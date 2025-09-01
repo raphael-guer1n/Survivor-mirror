@@ -1,0 +1,25 @@
+<article class="card">
+  <div class="media" *ngIf="project.imageUrl; else placeholder">
+    <img [src]="project.imageUrl" [alt]="project.title" loading="lazy" />
+  </div>
+  <ng-template #placeholder>
+    <div class="media placeholder" aria-hidden="true">
+      <span>{{ (project.title || 'P') | slice:0:1 }}</span>
+    </div>
+  </ng-template>
+
+  <div class="body">
+    <h3 class="title">{{ project.title }}</h3>
+    <p class="desc" *ngIf="project.description">{{ project.description }}</p>
+    <div class="tags" *ngIf="project.tags?.length">
+      <span class="tag" *ngFor="let t of project.tags">{{ t }}</span>
+    </div>
+  </div>
+
+  <a *ngIf="project.linkUrl"
+     class="overlay-link"
+     [href]="project.linkUrl"
+     target="_blank"
+     rel="noopener noreferrer"
+     aria-label="Open project{{ project.title }}"></a>
+</article>
