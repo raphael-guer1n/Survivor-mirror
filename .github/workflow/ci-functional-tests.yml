@@ -1,0 +1,28 @@
+name: Dummy CI - Push to Official Main (for testing mechanism)
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  dummy-push-to-main:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Mirror Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Configure Git for Push
+        run: |
+          git config --global user.name "GitHub Actions Dummy CI"
+          git config --global user.email "github-actions-dummy-ci[bot]@users.noreply.github.com"
+          git remote add official_main "https://x-access-token:${{ secrets.MAIN_REPO_PAT }}@github.com/EpitechPGE3-2025/G-SVR-500-PAR-5-1-survivor-6.git"
+        env:
+          MAIN_REPO_PAT: ${{ secrets.MAIN_REPO_PAT }}
+
+      - name: Push to Official Main Repository
+        run: |
+          git push official_main main # Push the 'main' branch of the mirror to the 'main' branch of the official repo
