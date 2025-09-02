@@ -1,21 +1,8 @@
 <header class="top-nav">
-  <a class="brand" routerLink="/" aria-label="Aller à l'accueil" (click)="closeMenu()">
+  <a class="brand" routerLink="/" aria-label="Go home" (click)="closeMenu()">
     <span class="brand-logo" aria-hidden="true">S</span>
     <span class="brand-text">{{ title }}</span>
   </a>
-
-  <button
-    class="menu-toggle"
-    type="button"
-    (click)="toggleMenu()"
-    [attr.aria-expanded]="menuOpen()"
-    aria-controls="primary-nav"
-    aria-label="Basculer le menu"
-  >
-    <span class="bar" aria-hidden="true"></span>
-    <span class="bar" aria-hidden="true"></span>
-    <span class="bar" aria-hidden="true"></span>
-  </button>
 
   <nav
     id="primary-nav"
@@ -30,6 +17,6 @@
       aria-current="page"
       (click)="closeMenu()"
     >Home</a>
-    <a routerLink="/projects" routerLinkActive="active" (click)="closeMenu()">Projects</a>
+    <a routerLink="/startups" routerLinkActive="active" (click)="closeMenu()">Startups</a>
   </nav>
 </header>
