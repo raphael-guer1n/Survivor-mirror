@@ -1,0 +1,97 @@
+import {Observable} from "rxjs";
+import { Injectable } from "@angular/core";
+import {HttpInterface, RequestOptions} from "../http/http-interface";
+import { Event, Investor, News, NewsDetail, Partner, StartupDetail, StartupList, User } from "./dtos";
+
+@Injectable({ providedIn: 'root' })
+export class BackendInterface {
+
+    constructor(private http: HttpInterface) {}
+
+    private buildQuery(params: Record<string, unknown>): string {
+        const query = Object.entries(params)
+            .filter(([_, v]) => v !== undefined && v !== null)
+            .map(([k, v]) => `${encodeURIComponent(k)}=${encodeURIComponent(String(v))}`)
+            .join("&");
+        return query ? `?${query}` : "";
+    }
+
+    // Startups
+    getStartups(skip?: number, limit?: number, options?: RequestOptions): Observable<StartupList[]> {
+        const qs = this.buildQuery({ skip, limit });
+        return this.http.get<StartupList[]>(`/startups${qs}`, options);
+    }
+
+    getStartup(startupId: number, options?: RequestOptions): Observable<StartupDetail> {
+        return this.http.get<StartupDetail>(`/startups/${encodeURIComponent(String(startupId))}`, options);
+    }
+
+    getFounderImage(startupId: number, founderId: number, options?: RequestOptions): Observable<any> {
+        return this.http.get<any>(`/startups/${encodeURIComponent(String(startupId))}/founders/${encodeURIComponent(String(founderId))}/image`, options);
+    }
+
+    // Investors
+    getInvestors(skip?: number, limit?: number, options?: RequestOptions): Observable<Investor[]> {
+        const qs = this.buildQuery({ skip, limit });
+        return this.http.get<Investor[]>(`/investors${qs}`, options);
+    }
+
+    getInvestor(investorId: number, options?: RequestOptions): Observable<Investor> {
+        return this.http.get<Investor>(`/investors/${encodeURIComponent(String(investorId))}`, options);
+    }
+
+    // Partners
+    getPartners(skip?: number, limit?: number, options?: RequestOptions): Observable<Partner[]> {
+        const qs = this.buildQuery({ skip, limit });
+        return this.http.get<Partner[]>(`/partners${qs}`, options);
+    }
+
+    getPartner(partnerId: number, options?: RequestOptions): Observable<Partner> {
+        return this.http.get<Partner>(`/partners/${encodeURIComponent(String(partnerId))}`, options);
+    }
+
+    // News
+    getNews(skip?: number, limit?: number, options?: RequestOptions): Observable<News[]> {
+        const qs = this.buildQuery({ skip, limit });
+        return this.http.get<News[]>(`/news${qs}`, options);
+    }
+
+    getNewsItem(newsId: number, options?: RequestOptions): Observable<NewsDetail> {
+        return this.http.get<NewsDetail>(`/news/${encodeURIComponent(String(newsId))}`, options);
+    }
+
+    getNewsImage(newsId: number, options?: RequestOptions): Observable<any> {
+        return this.http.get<any>(`/news/${encodeURIComponent(String(newsId))}/image`, options);
+    }
+
+    // Events
+    getEvents(skip?: number, limit?: number, options?: RequestOptions): Observable<Event[]> {
+        const qs = this.buildQuery({ skip, limit });
+        return this.http.get<Event[]>(`/events${qs}`, options);
+    }
+
+    getEvent(eventId: number, options?: RequestOptions): Observable<Event> {
+        return this.http.get<Event>(`/events/${encodeURIComponent(String(eventId))}`, options);
+    }
+
+    getEventImage(eventId: number, options?: RequestOptions): Observable<any> {
+        return this.http.get<any>(`/events/${encodeURIComponent(String(eventId))}/image`, options);
+    }
+
+    // Users
+    getUsers(options?: RequestOptions): Observable<User[]> {
+        return this.http.get<User[]>(`/users`, options);
+    }
+
+    getUser(userId: number, options?: RequestOptions): Observable<User> {
+        return this.http.get<User>(`/users/${encodeURIComponent(String(userId))}`, options);
+    }
+
+    getUserByEmail(email: string, options?: RequestOptions): Observable<User> {
+        return this.http.get<User>(`/users/email/${encodeURIComponent(email)}`, options);
+    }
+
+    getUserImage(userId: number, options?: RequestOptions): Observable<any> {
+        return this.http.get<any>(`/users/${encodeURIComponent(String(userId))}/image`, options);
+    }
+}
