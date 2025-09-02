@@ -1,0 +1,6 @@
+# Copy this to .env (do NOT commit .env to git)
+MYSQL_ROOT_PASSWORD=root_password
+MYSQL_DATABASE=jeb_incubator
+MYSQL_USER=user
+MYSQL_PASSWORD=password
+HOST_PORT=3327
