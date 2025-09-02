@@ -1,22 +1,22 @@
 <header class="top-nav">
-  <a class="brand" routerLink="/" aria-label="Go home" (click)="closeMenu()">
-    <span class="brand-logo" aria-hidden="true">S</span>
-    <span class="brand-text">{{ title }}</span>
-  </a>
+    <a class="brand" routerLink="/" aria-label="Go home" (click)="closeMenu()">
+        <span class="brand-logo" aria-hidden="true">S</span>
+        <span class="brand-text">{{ title }}</span>
+    </a>
 
-  <nav
-    id="primary-nav"
-    class="links"
-    [class.open]="menuOpen()"
-    aria-label="Navigation principale"
-  >
-    <a
-      routerLink="/"
-      routerLinkActive="active"
-      [routerLinkActiveOptions]="{ exact: true }"
-      aria-current="page"
-      (click)="closeMenu()"
-    >Home</a>
-    <a routerLink="/startups" routerLinkActive="active" (click)="closeMenu()">Startups</a>
-  </nav>
+    <nav
+            id="primary-nav"
+            class="links"
+            [class.open]="menuOpen()"
+            aria-label="Main navigation"
+    >
+        <a
+                routerLink="/"
+                routerLinkActive="active"
+                [routerLinkActiveOptions]="{ exact: true }"
+                aria-current="page"
+                (click)="closeMenu()"
+        >Home</a>
+        <a routerLink="/startups" routerLinkActive="active" (click)="closeMenu()">Startups</a>
+    </nav>
 </header>
