@@ -7,12 +7,14 @@
             class="search"
     />
 
-    <select [(ngModel)]="maturityFilter" aria-label="Filtrer by maturities" class="select">
-        <option value="">Maturities</option>
-        @for (m of maturities; track m) {
-            <option [value]="m">{{ m }}</option>
-        }
-    </select>
+    @for (f of filters; track f[0]) {
+        <select [(ngModel)]="filterValues[f[0]]" aria-label="Filter by {{ f[0] }}" class="select">
+            <option value="">{{ f[1] | titlecase }}</option>
+            @for (v of f.slice(1); track v) {
+                <option [value]="v">{{ v }}</option>
+            }
+        </select>
+    }
 </div>
 
 <div class="grid">
