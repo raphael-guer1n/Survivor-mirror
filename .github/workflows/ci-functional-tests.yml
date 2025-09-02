@@ -26,5 +26,8 @@ jobs:
           git config --global user.email "github-actions-dummy-ci[bot]@users.noreply.github.com"
           git remote add official_main git@github.com:EpitechPGE3-2025/G-SVR-500-PAR-5-1-survivor-6.git
 
+      - name: Pull latest official main before push
+        run: git pull official_main main --rebase
+
       - name: Push to Official Main Repository
         run: git push official_main main
