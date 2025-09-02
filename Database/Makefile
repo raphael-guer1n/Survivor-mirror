@@ -17,7 +17,7 @@ up:
 	docker compose up -d
 
 down:
-	docker compose down --remove-orphans
+	docker compose down
 
 shell:
 	docker compose exec -it $(DB_CONTAINER) mariadb -u$(DB_USER) -p$(DB_PASS) $(DB_NAME)
