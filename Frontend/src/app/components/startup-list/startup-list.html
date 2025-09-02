@@ -9,7 +9,7 @@
 
     @for (f of filters; track f[0]) {
         <select [(ngModel)]="filterValues[f[0]]" aria-label="Filter by {{ f[0] }}" class="select">
-            <option value="">{{ f[1] | titlecase }}</option>
+            <option value="">{{ f[0] | titlecase }}</option>
             @for (v of f.slice(1); track v) {
                 <option [value]="v">{{ v }}</option>
             }

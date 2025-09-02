@@ -17,6 +17,10 @@ export class StartupList {
   filtersBy: string[] = ['name', 'email', 'sector', 'maturity'];
   filterValues: Record<string, string> = {};
 
+  constructor() {
+    this.filtersBy.forEach(k => (this.filterValues[k] ??= ''));
+  }
+
   get filters(): string[][] {
     return this.filtersBy.map(field => {
       const set = new Set(
