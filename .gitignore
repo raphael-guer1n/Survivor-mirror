@@ -1,3 +1,4 @@
 /Frontend/.angular/*
 __pycache__
 .env
+.venv
