@@ -1,11 +1,26 @@
 import os
+from pathlib import Path
+from dotenv import load_dotenv
 
-# Lis d'abord les variables d'env si tu veux (ex: via docker compose `environment:`)
-DB_HOST = os.getenv("DB_HOST", "127.0.0.1")
-DB_PORT = int(os.getenv("DB_PORT", "3327"))
-DB_USER = os.getenv("DB_USER", "admin")
-DB_PASSWORD = os.getenv("DB_PASSWORD", "password")
-DB_NAME = os.getenv("DB_NAME", "jeb_incubator")
+ENV_PATH = Path(__file__).resolve().parents[1] / ".env"
+load_dotenv(dotenv_path=ENV_PATH)
 
-# Sécurité (tu pourras les réutiliser quand tu feras les JWT)
-BCRYPT_ROUNDS = int(os.getenv("BCRYPT_ROUNDS", "12"))
+def env(name: str, cast=None, default=None, required: bool = True):
+    val = os.getenv(name)
+    if val is None:
+        if required and default is None:
+            raise RuntimeError(f"Missing environment variable: {name}")
+        return default
+    return cast(val) if cast else val
+
+DB_HOST = env("DB_HOST")
+DB_PORT = env("DB_PORT", int)
+DB_USER = env("DB_USER")
+DB_PASSWORD = env("DB_PASSWORD")
+DB_NAME = env("DB_NAME")
+
+BCRYPT_ROUNDS = env("BCRYPT_ROUNDS", int)
+
+JEB_API_BASE_URL = env("JEB_API_BASE_URL")
+JEB_API_KEY = env("JEB_API_KEY")
+JEB_API_TIMEOUT = env("JEB_API_TIMEOUT", float)
