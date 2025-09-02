@@ -1,4 +1,4 @@
-import { Routes } from '@angular/router';
+import {Routes} from '@angular/router';
 
 export const routes: Routes = [
   {
@@ -7,8 +7,8 @@ export const routes: Routes = [
       import('./pages/home/home').then((m) => m.Home),
   },
   {
-    path: 'projects',
+    path: 'startups',
     loadComponent: () =>
-      import('./pages/project/project').then((m) => m.Project),
+      import('./pages/startups/startups').then((m) => m.Startups),
   },
 ];
