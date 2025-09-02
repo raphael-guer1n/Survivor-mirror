@@ -8,8 +8,10 @@
     />
 
     <select [(ngModel)]="maturityFilter" aria-label="Filtrer by maturities" class="select">
-        <option value="">All maturities</option>
-        <option *ngFor="let m of maturities" [value]="m">{{ m }}</option>
+        <option value="">Maturities</option>
+        @for (m of maturities; track m) {
+            <option [value]="m">{{ m }}</option>
+        }
     </select>
 </div>
 
@@ -17,14 +19,19 @@
     <article class="card" *ngFor="let s of filtered">
         <header class="card-header">
             <h3 class="card-title">{{ s.name }}</h3>
-            <span class="badge" *ngIf="s.maturity as m">{{ m }}</span>
+            @if (s.maturity) {
+                <span class="badge">{{ s.maturity }}</span>
+            }
         </header>
 
         <div class="card-body">
             <div class="row">
                 <span class="label">Mail:</span>
-                <a *ngIf="s.email" [href]="'mailto:' + s.email">{{ s.email }}</a>
-                <span *ngIf="!s.email" class="muted">—</span>
+                @if (s.email) {
+                    <a [href]="'mailto:' + s.email">{{ s.email }}</a>
+                } @else {
+                    <span class="muted">-</span>
+                }
             </div>
             <div class="row">
                 <span class="label">Sector:</span>
@@ -45,7 +52,6 @@
         </div>
     </article>
 </div>
-
-<div class="empty" *ngIf="filtered.length === 0">
-    Nothing found.
-</div>
+@if (filtered.length === 0) {
+    <div>No results found for "{{ query }}".</div>
+}
