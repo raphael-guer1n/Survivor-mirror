@@ -1,0 +1,12 @@
+<section class="page">
+    <h1 class="title">Startups</h1>
+    @if (loading) {
+        <div class="loading">Loading</div>
+    } @else {
+        @if (error) {
+            <div class="error">Error : {{ error }}</div>
+        } @else {
+            <app-startup-list [items]="startups"></app-startup-list>
+        }
+    }
+</section>
