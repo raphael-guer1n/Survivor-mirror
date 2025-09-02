@@ -16,41 +16,43 @@
 </div>
 
 <div class="grid">
-    <article class="card" *ngFor="let s of filtered">
-        <header class="card-header">
-            <h3 class="card-title">{{ s.name }}</h3>
-            @if (s.maturity) {
-                <span class="badge">{{ s.maturity }}</span>
-            }
-        </header>
-
-        <div class="card-body">
-            <div class="row">
-                <span class="label">Mail:</span>
-                @if (s.email) {
-                    <a [href]="'mailto:' + s.email">{{ s.email }}</a>
-                } @else {
-                    <span class="muted">-</span>
+    @for (s of filtered; track s) {
+        <article class="card">
+            <header class="card-header">
+                <h3 class="card-title">{{ s.name }}</h3>
+                @if (s.maturity) {
+                    <span class="badge">{{ s.maturity }}</span>
                 }
+            </header>
+
+            <div class="card-body">
+                <div class="row">
+                    <span class="label">Mail:</span>
+                    @if (s.email) {
+                        <a [href]="'mailto:' + s.email">{{ s.email }}</a>
+                    } @else {
+                        <span class="muted">-</span>
+                    }
+                </div>
+                <div class="row">
+                    <span class="label">Sector:</span>
+                    <span>{{ s.sector || '—' }}</span>
+                </div>
+                <div class="row">
+                    <span class="label">Legal Status:</span>
+                    <span>{{ s.legal_status || '—' }}</span>
+                </div>
+                <div class="row">
+                    <span class="label">Phone:</span>
+                    <span>{{ s.phone || '—' }}</span>
+                </div>
+                <div class="row">
+                    <span class="label">Address:</span>
+                    <span>{{ s.address || '—' }}</span>
+                </div>
             </div>
-            <div class="row">
-                <span class="label">Sector:</span>
-                <span>{{ s.sector || '—' }}</span>
-            </div>
-            <div class="row">
-                <span class="label">Legal Status:</span>
-                <span>{{ s.legal_status || '—' }}</span>
-            </div>
-            <div class="row">
-                <span class="label">Phone:</span>
-                <span>{{ s.phone || '—' }}</span>
-            </div>
-            <div class="row">
-                <span class="label">Address:</span>
-                <span>{{ s.address || '—' }}</span>
-            </div>
-        </div>
-    </article>
+        </article>
+    }
 </div>
 @if (filtered.length === 0) {
     <div>No results found for "{{ query }}".</div>
