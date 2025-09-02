@@ -2,3 +2,5 @@ fastapi
 uvicorn
 mysql-connector-python
 bcrypt
+requests
+python-dotenv
