@@ -83,7 +83,20 @@
                         <span class="label">Founders:</span>
                         <ul>
                             @for (f of data.founders!; track f.id) {
-                                <li>{{ f.name }}</li>
+                                <li class="founder-item">
+                                    @if (founderImages[f.id]) {
+                                        <img
+                                                ngSrc="{{founderImages[f.id]}}"
+                                                [alt]="'Photo de ' + f.name"
+                                                class="founder-photo"
+                                                width="48"
+                                                height="48"
+                                        />
+                                    } @else {
+                                        <span class="founder-photo placeholder" aria-hidden="true">👤</span>
+                                    }
+                                    <span class="founder-name">{{ f.name }}</span>
+                                </li>
                             }
                         </ul>
                     </div>
