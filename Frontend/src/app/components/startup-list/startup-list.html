@@ -1,0 +1,68 @@
+<div class="toolbar">
+    <input
+            type="search"
+            [(ngModel)]="query"
+            placeholder="Search"
+            aria-label="Search"
+            class="search"
+    />
+
+    @for (f of filters; track f[0]) {
+        <select [(ngModel)]="filterValues[f[0]]" aria-label="Filter by {{ f[0] }}" class="select">
+            <option value="">{{ f[0] | titlecase }}</option>
+            @for (v of f.slice(1); track v) {
+                <option [value]="v">{{ v }}</option>
+            }
+        </select>
+    }
+</div>
+
+<div class="grid">
+    @for (s of filtered; track s) {
+        <article class="card" (click)="openDetails(s.id)" style="cursor: pointer;">
+            <header class="card-header">
+                <h3 class="card-title">{{ s.name }}</h3>
+                @if (s.maturity) {
+                    <span class="badge">{{ s.maturity }}</span>
+                }
+            </header>
+
+            <div class="card-body">
+                <div class="row">
+                    <span class="label">Mail:</span>
+                    @if (s.email) {
+                        <a [href]="'mailto:' + s.email" (click)="$event.stopPropagation()">{{ s.email }}</a>
+                    } @else {
+                        <span class="muted">-</span>
+                    }
+                </div>
+                <div class="row">
+                    <span class="label">Sector:</span>
+                    <span>{{ s.sector || '—' }}</span>
+                </div>
+                <div class="row">
+                    <span class="label">Legal Status:</span>
+                    <span>{{ s.legal_status || '—' }}</span>
+                </div>
+                <div class="row">
+                    <span class="label">Phone:</span>
+                    <span>{{ s.phone || '—' }}</span>
+                </div>
+                <div class="row">
+                    <span class="label">Address:</span>
+                    <span>{{ s.address || '—' }}</span>
+                </div>
+            </div>
+        </article>
+    }
+</div>
+@if (filtered.length === 0) {
+    <div>No results found for "{{ query }}".</div>
+}
+
+@if (selectedId !== null) {
+    <app-startup-popup
+            [startupId]="selectedId!"
+            (closed)="closeDetails()">
+    </app-startup-popup>
+}

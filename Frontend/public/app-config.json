@@ -1,0 +1,4 @@
+{
+  "apiBaseUrl": "/api",
+  "authToken": "your_token"
+}

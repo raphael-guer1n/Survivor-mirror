@@ -12,14 +12,4 @@ import {ChatBot} from './components/chat-bot/chat-bot';
 })
 export class App {
   protected readonly title = signal('Survivor');
-
-  menuOpen = signal(false);
-
-  toggleMenu() {
-    this.menuOpen.update(v => !v);
-  }
-
-  closeMenu() {
-    this.menuOpen.set(false);
-  }
 }
