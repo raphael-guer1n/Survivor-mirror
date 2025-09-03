@@ -14,7 +14,7 @@ export class StartupList {
   @Input() items: StartupListDTO[] = [];
 
   query = '';
-  filtersBy: string[] = ['name', 'email', 'sector', 'maturity'];
+  filtersBy: string[] = ['sector', 'maturity'];
   filterValues: Record<string, string> = {};
 
   constructor() {
@@ -43,7 +43,7 @@ export class StartupList {
         !q ||
         (s.name?.toLowerCase().includes(q)) ||
         (s.email?.toLowerCase().includes(q)) ||
-        (s.sector?.toLowerCase().includes(q));
+        (s.address?.toLowerCase().includes(q));
 
       const matchesAllFilters = this.filtersBy.every(field => {
         const filterVal = (this.filterValues[field] ?? '').trim().toLowerCase();
