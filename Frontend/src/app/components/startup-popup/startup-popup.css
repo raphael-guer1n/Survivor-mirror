@@ -1,7 +1,7 @@
 .overlay {
     position: fixed;
     inset: 0;
-    background: rgba(0,0,0,0.6);
+    background: rgba(0, 0, 0, 0.6);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -23,7 +23,11 @@
     padding: 12px 16px;
     border-bottom: 1px solid var(--border);
 }
-.modal-footer { border-top: 1px solid var(--border); border-bottom: none; }
+
+.modal-footer {
+    border-top: 1px solid var(--border);
+    border-bottom: none;
+}
 
 .modal-body {
     padding: 12px 16px 4px;
@@ -42,14 +46,18 @@
     font-size: 24px;
     line-height: 1;
     cursor: pointer;
+    padding: 4px;
+    border-radius: 8px;
+    transition: background 140ms ease, color 140ms ease, box-shadow 140ms ease;
 }
 
-.btn {
-    padding: 8px 14px;
-    border-radius: 8px;
-    border: 1px solid #ddd;
-    background: #f6f6f6;
-    cursor: pointer;
+.icon-btn:hover {
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.icon-btn:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px var(--ring);
 }
 
 .row {
@@ -59,7 +67,10 @@
     padding: 6px 0;
     border-bottom: 1px dashed var(--border);
 }
-.row:last-child { border-bottom: none; }
+
+.row:last-child {
+    border-bottom: none;
+}
 
 .label {
     font-weight: 600;
@@ -73,6 +84,7 @@
 .state {
     padding: 8px 0;
 }
+
 .state.error {
     color: #f87171;
 }
