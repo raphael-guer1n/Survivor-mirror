@@ -1,7 +1,7 @@
 .overlay {
     position: fixed;
     inset: 0;
-    background: rgba(0,0,0,0.45);
+    background: rgba(0,0,0,0.6);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -9,20 +9,21 @@
 }
 
 .modal {
-    background: #fff;
-    color: #222;
+    background: var(--card);
+    color: var(--text);
     width: min(720px, 92vw);
     max-height: 88vh;
     overflow: auto;
-    border-radius: 12px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
 }
 
 .modal-header, .modal-footer {
     padding: 12px 16px;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid var(--border);
 }
-.modal-footer { border-top: 1px solid #eee; border-bottom: none; }
+.modal-footer { border-top: 1px solid var(--border); border-bottom: none; }
 
 .modal-body {
     padding: 12px 16px 4px;
@@ -37,6 +38,7 @@
 .icon-btn {
     background: transparent;
     border: none;
+    color: var(--text);
     font-size: 24px;
     line-height: 1;
     cursor: pointer;
@@ -55,24 +57,24 @@
     grid-template-columns: 160px 1fr;
     gap: 8px;
     padding: 6px 0;
-    border-bottom: 1px dashed #f0f0f0;
+    border-bottom: 1px dashed var(--border);
 }
 .row:last-child { border-bottom: none; }
 
 .label {
     font-weight: 600;
-    color: #555;
+    color: var(--text);
 }
 
 .muted {
-    color: #999;
+    color: var(--text-muted);
 }
 
 .state {
     padding: 8px 0;
 }
 .state.error {
-    color: #b00020;
+    color: #f87171;
 }
 
 .founders ul {
