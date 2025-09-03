@@ -1,0 +1,81 @@
+.overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.modal {
+    background: #fff;
+    color: #222;
+    width: min(720px, 92vw);
+    max-height: 88vh;
+    overflow: auto;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+}
+
+.modal-header, .modal-footer {
+    padding: 12px 16px;
+    border-bottom: 1px solid #eee;
+}
+.modal-footer { border-top: 1px solid #eee; border-bottom: none; }
+
+.modal-body {
+    padding: 12px 16px 4px;
+}
+
+.modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.icon-btn {
+    background: transparent;
+    border: none;
+    font-size: 24px;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.btn {
+    padding: 8px 14px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    background: #f6f6f6;
+    cursor: pointer;
+}
+
+.row {
+    display: grid;
+    grid-template-columns: 160px 1fr;
+    gap: 8px;
+    padding: 6px 0;
+    border-bottom: 1px dashed #f0f0f0;
+}
+.row:last-child { border-bottom: none; }
+
+.label {
+    font-weight: 600;
+    color: #555;
+}
+
+.muted {
+    color: #999;
+}
+
+.state {
+    padding: 8px 0;
+}
+.state.error {
+    color: #b00020;
+}
+
+.founders ul {
+    margin: 0;
+    padding-left: 18px;
+}
