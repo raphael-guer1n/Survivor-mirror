@@ -19,7 +19,7 @@
 
 <div class="grid">
     @for (s of filtered; track s) {
-        <article class="card">
+        <article class="card" (click)="openDetails(s.id)" style="cursor: pointer;">
             <header class="card-header">
                 <h3 class="card-title">{{ s.name }}</h3>
                 @if (s.maturity) {
@@ -31,7 +31,7 @@
                 <div class="row">
                     <span class="label">Mail:</span>
                     @if (s.email) {
-                        <a [href]="'mailto:' + s.email">{{ s.email }}</a>
+                        <a [href]="'mailto:' + s.email" (click)="$event.stopPropagation()">{{ s.email }}</a>
                     } @else {
                         <span class="muted">-</span>
                     }
@@ -58,4 +58,11 @@
 </div>
 @if (filtered.length === 0) {
     <div>No results found for "{{ query }}".</div>
+}
+
+@if (selectedId !== null) {
+    <app-startup-popup
+            [startupId]="selectedId!"
+            (closed)="closeDetails()">
+    </app-startup-popup>
 }

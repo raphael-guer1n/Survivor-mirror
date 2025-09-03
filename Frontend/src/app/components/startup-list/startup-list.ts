@@ -2,11 +2,12 @@ import {Component, Input} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {FormsModule} from '@angular/forms';
 import type {StartupList as StartupListDTO} from '../../cores/interfaces/backend/dtos';
+import {StartupPopup} from "../startup-popup/startup-popup";
 
 @Component({
   selector: 'app-startup-list',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, StartupPopup],
   templateUrl: './startup-list.html',
   styleUrl: './startup-list.css'
 })
@@ -55,4 +56,16 @@ export class StartupList {
       return matchesQuery && matchesAllFilters;
     });
   }
+
+
+  selectedId: number | null = null;
+
+  openDetails(id: number): void {
+    this.selectedId = id;
+  }
+
+  closeDetails(): void {
+    this.selectedId = null;
+  }
+
 }
