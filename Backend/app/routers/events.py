@@ -1,44 +1,57 @@
 from fastapi import APIRouter, HTTPException, Query
-from services.jeb_api import JEBAPIService
+from app.db.connection import get_connection
 from app.schemas.event import Event, EventImage
 
-router = APIRouter()
+router = APIRouter(prefix="/events", tags=["events"])
 
-@router.get("/events", response_model=list[Event])
-async def get_events(skip: int = Query(0, ge=0), limit: int = Query(100, ge=1)):
+@router.get("/", response_model=list[Event])
+def get_events(skip: int = Query(0, ge=0), limit: int = Query(100, ge=1)):
     """
-    Fetch a list of events from the JEB API.
+    Fetch all events from the database.
     """
+    conn = get_connection()
+    cursor = conn.cursor(dictionary=True)
     try:
-        events = JEBAPIService.get_events(skip=skip, limit=limit)
+        cursor.execute("SELECT id, name, dates, location, description, event_type, target_audience FROM events LIMIT %s OFFSET %s", (limit, skip))
+        events = cursor.fetchall()
         return events
-    except HTTPException as e:
-        raise e
-    except Exception as e:
-        raise HTTPException(status_code=500, detail="Internal server error")
+    finally:
+        cursor.close()
+        conn.close()
 
-@router.get("/events/{event_id}", response_model=Event)
-async def get_event(event_id: int):
+
+@router.get("/{event_id}", response_model=Event)
+def get_event(event_id: int):
     """
-    Fetch a specific event by ID from the JEB API.
+    Fetch a specific event by ID from the database.
     """
+    conn = get_connection()
+    cursor = conn.cursor(dictionary=True)
     try:
-        event = JEBAPIService.get_event_by_id(event_id)
+        cursor.execute("SELECT id, name, dates, location, description, event_type, target_audience FROM events WHERE id = %s", (event_id,))
+        event = cursor.fetchone()
+        if not event:
+            raise HTTPException(status_code=404, detail="Event not found")
         return event
-    except HTTPException as e:
-        raise e
-    except Exception as e:
-        raise HTTPException(status_code=500, detail="Internal server error")
+    finally:
+        cursor.close()
+        conn.close()
 
-@router.get("/events/{event_id}/image", response_model=EventImage)
-async def get_event_image(event_id: int):
+
+@router.get("/{event_id}/image", response_model=EventImage)
+def get_event_image(event_id: int):
     """
-    Fetch the image URL for a specific event by ID from the JEB API.
+    Fetch the image URL for a specific event by ID from the database.
+    (⚠️ Replace `description` with the actual column if you store image URLs elsewhere)
     """
+    conn = get_connection()
+    cursor = conn.cursor(dictionary=True)
     try:
-        image_url = JEBAPIService.get_event_image(event_id)
-        return {"image_url": image_url}
-    except HTTPException as e:
-        raise e
-    except Exception as e:
-        raise HTTPException(status_code=500, detail="Internal server error")
+        cursor.execute("SELECT description FROM events WHERE id = %s", (event_id,))
+        row = cursor.fetchone()
+        if not row:
+            raise HTTPException(status_code=404, detail="Event not found")
+        return {"image_url": row["description"]}
+    finally:
+        cursor.close()
+        conn.close()
