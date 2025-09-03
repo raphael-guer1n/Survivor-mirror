@@ -6,9 +6,6 @@ router = APIRouter(prefix="/users", tags=["users"])
 
 @router.get("/", response_model=list[UserOut])
 def get_users(skip: int = 0, limit: int = 100):
-    """
-    Fetch all users from the database.
-    """
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
     try:
@@ -22,9 +19,6 @@ def get_users(skip: int = 0, limit: int = 100):
 
 @router.get("/{user_id}", response_model=UserOut)
 def get_user(user_id: int):
-    """
-    Fetch a specific user by ID from the database.
-    """
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
     try:
@@ -40,9 +34,6 @@ def get_user(user_id: int):
 
 @router.get("/email/{email}", response_model=UserOut)
 def get_user_by_email(email: str):
-    """
-    Fetch a specific user by email from the database.
-    """
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
     try:

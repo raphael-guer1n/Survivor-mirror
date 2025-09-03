@@ -6,9 +6,6 @@ router = APIRouter(prefix="/events", tags=["events"])
 
 @router.get("/", response_model=list[Event])
 def get_events(skip: int = Query(0, ge=0), limit: int = Query(100, ge=1)):
-    """
-    Fetch all events from the database.
-    """
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
     try:
@@ -22,9 +19,6 @@ def get_events(skip: int = Query(0, ge=0), limit: int = Query(100, ge=1)):
 
 @router.get("/{event_id}", response_model=Event)
 def get_event(event_id: int):
-    """
-    Fetch a specific event by ID from the database.
-    """
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
     try:
@@ -40,10 +34,6 @@ def get_event(event_id: int):
 
 @router.get("/{event_id}/image", response_model=EventImage)
 def get_event_image(event_id: int):
-    """
-    Fetch the image URL for a specific event by ID from the database.
-    (⚠️ Replace `description` with the actual column if you store image URLs elsewhere)
-    """
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
     try:
