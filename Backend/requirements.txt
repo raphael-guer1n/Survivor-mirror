@@ -1,0 +1,9 @@
+fastapi
+uvicorn
+mysql-connector-python
+bcrypt
+requests
+python-dotenv
+requests
+APScheduler
+python_jose
