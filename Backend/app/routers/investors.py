@@ -4,7 +4,6 @@ from app.schemas.investor import Investor, InvestorImage
 
 router = APIRouter(prefix="/investors", tags=["investors"])
 
-
 @router.get("/", response_model=list[Investor])
 def get_investors(skip: int = Query(0, ge=0), limit: int = Query(100, ge=1)):
     conn = get_connection()
@@ -24,7 +23,6 @@ def get_investors(skip: int = Query(0, ge=0), limit: int = Query(100, ge=1)):
     finally:
         cursor.close()
         conn.close()
-
 
 @router.get("/{investor_id}", response_model=Investor)
 def get_investor(investor_id: int):
@@ -46,7 +44,6 @@ def get_investor(investor_id: int):
     finally:
         cursor.close()
         conn.close()
-
 
 @router.get("/{investor_id}/image", response_model=InvestorImage)
 def get_investor_image(investor_id: int):

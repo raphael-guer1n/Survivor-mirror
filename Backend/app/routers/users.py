@@ -16,7 +16,6 @@ def get_users(skip: int = 0, limit: int = 100):
         cursor.close()
         conn.close()
 
-
 @router.get("/{user_id}", response_model=UserOut)
 def get_user(user_id: int):
     conn = get_connection()
@@ -30,7 +29,6 @@ def get_user(user_id: int):
     finally:
         cursor.close()
         conn.close()
-
 
 @router.get("/email/{email}", response_model=UserOut)
 def get_user_by_email(email: str):

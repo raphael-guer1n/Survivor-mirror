@@ -4,7 +4,6 @@ from app.schemas.news import News, NewsDetail, NewsImage
 
 router = APIRouter(prefix="/news", tags=["news"])
 
-
 @router.get("/", response_model=list[News])
 def get_news(skip: int = Query(0, ge=0), limit: int = Query(100, ge=1)):
     conn = get_connection()
@@ -24,7 +23,6 @@ def get_news(skip: int = Query(0, ge=0), limit: int = Query(100, ge=1)):
     finally:
         cursor.close()
         conn.close()
-
 
 @router.get("/{news_id}", response_model=NewsDetail)
 def get_news_item(news_id: int):
@@ -46,7 +44,6 @@ def get_news_item(news_id: int):
     finally:
         cursor.close()
         conn.close()
-
 
 @router.get("/{news_id}/image", response_model=NewsImage)
 def get_news_image(news_id: int):

@@ -16,7 +16,6 @@ def get_events(skip: int = Query(0, ge=0), limit: int = Query(100, ge=1)):
         cursor.close()
         conn.close()
 
-
 @router.get("/{event_id}", response_model=Event)
 def get_event(event_id: int):
     conn = get_connection()
@@ -30,7 +29,6 @@ def get_event(event_id: int):
     finally:
         cursor.close()
         conn.close()
-
 
 @router.get("/{event_id}/image", response_model=EventImage)
 def get_event_image(event_id: int):
