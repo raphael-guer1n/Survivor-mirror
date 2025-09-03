@@ -76,7 +76,7 @@ def login(credentials: UserLogin):
         cursor.close()
         conn.close()
 
-@router.get("/me")
+@router.get("/me", response_model=UserOut)
 def get_me(user=Depends(get_current_user)):
     user_id = user.get("sub")
     conn = get_connection()
