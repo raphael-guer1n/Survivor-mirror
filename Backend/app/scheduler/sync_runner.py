@@ -3,6 +3,7 @@ from apscheduler.triggers.interval import IntervalTrigger
 from fastapi import FastAPI
 from app.core.config import SYNC_INTERVAL_SECONDS
 from app.services.sync import sync_all
+from datetime import datetime
 
 def register_scheduler(app: FastAPI):
     scheduler = BackgroundScheduler(timezone="UTC")
@@ -15,6 +16,7 @@ def register_scheduler(app: FastAPI):
         max_instances=1,
         coalesce=True,
     )
+    print(f"[DEBUG] Periodic sync triggered at {datetime.utcnow().isoformat()}Z")
 
     @app.on_event("startup")
     def _start():
