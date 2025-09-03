@@ -10,28 +10,42 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
   selector: 'app-startups',
   imports: [CommonModule, StartupList],
   standalone: true,
-  templateUrl: './startups.html',
-  styleUrl: './startups.css'
+  templateUrl: './startups-page.html',
+  styleUrl: './startups-page.css'
 })
-export class Startups implements OnInit {
+export class StartupsPage implements OnInit {
   startups: StartupListDTO[] = [];
   loading = true;
   error: string | null = null;
+
+  MAX_STARTUPS_PER_CALL = 100;
 
   private backend = inject(BackendInterface);
   private destroyRef = inject(DestroyRef);
 
   ngOnInit(): void {
-    console.log('Startups');
+    this.getNextStartups();
+  }
+
+  getNextStartups() : void {
     this.backend
-      .getStartups(0, 100)
+      .getStartups(this.startups.length, this.MAX_STARTUPS_PER_CALL)
       .pipe(
         takeUntilDestroyed(this.destroyRef),
         finalize(() => (this.loading = false))
       )
       .subscribe({
-        next: (data) => (this.startups = data ?? []),
-        error: (err) => (this.error = err?.message ?? 'Une erreur est survenue lors du chargement des startups.')
-      });
+        next: (data) => {
+          this.startups = [...this.startups, ...data ?? []]
+          if (data.length === this.MAX_STARTUPS_PER_CALL) {
+            this.getNextStartups();
+          } else {
+            this.startups = this.startups.sort((a, b) => a.name.localeCompare(b.name));
+            console.log(this.startups.length)
+          }
+        },
+        error: (err) => (this.error = err?.message ?? 'Error during loading startups')
+      })
   }
+
 }
