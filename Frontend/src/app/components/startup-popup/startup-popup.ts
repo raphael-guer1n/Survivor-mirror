@@ -1,12 +1,12 @@
-import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
-import {CommonModule, NgOptimizedImage} from '@angular/common';
-import { BackendInterface } from '../../cores/interfaces/backend/backend-interface';
-import type { StartupDetail } from '../../cores/interfaces/backend/dtos';
+import {Component, EventEmitter, Input, OnChanges, Output, SimpleChanges} from '@angular/core';
+import {CommonModule} from '@angular/common';
+import {BackendInterface} from '../../cores/interfaces/backend/backend-interface';
+import type {StartupDetail} from '../../cores/interfaces/backend/dtos';
 
 @Component({
   selector: 'app-startup-popup',
   standalone: true,
-  imports: [CommonModule, NgOptimizedImage],
+  imports: [CommonModule],
   templateUrl: './startup-popup.html',
   styleUrl: './startup-popup.css'
 })
@@ -19,7 +19,8 @@ export class StartupPopup implements OnChanges {
   data: StartupDetail | null = null;
   founderImages: Record<number, string> = {};
 
-  constructor(private backend: BackendInterface) {}
+  constructor(private backend: BackendInterface) {
+  }
 
   ngOnChanges(_changes: SimpleChanges): void {
     if ('startupId' in _changes && this.startupId != null) {
@@ -52,21 +53,8 @@ export class StartupPopup implements OnChanges {
 
     for (const f of this.data.founders) {
       this.backend.getFounderImage(this.startupId, f.id).subscribe({
-        next: (blobOrData: any) => {
-          try {
-            const url =
-              blobOrData instanceof Blob
-                ? URL.createObjectURL(blobOrData)
-                : typeof blobOrData === 'string'
-                  ? blobOrData
-                  : null;
-
-            if (url) {
-              this.founderImages[f.id] = url;
-            }
-          } catch (err) {
-            console.warn('Error while loading founder image', f.id, err);
-          }
+        next: (blob: Blob) => {
+          this.founderImages[f.id] = URL.createObjectURL(blob);
         },
         error: (e) => {
           console.warn('Founder image not found', f.id, e);
