@@ -1,6 +1,6 @@
 from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
-from app.routers import users, partners, auth, events, news
+from app.routers import auth, users, events, news, partners, investors
 from app.scheduler.sync_runner import register_scheduler
 from app.services.sync import sync_all
 
@@ -19,6 +19,7 @@ app.include_router(auth.router)
 app.include_router(events.router, prefix="/api", tags=["events"])
 app.include_router(news.router, prefix="/api", tags=["news"])
 app.include_router(partners.router, prefix="/api", tags=["news"])
+app.include_router(investors.router, prefix="/api", tags=["news"])
 
 @app.post("/admin/sync")
 def admin_sync(user=Depends(auth.require_admin)):
