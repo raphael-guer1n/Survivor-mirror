@@ -2,11 +2,12 @@ import {Component, Input} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {FormsModule} from '@angular/forms';
 import type {StartupList as StartupListDTO} from '../../cores/interfaces/backend/dtos';
+import {StartupPopup} from "../startup-popup/startup-popup";
 
 @Component({
   selector: 'app-startup-list',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, StartupPopup],
   templateUrl: './startup-list.html',
   styleUrl: './startup-list.css'
 })
@@ -14,7 +15,7 @@ export class StartupList {
   @Input() items: StartupListDTO[] = [];
 
   query = '';
-  filtersBy: string[] = ['name', 'email', 'sector', 'maturity'];
+  filtersBy: string[] = ['sector', 'maturity'];
   filterValues: Record<string, string> = {};
 
   constructor() {
@@ -43,7 +44,7 @@ export class StartupList {
         !q ||
         (s.name?.toLowerCase().includes(q)) ||
         (s.email?.toLowerCase().includes(q)) ||
-        (s.sector?.toLowerCase().includes(q));
+        (s.address?.toLowerCase().includes(q));
 
       const matchesAllFilters = this.filtersBy.every(field => {
         const filterVal = (this.filterValues[field] ?? '').trim().toLowerCase();
@@ -55,4 +56,16 @@ export class StartupList {
       return matchesQuery && matchesAllFilters;
     });
   }
+
+
+  selectedId: number | null = null;
+
+  openDetails(id: number): void {
+    this.selectedId = id;
+  }
+
+  closeDetails(): void {
+    this.selectedId = null;
+  }
+
 }

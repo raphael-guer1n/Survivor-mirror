@@ -4,11 +4,11 @@ export const routes: Routes = [
   {
     path: '',
     loadComponent: () =>
-      import('./pages/home/home').then((m) => m.Home),
+      import('./pages/home-page/home-page').then((m) => m.HomePage),
   },
   {
     path: 'startups',
     loadComponent: () =>
-      import('./pages/startups/startups').then((m) => m.Startups),
+      import('./pages/startups-page/startups-page').then((m) => m.StartupsPage),
   },
 ];

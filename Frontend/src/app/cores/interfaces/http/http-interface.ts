@@ -72,6 +72,15 @@ export class HttpInterface {
       catchError((err) => this.handleError<T>('DELETE', url, err))
     );
   }
+
+  getBaseUrl(): string {
+    return this.baseUrl;
+  }
+
+  getAuthHeaderPair(): { name: string; value: string } | null {
+    return this.authToken ? { name: this.authHeaderName, value: this.authToken } : null;
+  }
+
   private buildUrl(path: string): string {
     const cleanBase = this.baseUrl.replace(/\/+$/, '');
     const cleanPath = (path || '').replace(/^\/+/, '');

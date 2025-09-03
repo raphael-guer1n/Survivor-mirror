@@ -1,0 +1,115 @@
+<div class="overlay" (click)="close()">
+    <div class="modal" (click)="$event.stopPropagation()">
+        <header class="modal-header">
+            <h3>@if (data) {
+                {{ data.name }}
+            } @else {
+                Startup détails
+            }</h3>
+            <button class="icon-btn" aria-label="Close" (click)="close()">×</button>
+        </header>
+
+        <section class="modal-body">
+            @if (loading) {
+                <div class="state">Loading…</div>
+            } @else if (error) {
+                <div class="state error">{{ error }}</div>
+            } @else if (data) {
+                <div class="row">
+                    <span class="label">Email:</span>
+                    @if (data.email) {
+                        <a [href]="'mailto:' + data.email">{{ data.email }}</a>
+                    } @else {
+                        <span class="muted">—</span>
+                    }
+                </div>
+
+                <div class="row">
+                    <span class="label">Phone:</span>
+                    <span>{{ data.phone || '—' }}</span>
+                </div>
+
+                <div class="row">
+                    <span class="label">Address:</span>
+                    <span>{{ data.address || '—' }}</span>
+                </div>
+
+                <div class="row">
+                    <span class="label">Legal Status:</span>
+                    <span>{{ data.legal_status || '—' }}</span>
+                </div>
+
+                <div class="row">
+                    <span class="label">Sector:</span>
+                    <span>{{ data.sector || '—' }}</span>
+                </div>
+
+                <div class="row">
+                    <span class="label">Maturity:</span>
+                    <span>{{ data.maturity || '—' }}</span>
+                </div>
+
+                <div class="row">
+                    <span class="label">Project status:</span>
+                    <span>{{ data.project_status || '—' }}</span>
+                </div>
+
+                <div class="row">
+                    <span class="label">Needs:</span>
+                    <span>{{ data.needs || '—' }}</span>
+                </div>
+
+                <div class="row">
+                    <span class="label">Web site:</span>
+                    @if (data.website_url) {
+                        <a [href]="data.website_url" target="_blank" rel="noopener">{{ data.website_url }}</a>
+                    } @else {
+                        <span class="muted">—</span>
+                    }
+                </div>
+
+                <div class="row">
+                    <span class="label">Socials:</span>
+                    @if (data.social_media_url) {
+                        <a [href]="data.social_media_url" target="_blank" rel="noopener">{{ data.social_media_url }}</a>
+                    } @else {
+                        <span class="muted">—</span>
+                    }
+                </div>
+
+                <div class="row">
+                    <span class="label">Description:</span>
+                    <span>{{ data.description || '—' }}</span>
+                </div>
+
+                @if ((data.founders?.length || 0) > 0) {
+                    <div class="row founders">
+                        <span class="label">Founders:</span>
+                        <ul>
+                            @for (f of data.founders!; track f.id) {
+                                <li class="founder-item">
+                                    @if (founderImages[f.id]) {
+                                        <img
+                                                [src]="founderImages[f.id]"
+                                                [alt]="'Photo de ' + f.name"
+                                                class="founder-photo"
+                                                width="48"
+                                                height="48"
+                                        />
+                                    } @else {
+                                        <span class="founder-photo placeholder" aria-hidden="true">👤</span>
+                                    }
+                                    <span class="founder-name">{{ f.name }}</span>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                }
+            }
+        </section>
+
+        <footer class="modal-footer">
+            <button class="btn" (click)="close()">Close</button>
+        </footer>
+    </div>
+</div>
