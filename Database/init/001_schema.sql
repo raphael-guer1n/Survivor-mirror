@@ -100,31 +100,21 @@ CREATE TABLE IF NOT EXISTS users (
   FOREIGN KEY (investor_id) REFERENCES investors(id) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-
+-- Conversations
 CREATE TABLE IF NOT EXISTS conversations (
     id BIGINT PRIMARY KEY AUTO_INCREMENT,
     user1_id BIGINT NOT NULL,
     user2_id BIGINT NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    UNIQUE KEY unique_users (user1_id, user2_id),
-    FOREIGN KEY (user1_id) REFERENCES users(id),
-    FOREIGN KEY (user2_id) REFERENCES users(id)
-);
+    UNIQUE KEY unique_users (user1_id, user2_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+-- Messages
 CREATE TABLE IF NOT EXISTS messages (
-    id BIGINT PRIMARY KEY AUTO_INCREMENT,
     conversation_id BIGINT NOT NULL,
     sender_id BIGINT NOT NULL,
     receiver_id BIGINT NOT NULL,
-    content TEXT NOT NULL,
-    sent_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    is_read BOOLEAN DEFAULT FALSE,
-    FOREIGN KEY (conversation_id) REFERENCES conversations(id),
-    FOREIGN KEY (sender_id) REFERENCES users(id),
-    FOREIGN KEY (receiver_id) REFERENCES users(id),
-    INDEX idx_conversation (conversation_id)
-);
+    content TEXT NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- Indexes
 CREATE INDEX idx_startups_sector ON startups(sector);
