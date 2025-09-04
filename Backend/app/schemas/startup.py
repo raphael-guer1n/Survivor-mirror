@@ -1,37 +1,55 @@
 from pydantic import BaseModel
+from typing import Optional, List
 from datetime import date
 
-class Startup(BaseModel):
-    id: int
+class StartupBase(BaseModel):
     name: str
-    legal_status: str | None = None
-    address: str | None = None
+    legal_status: Optional[str] = None
+    address: Optional[str] = None
     email: str
-    phone: str | None = None
-    sector: str | None = None
-    maturity: str | None = None
+    phone: Optional[str] = None
+    sector: Optional[str] = None
+    maturity: Optional[str] = None
+
+class StartupCreate(StartupBase):
+    description: Optional[str] = None
+    website_url: Optional[str] = None
+    social_media_url: Optional[str] = None
+    project_status: Optional[str] = None
+    needs: Optional[str] = None
+
+class StartupUpdate(BaseModel):
+    name: Optional[str] = None
+    legal_status: Optional[str] = None
+    address: Optional[str] = None
+    email: Optional[str] = None
+    phone: Optional[str] = None
+    sector: Optional[str] = None
+    maturity: Optional[str] = None
+    description: Optional[str] = None
+    website_url: Optional[str] = None
+    social_media_url: Optional[str] = None
+    project_status: Optional[str] = None
+    needs: Optional[str] = None
+
+class StartupOut(StartupBase):
+    id: int
+    created_at: Optional[date] = None
+    description: Optional[str] = None
+    website_url: Optional[str] = None
+    social_media_url: Optional[str] = None
+    project_status: Optional[str] = None
+    needs: Optional[str] = None
 
     class Config:
         orm_mode = True
-
 
 class Founder(BaseModel):
     id: int
     name: str
 
-    class Config:
-        orm_mode = True
-
-
-class StartupDetail(Startup):
-    created_at: date | None = None
-    description: str | None = None
-    website_url: str | None = None
-    social_media_url: str | None = None
-    project_status: str | None = None
-    needs: str | None = None
-    founders: list[Founder] = []
-
+class StartupDetail(StartupOut):
+    founders: List[Founder] = []
 
 class FounderImage(BaseModel):
     image_url: str
