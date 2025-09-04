@@ -1,21 +1,28 @@
 from pydantic import BaseModel
+from typing import Optional
 from datetime import date
 
-class News(BaseModel):
-    id: int
+class NewsBase(BaseModel):
     title: str
-    news_date: date | None = None
-    location: str | None = None
-    category: str | None = None
-    startup_id: int | None = None
+    news_date: Optional[date] = None
+    location: Optional[str] = None
+    category: Optional[str] = None
+    startup_id: Optional[int] = None
+
+class NewsCreate(NewsBase):
+    description: Optional[str] = None
+
+class NewsUpdate(BaseModel):
+    title: Optional[str] = None
+    news_date: Optional[date] = None
+    location: Optional[str] = None
+    category: Optional[str] = None
+    startup_id: Optional[int] = None
+    description: Optional[str] = None
+
+class NewsOut(NewsBase):
+    id: int
+    description: Optional[str] = None
 
     class Config:
         orm_mode = True
-
-
-class NewsDetail(News):
-    description: str | None = None
-
-
-class NewsImage(BaseModel):
-    image_url: str
