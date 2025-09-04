@@ -94,7 +94,6 @@ export class BackendInterface {
     return this.http.get<StartupDetail>(`/startups/${encodeURIComponent(String(startupId))}`, options);
   }
 
-  // Le backend renvoie maintenant { image_url: string }
   getFounderImage(startupId: number, founderId: number, _options?: RequestOptions): Observable<Blob> {
     const base = this.http.getBaseUrl().replace(/\/+$/, '');
     const url = `${base}/startups/${encodeURIComponent(String(startupId))}/founders/${encodeURIComponent(String(founderId))}/image`;
@@ -168,6 +167,7 @@ export class BackendInterface {
     return this.http.get<{ image_url: string }>(
       `/news/${encodeURIComponent(String(newsId))}/image`,
       options
+  // Le backend renvoie maintenant { image_url: string }
     );
   }
 
