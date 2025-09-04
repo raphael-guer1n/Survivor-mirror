@@ -1,8 +1,8 @@
-import {Component} from '@angular/core';
-import {FormsModule} from '@angular/forms';
-import {RouterLink, Router} from "@angular/router";
-import {firstValueFrom} from 'rxjs';
-import {BackendInterface} from '../../../cores/interfaces/backend/backend-interface';
+import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { Router, RouterLink } from '@angular/router';
+import { firstValueFrom } from 'rxjs';
+import { AuthService } from '../../../cores/services/auth-service/auth';
 
 @Component({
   selector: 'app-login-page',
@@ -17,14 +17,14 @@ export class LoginPage {
   loading = false;
   error: string | null = null;
 
-  constructor(private backend: BackendInterface, private router: Router) {}
+  constructor(private auth: AuthService, private router: Router) {}
 
   async onSubmit() {
     this.error = null;
     this.loading = true;
     try {
       await firstValueFrom(
-        this.backend.login({ email: this.email.trim(), password: this.password })
+        this.auth.login(this.email.trim(), this.password)
       );
       await this.router.navigateByUrl('/');
     } catch (e: any) {
