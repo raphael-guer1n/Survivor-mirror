@@ -82,8 +82,6 @@ from fastapi import APIRouter, HTTPException
 from app.db.connection import get_connection
 from app.schemas.user import UserUpdate, UserOut
 
-router = APIRouter(prefix="/users", tags=["users"])
-
 @router.put("/{user_id}", response_model=UserOut)
 def update_user(user_id: int, user: UserUpdate):
     conn = get_connection()
