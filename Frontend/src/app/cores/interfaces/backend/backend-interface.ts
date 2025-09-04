@@ -17,7 +17,7 @@ export class BackendInterface {
     return query ? `?${query}` : "";
   }
 
-  // Auth (nouveaux endpoints)
+  // Auth
   requestRegister(email: string): Observable<{ detail: string }> {
     return this.http.post<{ detail: string }>(
       `/auth/request-register`,
@@ -167,7 +167,6 @@ export class BackendInterface {
     return this.http.get<{ image_url: string }>(
       `/news/${encodeURIComponent(String(newsId))}/image`,
       options
-  // Le backend renvoie maintenant { image_url: string }
     );
   }
 
