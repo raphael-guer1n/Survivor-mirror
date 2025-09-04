@@ -1,3 +1,4 @@
+import time
 from datetime import datetime
 import logging
 from typing import Iterable, List, Dict, Optional
@@ -26,9 +27,6 @@ def _execute(conn, sql: str, params: tuple):
         cur.close()
 
 def _iter_pages(path: str, page_size: int = 200, params: Optional[Dict] = None) -> Iterable[List[Dict]]:
-    """
-    Itère sur l'endpoint `path` avec `skip/limit` jusqu'à ce qu'une page soit vide.
-    """
     params = dict(params or {})
     skip = 0
     while True:
@@ -43,10 +41,32 @@ def _iter_items(path: str, page_size: int = 200, params: Optional[Dict] = None) 
     for page in _iter_pages(path, page_size=page_size, params=params):
         for item in page:
             yield item
+def _get_last_synced_id(conn, entity: str) -> int:
+    cur = conn.cursor()
+    try:
+        cur.execute("SELECT last_id FROM sync_state WHERE entity=%s", (entity,))
+        row = cur.fetchone()
+        return row[0] if row else 0
+    finally:
+        cur.close()
+
+def _set_last_synced_id(conn, entity: str, last_id: int):
+    print(f"[DEBUG] _set_last_synced_id called for entity={entity}, last_id={last_id}")
+    cur = conn.cursor()
+    try:
+        cur.execute("REPLACE INTO sync_state (entity, last_id) VALUES (%s, %s)", (entity, last_id))
+        conn.commit()
+        print(f"[DEBUG] sync_state updated: entity={entity}, last_id={last_id}")
+    except Exception as e:
+        print(f"[ERROR] Failed to update sync_state for entity={entity}: {e}")
+    finally:
+        cur.close()
 
 def sync_startups():
     conn = get_connection()
     try:
+        entity = "startups"
+        last_id = _get_last_synced_id(conn, entity)
         ins_sql = """
         INSERT INTO startups (id, name, legal_status, address, email, phone, sector, maturity)
         VALUES (%s,%s,%s,%s,%s,%s,%s,%s)
@@ -60,9 +80,13 @@ def sync_startups():
           maturity=VALUES(maturity)
         """
         batch = []
-        for it in _iter_items("/startups", page_size=200):
+        max_id = last_id
+        for it in _iter_items("/startups", page_size=200, params={"skip": last_id}):
+            sid = it.get("id")
+            if not sid or sid <= last_id:
+                continue
             batch.append((
-                it.get("id"),
+                sid,
                 it.get("name"),
                 it.get("legal_status"),
                 it.get("address"),
@@ -71,9 +95,13 @@ def sync_startups():
                 it.get("sector"),
                 it.get("maturity"),
             ))
+            if sid > max_id:
+                max_id = sid
             if len(batch) >= 500:
                 _execute_many(conn, ins_sql, batch); batch.clear()
         _execute_many(conn, ins_sql, batch)
+        if max_id > last_id:
+            _set_last_synced_id(conn, entity, max_id)
 
         upd_detail_sql = """
         UPDATE startups
@@ -93,16 +121,16 @@ def sync_startups():
           startup_id=VALUES(startup_id)
         """
 
-        for it in _iter_items("/startups", page_size=200):
+        for it in _iter_items("/startups", page_size=200, params={"skip": last_id}):
             sid = it.get("id")
-            if not sid:
+            if not sid or sid <= last_id:
                 continue
             try:
                 detail = get_one(f"/startups/{sid}")
             except UpstreamHTTPError as e:
                 log.warning(f"[sync_startups] detail KO id={sid}: {e}")
                 continue
-            if not detail:  # 404 upstream
+            if not detail:
                 log.info(f"[sync_startups] detail 404 id={sid}, skip")
                 continue
 
@@ -132,6 +160,8 @@ def sync_startups():
 def sync_investors():
     conn = get_connection()
     try:
+        entity = "investors"
+        last_id = _get_last_synced_id(conn, entity)
         upsert_sql = """
         INSERT INTO investors (id, name, legal_status, address, email, phone, created_at, description, investor_type, investment_focus)
         VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
@@ -147,9 +177,13 @@ def sync_investors():
           investment_focus=VALUES(investment_focus)
         """
         batch = []
-        for it in _iter_items("/investors", page_size=300):
+        max_id = last_id
+        for it in _iter_items("/investors", page_size=300, params={"skip": last_id}):
+            iid = it.get("id")
+            if not iid or iid <= last_id:
+                continue
             batch.append((
-                it.get("id"),
+                iid,
                 it.get("name"),
                 it.get("legal_status"),
                 it.get("address"),
@@ -160,15 +194,21 @@ def sync_investors():
                 it.get("investor_type"),
                 it.get("investment_focus"),
             ))
+            if iid > max_id:
+                max_id = iid
             if len(batch) >= 500:
                 _execute_many(conn, upsert_sql, batch); batch.clear()
         _execute_many(conn, upsert_sql, batch)
+        if max_id > last_id:
+            _set_last_synced_id(conn, entity, max_id)
     finally:
         conn.close()
 
 def sync_partners():
     conn = get_connection()
     try:
+        entity = "partners"
+        last_id = _get_last_synced_id(conn, entity)
         upsert_sql = """
         INSERT INTO partners (id, name, legal_status, address, email, phone, created_at, description, partnership_type)
         VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)
@@ -183,9 +223,13 @@ def sync_partners():
           partnership_type=VALUES(partnership_type)
         """
         batch = []
-        for it in _iter_items("/partners", page_size=300):
+        max_id = last_id
+        for it in _iter_items("/partners", page_size=300, params={"skip": last_id}):
+            pid = it.get("id")
+            if not pid or pid <= last_id:
+                continue
             batch.append((
-                it.get("id"),
+                pid,
                 it.get("name"),
                 it.get("legal_status"),
                 it.get("address"),
@@ -195,15 +239,21 @@ def sync_partners():
                 it.get("description"),
                 it.get("partnership_type"),
             ))
+            if pid > max_id:
+                max_id = pid
             if len(batch) >= 500:
                 _execute_many(conn, upsert_sql, batch); batch.clear()
         _execute_many(conn, upsert_sql, batch)
+        if max_id > last_id:
+            _set_last_synced_id(conn, entity, max_id)
     finally:
         conn.close()
 
 def sync_news():
     conn = get_connection()
     try:
+        entity = "news"
+        last_id = _get_last_synced_id(conn, entity)
         upsert_sql = """
         INSERT INTO news (id, news_date, location, title, category, startup_id, description)
         VALUES (%s,%s,%s,%s,%s,%s,%s)
@@ -216,9 +266,10 @@ def sync_news():
           description=VALUES(description)
         """
 
-        for it in _iter_items("/news", page_size=300):
+        max_id = last_id
+        for it in _iter_items("/news", page_size=300, params={"skip": last_id}):
             nid = it.get("id")
-            if not nid:
+            if not nid or nid <= last_id:
                 continue
             try:
                 detail = get_one(f"/news/{nid}")
@@ -238,12 +289,18 @@ def sync_news():
                 detail.get("startup_id"),
                 detail.get("description"),
             ))
+            if nid > max_id:
+                max_id = nid
+        if max_id > last_id:
+            _set_last_synced_id(conn, entity, max_id)
     finally:
         conn.close()
 
 def sync_events():
     conn = get_connection()
     try:
+        entity = "events"
+        last_id = _get_last_synced_id(conn, entity)
         upsert_sql = """
         INSERT INTO events (id, name, dates, location, description, event_type, target_audience)
         VALUES (%s,%s,%s,%s,%s,%s,%s)
@@ -256,9 +313,13 @@ def sync_events():
           target_audience=VALUES(target_audience)
         """
         batch = []
-        for it in _iter_items("/events", page_size=300):
+        max_id = last_id
+        for it in _iter_items("/events", page_size=300, params={"skip": last_id}):
+            eid = it.get("id")
+            if not eid or eid <= last_id:
+                continue
             batch.append((
-                it.get("id"),
+                eid,
                 it.get("name"),
                 it.get("dates"),
                 it.get("location"),
@@ -266,16 +327,20 @@ def sync_events():
                 it.get("event_type"),
                 it.get("target_audience"),
             ))
+            if eid > max_id:
+                max_id = eid
             if len(batch) >= 500:
                 _execute_many(conn, upsert_sql, batch); batch.clear()
         _execute_many(conn, upsert_sql, batch)
+        if max_id > last_id:
+            _set_last_synced_id(conn, entity, max_id)
     finally:
         conn.close()
 
 def sync_users():
     conn = get_connection()
     try:
-        items = get_page("/users", params=None)
+        entity = "users"
         upsert_sql = """
         INSERT INTO users (id, email, name, role, founder_id, investor_id)
         VALUES (%s,%s,%s,%s,%s,%s)
@@ -286,19 +351,28 @@ def sync_users():
           founder_id=VALUES(founder_id),
           investor_id=VALUES(investor_id)
         """
+        items = get_page("/users")
         rows = []
+        max_id = 0
         for it in items:
+            uid = it.get("id")
+            if not uid:
+                continue
             rows.append((
-                it.get("id"),
+                uid,
                 it.get("email"),
                 it.get("name"),
                 it.get("role"),
                 it.get("founder_id"),
                 it.get("investor_id"),
             ))
+            if uid > max_id:
+                max_id = uid
             if len(rows) >= 500:
                 _execute_many(conn, upsert_sql, rows); rows.clear()
         _execute_many(conn, upsert_sql, rows)
+        if max_id > 0:
+            _set_last_synced_id(conn, entity, max_id)
     finally:
         conn.close()
 

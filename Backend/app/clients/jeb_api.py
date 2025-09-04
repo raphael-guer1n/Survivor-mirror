@@ -28,6 +28,8 @@ def _request_with_retry(method: str, path: str, *,
             resp = _session.request(method, url, params=params, timeout=JEB_API_TIMEOUT, stream=stream)
             if resp.status_code == 404:
                 return resp
+            if resp.status_code == 429:
+                print(f"[DEBUG] 429 Too Many Requests on endpoint: {path} (attempt {attempt+1})")
             if 500 <= resp.status_code < 600:
                 last_exc = UpstreamHTTPError(resp.status_code, resp.text)
                 if attempt < retries:
