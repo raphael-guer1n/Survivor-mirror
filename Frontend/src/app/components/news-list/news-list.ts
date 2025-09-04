@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
@@ -21,7 +21,7 @@ export interface News {
 })
 export class NewsList {
   @Input() items: News[] = [];
-  @Input() openNews!: (news: News) => void;
+  @Output() newsClicked = new EventEmitter<News>();
 
   query = '';
   filterValues: { category: string } = { category: '' };

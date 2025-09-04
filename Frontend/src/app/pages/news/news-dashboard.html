@@ -3,7 +3,7 @@
 
   <div *ngIf="loading" class="card">Loading news...</div>
   <div *ngIf="!loading && newsList.length === 0" class="card">No news found.</div>
-  <app-news-list [items]="newsList" [openNews]="openNews"></app-news-list>
+  <app-news-list [items]="newsList" (newsClicked)="openNews($event)"></app-news-list>
 
   <div *ngIf="selectedNews" class="news-modal">
     <div class="modal-backdrop" (click)="closeNews()"></div>

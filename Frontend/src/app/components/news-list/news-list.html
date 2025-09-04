@@ -17,7 +17,7 @@
 </div>
 
 <div class="news-list">
-  <div *ngFor="let news of filtered" class="card news-item" (click)="openNews(news)">
+  <div *ngFor="let news of filtered" class="card news-item" (click)="newsClicked.emit(news)">
     <div class="news-title">{{ news.title }}</div>
     <div class="news-meta">
       <span class="news-date">{{ news.news_date ? (news.news_date | date:'d MMMM y' : 'fr') : '-' }}</span>
