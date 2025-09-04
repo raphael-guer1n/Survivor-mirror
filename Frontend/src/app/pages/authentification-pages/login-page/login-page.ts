@@ -7,7 +7,7 @@ import {RouterLink} from "@angular/router";
   standalone: true,
   imports: [FormsModule, RouterLink],
   templateUrl: './login-page.html',
-  styleUrl: './login-page.css'
+  styleUrls: ['./login-page.css', './../auth-page.css'],
 })
 export class LoginPage {
   email = '';

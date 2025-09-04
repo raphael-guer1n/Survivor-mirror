@@ -7,7 +7,7 @@ import {RouterLink} from "@angular/router";
   standalone: true,
   imports: [FormsModule, RouterLink],
   templateUrl: './register-page.html',
-  styleUrl: './register-page.css',
+  styleUrls: ['./register-page.css', './../auth-page.css'],
 })
 export class RegisterPage {
   email = '';

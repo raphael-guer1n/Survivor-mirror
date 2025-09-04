@@ -28,7 +28,7 @@
             />
         </div>
 
-        <button type="submit" [disabled]="loading || !loginForm.form.valid">
+        <button class="btn" type="submit" [disabled]="loading || !loginForm.form.valid">
             {{ loading ? 'Connexion...' : 'Connect' }}
         </button>
 
