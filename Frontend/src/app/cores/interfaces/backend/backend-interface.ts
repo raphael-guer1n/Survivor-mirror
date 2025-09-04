@@ -95,11 +95,36 @@ export class BackendInterface {
   }
 
   // Le backend renvoie maintenant { image_url: string }
-  getFounderImage(startupId: number, founderId: number, options?: RequestOptions): Observable<{ image_url: string }> {
-    return this.http.get<{ image_url: string }>(
-      `/startups/${encodeURIComponent(String(startupId))}/founders/${encodeURIComponent(String(founderId))}/image`,
-      options
-    );
+  getFounderImage(startupId: number, founderId: number, _options?: RequestOptions): Observable<Blob> {
+    const base = this.http.getBaseUrl().replace(/\/+$/, '');
+    const url = `${base}/startups/${encodeURIComponent(String(startupId))}/founders/${encodeURIComponent(String(founderId))}/image`;
+    const auth = this.http.getAuthHeaderPair();
+
+    return new Observable<Blob>((subscriber) => {
+      const headers: Record<string, string> = {Accept: 'image/*'};
+      if (auth) headers[auth.name] = auth.value;
+
+      fetch(url, {
+        method: 'GET',
+        headers,
+        cache: 'no-store',
+        mode: 'cors'
+      })
+        .then(async (res) => {
+          if (!res.ok) {
+            const text = await res.text().catch(() => '');
+            throw new Error(`Image fetch failed (${res.status}) ${text?.slice(0, 200)}`);
+          }
+          return res.blob();
+        })
+        .then((blob) => {
+          subscriber.next(blob);
+          subscriber.complete();
+        })
+        .catch((err) => {
+          subscriber.error(err);
+        });
+    });
   }
 
   // Investors
