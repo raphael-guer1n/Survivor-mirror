@@ -1,7 +1,7 @@
 {
   "/api": {
-    "target": "https://api.jeb-incubator.com",
-    "secure": true,
+    "target": "http://127.0.0.1:8000/api",
+    "secure": false,
     "changeOrigin": true,
     "logLevel": "debug",
     "pathRewrite": {
