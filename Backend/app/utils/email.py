@@ -9,9 +9,11 @@ SMTP_PASSWORD = env("SMTP_PASSWORD")
 SMTP_SENDER = env("SMTP_SENDER")
 
 def send_verification_email(to_email: str, code: str):
-    subject = "Votre code de vérification JEB Incubator"
-    body = f"Votre code de vérification est : {code}\nCe code est valable 10 minutes."
-    msg = MIMEText(body)
+    subject = "Survivor - Email Verification Code"
+    template_path = "app/utils/email_verification_template.html"
+    with open(template_path, "r", encoding="utf-8") as f:
+        html_body = f.read().replace("{{ code }}", code)
+    msg = MIMEText(html_body, "html")
     msg["Subject"] = subject
     msg["From"] = SMTP_SENDER
     msg["To"] = to_email
