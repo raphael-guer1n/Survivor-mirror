@@ -11,4 +11,14 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./pages/startups-page/startups-page').then((m) => m.StartupsPage),
   },
+  {
+    path: 'login',
+    loadComponent: () =>
+      import('./pages/authentification-pages/login-page/login-page').then((m) => m.LoginPage),
+  },
+  {
+    path: 'register',
+    loadComponent: () =>
+      import('./pages/authentification-pages/register-page/register-page').then((m) => m.RegisterPage),
+  },
 ];
