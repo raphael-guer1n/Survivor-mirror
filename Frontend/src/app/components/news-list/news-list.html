@@ -1,0 +1,31 @@
+<div class="toolbar">
+  <input
+    type="search"
+    [(ngModel)]="query"
+    placeholder="Search for news..."
+    aria-label="Search"
+    class="search"
+  />
+  <select [(ngModel)]="filterValues.category" aria-label="Filtrer by category" class="select">
+    <option value="">Category</option>
+    <option *ngFor="let cat of categories" [value]="cat">{{ cat }}</option>
+  </select>
+  <select [(ngModel)]="sortOrder" aria-label="Sort by date" class="select">
+    <option value="desc">Newest first</option>
+    <option value="asc">Oldest first</option>
+  </select>
+</div>
+
+<div class="news-list">
+  <div *ngFor="let news of filtered" class="card news-item" (click)="newsClicked.emit(news)">
+    <div class="news-title">{{ news.title }}</div>
+    <div class="news-meta">
+      <span class="news-date">{{ news.news_date ? (news.news_date | date:'d MMMM y' : 'fr') : '-' }}</span>
+      <span class="news-category-pill" [attr.data-category]="news.category">{{ news.category || '-' }}</span>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="filtered.length === 0">
+  <div>Aucune news trouvée pour "{{ query }}".</div>
+</div>
