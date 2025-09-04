@@ -1,11 +1,8 @@
 from pydantic import BaseModel
 
 class Message(BaseModel):
-    conversation_id: int
-    sender_id: int
-    reciver_id: int
-    time_sent: float
-    is_read: int
+    sender_email: str
+    reciver_email: str
     content_message: str
 
 class Recive_Message(BaseModel):
