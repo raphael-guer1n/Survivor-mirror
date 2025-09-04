@@ -10,6 +10,7 @@
                     type="email"
                     [(ngModel)]="email"
                     required
+                    [readonly]="phase === 'verify'"
                     autocomplete="username"
                     placeholder="mail@exemple.com"
             />
@@ -23,6 +24,7 @@
                     type="password"
                     [(ngModel)]="password"
                     required
+                    [readonly]="phase === 'verify'"
                     autocomplete="new-password"
                     placeholder="Password"
             />
@@ -36,22 +38,51 @@
                     type="password"
                     [(ngModel)]="confirm"
                     required
+                    [readonly]="phase === 'verify'"
                     autocomplete="new-password"
                     placeholder="Confirm password"
             />
-            @if (confirm && !passwordsMatch) {
+            @if (confirm && !passwordsMatch && phase === 'request') {
                 <small class="error">
                     Passwords do not match
                 </small>
             }
         </div>
 
-        <button class="btn" type="submit" [disabled]="loading || !registerForm.form.valid || !passwordsMatch">
-            {{ loading ? 'Creation...' : 'Register' }}
+        @if (phase === 'verify') {
+            <div class="field">
+                <label for="code">Verification code</label>
+                <input
+                        id="code"
+                        name="code"
+                        type="text"
+                        [(ngModel)]="code"
+                        required
+                        placeholder="Enter the code received by email"
+                        autocomplete="one-time-code"
+                />
+            </div>
+        }
+
+        <button
+                class="btn"
+                type="submit"
+                [disabled]="loading ||
+                        !registerForm.form.valid ||
+                        (phase === 'request' && !passwordsMatch) ||
+                        (phase === 'verify' && !code)">
+            {{
+            loading
+              ? (phase === 'request' ? 'Sending code...' : 'Creating account...')
+              : (phase === 'request' ? 'Send verification code' : 'Verify code and create account')
+            }}
         </button>
 
         @if (error) {
             <p class="error">{{ error }}</p>
+        }
+        @if (info) {
+            <p class="hint">{{ info }}</p>
         }
     </form>
 
