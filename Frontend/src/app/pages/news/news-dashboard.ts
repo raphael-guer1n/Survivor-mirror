@@ -1,6 +1,7 @@
 import { marked } from 'marked';
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { NewsList } from '../../components/news-list/news-list';
 import { HttpClient } from '@angular/common/http';
 
 interface News {
@@ -18,7 +19,7 @@ interface News {
   templateUrl: './news-dashboard.html',
   styleUrls: ['./news-dashboard.css'],
   standalone: true,
-  imports: [CommonModule]
+  imports: [CommonModule, NewsList]
 })
 export class NewsDashboardComponent implements OnInit {
   newsList: News[] = [];
