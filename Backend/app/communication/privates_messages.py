@@ -13,13 +13,20 @@ def send_message(message: Message):
     connection = get_connection()
     cursor = connection.cursor(dictionary=True)
     try:
-        cursor.execute("SELECT id FROM user where email = %s", (sender_email,))
+        cursor.execute("SELECT id FROM users where email = %s", (sender_email,))
         sender_id = cursor.fetchone()
-        cursor.execute("SELECT id FROM user where email = %s", (reciver_email,))
+        if not sender_id:
+            raise HTTPException(status_code=400, detail="Sender does not exist.")
+        cursor.execute("SELECT id FROM users where email = %s", (reciver_email,))
         reciver_id = cursor.fetchone()
+        if not reciver_id:
+            raise HTTPException(status_code=400, detail="The email you tried to send this message does not exist.")
         if (sender_id == reciver_id):
             raise HTTPException(status_code=400, detail="Sender and Reciver of the massages cannot be the same.")
-        return
+        return {"sender_email": sender_email, "reciver_email": reciver_email, "content_message": message.content_message}
     finally:
         cursor.close()
         connection.close()
+
+
+# pour les conversations vérifier si in des id contiens les 2 ids des users.
