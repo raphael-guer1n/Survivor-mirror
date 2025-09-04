@@ -17,7 +17,7 @@ export class BackendInterface {
     return query ? `?${query}` : "";
   }
 
-  // Auth (nouveaux endpoints)
+  // Auth
   requestRegister(email: string): Observable<{ detail: string }> {
     return this.http.post<{ detail: string }>(
       `/auth/request-register`,
@@ -94,7 +94,6 @@ export class BackendInterface {
     return this.http.get<StartupDetail>(`/startups/${encodeURIComponent(String(startupId))}`, options);
   }
 
-  // Le backend renvoie maintenant { image_url: string }
   getFounderImage(startupId: number, founderId: number, _options?: RequestOptions): Observable<Blob> {
     const base = this.http.getBaseUrl().replace(/\/+$/, '');
     const url = `${base}/startups/${encodeURIComponent(String(startupId))}/founders/${encodeURIComponent(String(founderId))}/image`;
