@@ -64,18 +64,18 @@ def verify_register_code(data: CodeVerificationRequest, response: Response):
         cursor.execute("SELECT code, created_at FROM email_verifications WHERE email = %s", (email,))
         row = cursor.fetchone()
         if not row or row["code"] != code:
-            return VerifyRegisterCodeResponse(None, "Wrong code")
+            return VerifyRegisterCodeResponse(pre_fill = None, detail = "Wrong code")
 
         created_at = row["created_at"]
         if (datetime.utcnow() - created_at) > timedelta(minutes=int(REGISTER_CODE_EXPIRES_MINUTES)):
-            return VerifyRegisterCodeResponse(None, "Code expired")
+            return VerifyRegisterCodeResponse(pre_fill = None, detail = "Code expired")
 
         cursor.execute("SELECT id, name, role FROM users WHERE email = %s AND password_hash IS NULL", (email,))
         user = cursor.fetchone()
         if user:
             return VerifyRegisterCodeResponse(pre_fill={"name": user["name"], "role": user["role"]}, detail="Code valid, pre-filled user informations")
         else:
-            return VerifyRegisterCodeResponse(None, detail="Code valid, could not pre-fill user informations")
+            return VerifyRegisterCodeResponse(pre_fill = None, detail="Code valid, could not pre-fill user informations")
     finally:
         cursor.close()
         conn.close()

@@ -111,3 +111,17 @@ CREATE TABLE IF NOT EXISTS users (
 CREATE INDEX idx_startups_sector ON startups(sector);
 CREATE INDEX idx_news_startup_id ON news(startup_id);
 CREATE INDEX idx_users_role ON users(role);
+
+-- Email verification codes
+CREATE TABLE IF NOT EXISTS email_verifications (
+    email VARCHAR(255) PRIMARY KEY,
+    code VARCHAR(6) NOT NULL,
+    created_at DATETIME NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Sync
+CREATE TABLE IF NOT EXISTS sync_state (
+  entity VARCHAR(32) PRIMARY KEY,
+  last_id INT NOT NULL DEFAULT 0,
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
