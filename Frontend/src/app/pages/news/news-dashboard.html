@@ -1,0 +1,35 @@
+<div class="news-dashboard content">
+  <h1>News Dashboard</h1>
+  <div *ngIf="loading" class="card">Loading news...</div>
+  <div *ngIf="!loading && newsList.length === 0" class="card">No news found.</div>
+  <div class="news-list">
+    <div *ngFor="let news of newsList" class="card news-item" (click)="openNews(news)">
+      <div class="news-title">{{ news.title }}</div>
+      <div class="news-meta">
+  <span class="news-date">{{ news.news_date ? (news.news_date | date:'d MMMM y' : 'fr') : '-' }}</span>
+  <span class="news-category-pill" [attr.data-category]="news.category">{{ news.category || '-' }}</span>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="selectedNews" class="news-modal">
+    <div class="modal-backdrop" (click)="closeNews()"></div>
+    <div class="modal-content card">
+      <button class="btn ghost close-btn" (click)="closeNews()">Close</button>
+  <h2>{{ selectedNews.title }}</h2>
+      <div class="news-meta">
+  <span class="news-date">{{ selectedNews.news_date || '-' }}</span>
+  <span class="news-category">{{ selectedNews.category || '-' }}</span>
+      </div>
+      <div class="news-description">
+  <div class="news-description" [innerHTML]="selectedNewsHtml"></div>
+      </div>
+      <div *ngIf="selectedNews.location" class="news-location">
+        <strong>Location:</strong> {{ selectedNews.location }}
+      </div>
+      <div *ngIf="selectedNews.startup_id" class="news-startup">
+        <strong>Startup ID:</strong> {{ selectedNews.startup_id }}
+      </div>
+    </div>
+  </div>
+</div>

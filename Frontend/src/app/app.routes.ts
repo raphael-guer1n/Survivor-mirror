@@ -21,4 +21,9 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./pages/authentification-pages/register-page/register-page').then((m) => m.RegisterPage),
   },
+  {
+    path: 'news',
+    loadComponent: () =>
+      import('./pages/news/news-dashboard').then((m) => m.NewsDashboardComponent),
+  },
 ];
