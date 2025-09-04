@@ -1,6 +1,8 @@
 import {Component} from '@angular/core';
 import {FormsModule} from '@angular/forms';
-import {RouterLink} from "@angular/router";
+import {RouterLink, Router} from "@angular/router";
+import {firstValueFrom} from 'rxjs';
+import {BackendInterface} from '../../../cores/interfaces/backend/backend-interface';
 
 @Component({
   selector: 'app-login-page',
@@ -15,13 +17,19 @@ export class LoginPage {
   loading = false;
   error: string | null = null;
 
+  constructor(private backend: BackendInterface, private router: Router) {}
+
   async onSubmit() {
     this.error = null;
     this.loading = true;
     try {
-      await new Promise((r) => setTimeout(r, 600));
+      await firstValueFrom(
+        this.backend.login({ email: this.email.trim(), password: this.password })
+      );
+      await this.router.navigateByUrl('/');
     } catch (e: any) {
-      this.error = 'Connexion failed: ' + e.message;
+      const detail = e?.error?.detail || e?.message || 'Unknown error';
+      this.error = 'Connexion failed: ' + detail;
     } finally {
       this.loading = false;
     }
