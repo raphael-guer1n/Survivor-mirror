@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Survivor - Email Verification</title>
+  <style>
+    body {
+      background: #0f172a;
+      color: #e5e7eb;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, "Helvetica Neue", Arial;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      max-width: 420px;
+      margin: 40px auto;
+      background: #111827;
+      border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+      border: 1px solid #27314a;
+      padding: 32px 24px;
+      text-align: center;
+    }
+    h1 {
+      font-size: 24px;
+      margin-bottom: 18px;
+      color: #e5e7eb;
+    }
+    p {
+      color: #9ca3af;
+      font-size: 16px;
+      margin-bottom: 24px;
+    }
+    .code-btn {
+      display: inline-block;
+      background: linear-gradient(180deg, #7c3aed, #6d28d9);
+      color: #fff;
+      font-weight: 600;
+      font-size: 20px;
+      padding: 12px 32px;
+      border-radius: 10px;
+      text-decoration: none;
+      box-shadow: 0 10px 20px rgba(124,58,237,0.25);
+      margin-bottom: 18px;
+      letter-spacing: 2px;
+    }
+    .footer {
+      margin-top: 32px;
+      font-size: 13px;
+      color: #475569;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Verify your email</h1>
+    <p>Welcome to Survivor!<br><br>To continue your registration,<br>please enter this code in the app:</p>
+    <div class="code-btn">{{ code }}</div>
+    <p>If you did not request this, you can ignore this email.</p>
+    <div class="footer">Survivor &copy; 2025</div>
+  </div>
+</body>
+</html>
