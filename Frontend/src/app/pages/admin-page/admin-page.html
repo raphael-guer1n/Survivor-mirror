@@ -1,4 +1,4 @@
-<section class="admin-page content">
+<section class="admin-page content" (keydown.escape)="closeStartup()">
     <header class="admin-header">
         <h1>Administration</h1>
         <div class="entity-tabs">
@@ -43,7 +43,7 @@
         </div>
 
         <div class="grid">
-            @for (s of filteredStartups; track trackById) {
+            @for (s of filteredStartups; track s?.id ?? $index) {
                 <article class="card card-clickable" (click)="openStartup(s.id)" title="Éditer/Supprimer">
                     <header class="card-header">
                         <h3 class="card-title">{{ s.name }}</h3>
@@ -51,7 +51,6 @@
                             <span class="badge">{{ s.maturity }}</span>
                         }
                     </header>
-
                     <div class="card-body">
                         <div class="row">
                             <span class="label">Mail:</span>
@@ -87,11 +86,16 @@
         }
 
         @if (selectedStartupId() !== null) {
-            <app-admin-startup-edit-popup
-                    [startupId]="selectedStartupId()!"
-                    (closed)="closeStartup()"
-            ></app-admin-startup-edit-popup>
+            <div class="admin-modal-overlay" (click)="closeStartup()">
+                <div class="admin-modal" (click)="$event.stopPropagation()">
+                    <app-admin-startup-edit-popup
+                            [startupId]="selectedStartupId()!"
+                            (closed)="closeStartup()"
+                    ></app-admin-startup-edit-popup>
+                </div>
+            </div>
         }
+
     }
 
 </section>

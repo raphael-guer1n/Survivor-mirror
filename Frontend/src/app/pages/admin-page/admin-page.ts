@@ -105,10 +105,12 @@ export class AdminPage implements OnInit {
   }
 
   openStartup(id: number) {
+    console.debug('[AdminPage] openStartup', id);
     this.selectedStartupId.set(id);
   }
 
   closeStartup() {
+    console.debug('[AdminPage] closeStartup');
     this.selectedStartupId.set(null);
   }
 
