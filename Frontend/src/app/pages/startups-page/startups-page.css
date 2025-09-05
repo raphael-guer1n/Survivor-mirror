@@ -2,6 +2,15 @@
     display: block;
 }
 
+.page {
+    border-radius: var(--radius);
+    padding: 14px;
+    background: linear-gradient(
+            180deg,
+            rgba(241, 133, 133, 0.14), /* #F18585 */ rgba(193, 116, 242, 0.12) /* #C174F2 */
+    );
+}
+
 .page-header {
     display: flex;
     align-items: center;
@@ -12,8 +21,7 @@
     border-radius: var(--radius);
     background: linear-gradient(
             180deg,
-            color-mix(in oklab, var(--brand) 14%, transparent),
-            color-mix(in oklab, var(--brand-700) 8%, transparent)
+            rgba(241, 133, 133, 0.16), /* #F18585 */ rgba(193, 116, 242, 0.12) /* #C174F2 */
     );
     box-shadow: var(--shadow);
     margin-bottom: 18px;

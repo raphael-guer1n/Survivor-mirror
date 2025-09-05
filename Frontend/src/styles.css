@@ -150,7 +150,10 @@ a {
 .content .card,
 .content section:not(.page),
 .content article:not(.page) {
-    background: var(--card);
+    background: linear-gradient(
+            180deg,
+            rgba(241, 133, 133, 0.14), rgba(193, 116, 242, 0.12)
+    );
     border: 1px solid var(--border);
     border-radius: var(--radius);
     padding: 20px;
