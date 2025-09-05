@@ -220,18 +220,80 @@
 .admin-modal-overlay {
     position: fixed;
     inset: 0;
-    background: rgba(2, 6, 23, 0.65);
+    background: linear-gradient(
+            180deg,
+            color-mix(in oklab, transparent 80%, var(--brand-700) 20%) 0%,
+            color-mix(in oklab, transparent 85%, var(--brand) 15%) 100%
+    );
+    backdrop-filter: saturate(140%) blur(8px);
+    -webkit-backdrop-filter: saturate(140%) blur(8px);
     display: grid;
     place-items: center;
     z-index: 2000;
 }
+
 .admin-modal {
-    width: min(960px, 96vw);
+    width: min(980px, 96vw);
     max-height: 92vh;
     overflow: auto;
-    background: var(--card);
+
+    background: linear-gradient(
+            180deg,
+            rgba(241, 133, 133, 0.14),
+            rgba(193, 116, 242, 0.12)
+    );
     border: 1px solid var(--border);
     border-radius: var(--radius);
     box-shadow: var(--shadow);
-    padding: 0;
+    padding: 20px;
 }
+
+.admin-modal .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    border: 1px solid transparent;
+    background: linear-gradient(180deg, var(--pink-500), var(--brand-700));
+    color: white;
+    padding: 10px 14px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: 600;
+    box-shadow: 0 10px 20px color-mix(in oklab, var(--brand) 25%, transparent);
+    transition: transform 120ms ease, box-shadow 120ms ease, filter 160ms ease;
+}
+
+.admin-modal .btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 12px 24px color-mix(in oklab, var(--brand) 35%, transparent);
+    filter: brightness(1.02);
+}
+
+.admin-modal .btn.ghost {
+    background: transparent;
+    color: var(--text);
+    border-color: var(--border);
+}
+
+.admin-modal .btn.ghost:hover {
+    background: rgba(255, 255, 255, 0.04);
+}
+
+.admin-modal .btn.danger {
+    background: linear-gradient(180deg, #ef4444, #dc2626);
+}
+
+.admin-modal :where(input, textarea, select) {
+    color: var(--text);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 12px;
+    outline: none;
+}
+
+.admin-modal :where(input, textarea, select):focus {
+    border-color: var(--brand);
+    box-shadow: 0 0 0 3px var(--ring);
+}
+
