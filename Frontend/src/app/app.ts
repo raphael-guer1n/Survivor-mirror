@@ -11,5 +11,5 @@ import {ChatBot} from './components/chat-bot/chat-bot';
   styleUrl: './app.css'
 })
 export class App {
-  protected readonly title = signal('Survivor');
+  protected readonly title = signal('Jeb-Incubator');
 }
