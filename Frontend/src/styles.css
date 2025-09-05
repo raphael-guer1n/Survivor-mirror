@@ -3,10 +3,10 @@
 }
 
 :root {
-    --bg: #0f172a;
-    --bg-soft: #0b1225;
-    --surface: #0b132b;
-    --card: #111827;
+    --bg: color-mix(in oklab, #000 84%, var(--brand-800) 16%);
+    --bg-soft: color-mix(in oklab, #000 80%, var(--brand-700) 20%);
+    --surface: color-mix(in oklab, #000 76%, var(--lavender-400) 24%);
+    --card: color-mix(in oklab, #000 72%, var(--lavender-300) 28%);
     --text: #e5e7eb;
     --text-muted: #9ca3af;
     --brand: #c174f2;
@@ -27,38 +27,26 @@
 
 @media (prefers-color-scheme: light) {
     :root {
-        --bg: #f8fafc;
-        --bg-soft: #f1f5f9;
-        --surface: #ffffff;
-        --card: #ffffff;
-        --text: #0f172a;
-        --text-muted: #475569;
-        --brand: #c174f2;
-        --brand-700: #cb90f1;
-        --brand-800: #d5a8f2;
-        --pink-600: #f18585;
-        --pink-500: #f49c9c;
-        --pink-400: #f6aeae;
-        --pink-300: #f8cacf;
-        --lavender-300: #eed5fb;
-        --lavender-400: #e4bef8;
-        --border: #e5e7eb;
-        --ring: rgba(193, 116, 242, 0.25);
-        --shadow: 0 10px 25px rgba(2, 6, 23, 0.08);
+        --bg: color-mix(in oklab, #000 84%, var(--brand-800) 16%);
+        --bg-soft: color-mix(in oklab, #000 80%, var(--brand-700) 20%);
+        --surface: color-mix(in oklab, #000 76%, var(--lavender-400) 24%);
+        --card: color-mix(in oklab, #000 72%, var(--lavender-300) 28%);
+        --text: #e5e7eb;
+        --text-muted: #9ca3af;
+        --border: #27314a;
+        --ring: rgba(193, 116, 242, 0.35);
+        --shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
     }
-}
-
-html, body {
-    height: 100%;
 }
 
 body {
     margin: 0;
     color: var(--text);
-    background:
-            radial-gradient(1200px 600px at 10% -10%, rgba(193, 116, 242, 0.08), transparent 50%),
-            radial-gradient(1000px 600px at 110% 0%, rgba(241, 133, 133, 0.08), transparent 55%),
-            linear-gradient(180deg, var(--bg) 0%, var(--bg-soft) 100%);
+    background: linear-gradient(
+            180deg,
+            color-mix(in oklab, var(--bg) 60%, var(--brand) 40%) 0%,
+            color-mix(in oklab, var(--bg) 70%, var(--brand-700) 30%) 100%
+    );
     font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji";
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
