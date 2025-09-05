@@ -12,6 +12,8 @@ import {BackendInterface} from '../../../cores/interfaces/backend/backend-interf
   styleUrls: ['./register-page.css', './../auth-shared.css'],
 })
 export class RegisterPage {
+  roles = ['investor', 'founder'];
+  role = '';
   email = '';
   password = '';
   confirm = '';

@@ -9,11 +9,36 @@
                     name="email"
                     type="email"
                     [(ngModel)]="email"
+                    #emailCtrl="ngModel"
                     required
                     [readonly]="phase === 'verify'"
                     autocomplete="username"
                     placeholder="mail@exemple.com"
             />
+            @if (emailCtrl.invalid && (emailCtrl.touched || registerForm.submitted) && phase === 'request') {
+                <small class="error">Email is required</small>
+            }
+        </div>
+
+        <div class="field">
+            <label for="role">Role</label>
+            <select class="select"
+                    id="role"
+                    name="role"
+                    type="text"
+                    [(ngModel)]="role"
+                    #roleCtrl="ngModel"
+                    required
+                    [disabled]="phase === 'verify'"
+            >
+                <option value="" disabled selected hidden>Choose a role</option>
+                @for (role of roles; track role) {
+                    <option [value]="role">{{ role }}</option>
+                }
+            </select>
+            @if (roleCtrl.invalid && (roleCtrl.touched || registerForm.submitted) && phase === 'request') {
+                <small class="error">Role is required</small>
+            }
         </div>
 
         <div class="field">
@@ -23,11 +48,15 @@
                     name="password"
                     type="password"
                     [(ngModel)]="password"
+                    #passwordCtrl="ngModel"
                     required
                     [readonly]="phase === 'verify'"
                     autocomplete="new-password"
                     placeholder="Password"
             />
+            @if (passwordCtrl.invalid && (passwordCtrl.touched || registerForm.submitted) && phase === 'request') {
+                <small class="error">Password is required</small>
+            }
         </div>
 
         <div class="field">
@@ -37,11 +66,15 @@
                     name="confirm"
                     type="password"
                     [(ngModel)]="confirm"
+                    #confirmCtrl="ngModel"
                     required
                     [readonly]="phase === 'verify'"
                     autocomplete="new-password"
                     placeholder="Confirm password"
             />
+            @if (confirmCtrl.invalid && (confirmCtrl.touched || registerForm.submitted) && phase === 'request') {
+                <small class="error">Confirmation is required</small>
+            }
             @if (confirm && !passwordsMatch && phase === 'request') {
                 <small class="error">
                     Passwords do not match
@@ -57,10 +90,14 @@
                         name="code"
                         type="text"
                         [(ngModel)]="code"
+                        #codeCtrl="ngModel"
                         required
                         placeholder="Enter the code received by email"
                         autocomplete="one-time-code"
                 />
+                @if (codeCtrl.invalid && (codeCtrl.touched || registerForm.submitted)) {
+                    <small class="error">Verification code is required</small>
+                }
             </div>
         }
 
