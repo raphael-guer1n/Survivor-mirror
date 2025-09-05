@@ -11,33 +11,12 @@
                     [(ngModel)]="email"
                     #emailCtrl="ngModel"
                     required
-                    [readonly]="phase === 'verify'"
+                    [readonly]="phase !== 'request'"
                     autocomplete="username"
                     placeholder="mail@exemple.com"
             />
             @if (emailCtrl.invalid && (emailCtrl.touched || registerForm.submitted) && phase === 'request') {
                 <small class="error">Email is required</small>
-            }
-        </div>
-
-        <div class="field">
-            <label for="role">Role</label>
-            <select class="select"
-                    id="role"
-                    name="role"
-                    type="text"
-                    [(ngModel)]="role"
-                    #roleCtrl="ngModel"
-                    required
-                    [disabled]="phase === 'verify'"
-            >
-                <option value="" disabled selected hidden>Choose a role</option>
-                @for (role of roles; track role) {
-                    <option [value]="role">{{ role }}</option>
-                }
-            </select>
-            @if (roleCtrl.invalid && (roleCtrl.touched || registerForm.submitted) && phase === 'request') {
-                <small class="error">Role is required</small>
             }
         </div>
 
@@ -50,7 +29,7 @@
                     [(ngModel)]="password"
                     #passwordCtrl="ngModel"
                     required
-                    [readonly]="phase === 'verify'"
+                    [readonly]="phase !== 'request'"
                     autocomplete="new-password"
                     placeholder="Password"
             />
@@ -68,7 +47,7 @@
                     [(ngModel)]="confirm"
                     #confirmCtrl="ngModel"
                     required
-                    [readonly]="phase === 'verify'"
+                    [readonly]="phase !== 'request'"
                     autocomplete="new-password"
                     placeholder="Confirm password"
             />
@@ -101,17 +80,54 @@
             </div>
         }
 
+        @if (phase === 'complete') {
+            <div class="field">
+                <label for="role">Role</label>
+                <select class="select"
+                        id="role"
+                        name="role"
+                        type="text"
+                        [(ngModel)]="role"
+                        #roleCtrl="ngModel"
+                        required
+                >
+                    <option value="" disabled selected hidden>Choose a role</option>
+                    @for (role of roles; track role) {
+                        <option [value]="role">{{ role }}</option>
+                    }
+                </select>
+                @if (roleCtrl.invalid && (roleCtrl.touched || registerForm.submitted)) {
+                    <small class="error">Role is required</small>
+                }
+            </div>
+            <div class="field">
+                <label for="name">Name</label>
+                <input
+                        id="name"
+                        name="name"
+                        type="text"
+                        [(ngModel)]="name"
+                        #nameCtrl="ngModel"
+                        required
+                        placeholder="Your name" />
+                @if (nameCtrl.invalid && (nameCtrl.touched || registerForm.submitted)) {
+                    <small class="error">Name is required</small>
+                }
+            </div>
+        }
+
         <button
                 class="btn"
                 type="submit"
                 [disabled]="loading ||
                         !registerForm.form.valid ||
                         (phase === 'request' && !passwordsMatch) ||
-                        (phase === 'verify' && !code)">
+                        (phase === 'verify' && !code) ||
+                        (phase === 'complete' && (!name || !role))">
             {{
             loading
-              ? (phase === 'request' ? 'Sending code...' : 'Creating account...')
-              : (phase === 'request' ? 'Send verification code' : 'Verify code and create account')
+              ? (phase === 'request' ? 'Sending code...' : (phase === 'verify' ? 'Verifying code...' : 'Creating account...'))
+              : (phase === 'request' ? 'Send verification code' : (phase === 'verify' ? 'Verify code' : 'Create account'))
             }}
         </button>
 

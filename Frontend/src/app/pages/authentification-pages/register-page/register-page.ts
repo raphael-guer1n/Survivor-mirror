@@ -12,14 +12,18 @@ import {BackendInterface} from '../../../cores/interfaces/backend/backend-interf
   styleUrls: ['./register-page.css', './../auth-shared.css'],
 })
 export class RegisterPage {
-  roles = ['investor', 'founder'];
   role = '';
+  name= '';
   email = '';
   password = '';
   confirm = '';
+
   loading = false;
   error: string | null = null;
-  phase: 'request' | 'verify' = 'request';
+
+  roles = ['investor', 'founder'];
+  phase: 'request' | 'verify' | 'complete' = 'request';
+
   code = '';
   info: string | null = null;
 
@@ -66,16 +70,42 @@ export class RegisterPage {
       this.loading = true;
       try {
         const email = this.email.trim();
-        const name = this.inferNameFromEmail(email);
 
-        await firstValueFrom(this.backend.verifyRegisterCode({ email, code: this.code.trim() }));
+        const res = await firstValueFrom(
+          this.backend.verifyRegisterCode({ email, code: this.code.trim() })
+        );
+
+        const pre = res?.pre_fill || {};
+        this.name = (pre?.name ?? '')?.trim() || this.inferNameFromEmail(email);
+        this.role = (pre?.role ?? '')?.trim() || '';
+
+        this.phase = 'complete';
+        this.info = res?.detail || 'Code verified. Please complete your profile.';
+      } catch (e: any) {
+        const detail = e?.error?.detail || e?.message || 'Unknown error';
+        this.error = 'Registration failed: ' + detail;
+      } finally {
+        this.loading = false;
+      }
+      return;
+    }
+
+    if (this.phase === 'complete') {
+      if (!this.name?.trim() || !this.role?.trim()) {
+        this.error = 'Please provide a name and select a role.';
+        return;
+      }
+      this.loading = true;
+      try {
+        const email = this.email.trim();
 
         await firstValueFrom(
           this.backend.completeRegister({
             email,
             code: this.code.trim(),
-            name,
-            password: this.password
+            name: this.name.trim(),
+            password: this.password,
+            role: this.role.trim()
           })
         );
 
