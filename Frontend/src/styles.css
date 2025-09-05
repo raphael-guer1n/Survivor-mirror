@@ -3,38 +3,37 @@
 }
 
 :root {
-  --bg: #0f172a;
-  --bg-soft: #0b1225;
-  --surface: #0b132b;
-  --card: #111827;
-  --text: #e5e7eb;
-  --text-muted: #9ca3af;
-  --brand: #7c3aed;
-  --brand-700: #6d28d9;
-  --brand-800: #5b21b6;
-  --border: #27314a;
-  --ring: rgba(124, 58, 237, 0.45);
-  --shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
-  --radius: 12px;
-
-  --container: 1100px;
+    --bg: #0f172a;
+    --bg-soft: #0b1225;
+    --surface: #0b132b;
+    --card: #111827;
+    --text: #e5e7eb;
+    --text-muted: #9ca3af;
+    --brand: #c174f2;
+    --brand-700: #cb90f1;
+    --brand-800: #d5a8f2;
+    --border: #27314a;
+    --ring: rgba(193, 116, 242, 0.45);
+    --shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+    --radius: 12px;
+    --container: 1100px;
 }
 
 @media (prefers-color-scheme: light) {
-  :root {
-    --bg: #f8fafc;
-    --bg-soft: #f1f5f9;
-    --surface: #ffffff;
-    --card: #ffffff;
-    --text: #0f172a;
-    --text-muted: #475569;
-    --brand: #7c3aed;
-    --brand-700: #6d28d9;
-    --brand-800: #5b21b6;
-    --border: #e5e7eb;
-    --ring: rgba(124, 58, 237, 0.25);
-    --shadow: 0 10px 25px rgba(2, 6, 23, 0.08);
-  }
+    :root {
+        --bg: #f8fafc;
+        --bg-soft: #f1f5f9;
+        --surface: #ffffff;
+        --card: #ffffff;
+        --text: #0f172a;
+        --text-muted: #475569;
+        --brand: #c174f2;
+        --brand-700: #cb90f1;
+        --brand-800: #d5a8f2;
+        --border: #e5e7eb;
+        --ring: rgba(193, 116, 242, 0.25);
+        --shadow: 0 10px 25px rgba(2, 6, 23, 0.08);
+    }
 }
 
 html, body {
@@ -42,15 +41,15 @@ html, body {
 }
 
 body {
-  margin: 0;
-  color: var(--text);
-  background:
-    radial-gradient(1200px 600px at 10% -10%, rgba(124, 58, 237, 0.08), transparent 50%),
-    radial-gradient(1000px 600px at 110% 0%, rgba(14, 165, 233, 0.06), transparent 50%),
-    linear-gradient(180deg, var(--bg) 0%, var(--bg-soft) 100%);
-  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji";
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+    margin: 0;
+    color: var(--text);
+    background:
+            radial-gradient(1200px 600px at 10% -10%, rgba(193, 116, 242, 0.08), transparent 50%),
+            radial-gradient(1000px 600px at 110% 0%, rgba(241, 133, 133, 0.06), transparent 50%),
+            linear-gradient(180deg, var(--bg) 0%, var(--bg-soft) 100%);
+    font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji";
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
 *,
@@ -89,28 +88,28 @@ a {
 }
 
 .links {
-  margin-left: auto;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 4px;
-  border-radius: 999px;
-  background: rgba(124, 58, 237, 0.10);
-  border: 1px solid rgba(124, 58, 237, 0.25);
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px;
+    border-radius: 999px;
+    background: rgba(193, 116, 242, 0.10);
+    border: 1px solid rgba(193, 116, 242, 0.25);
 }
 
 .links a {
-  position: relative;
-  text-decoration: none;
-  color: var(--text);
-  padding: 8px 12px;
-  border-radius: 999px;
-  transition: background 160ms ease, color 160ms ease, transform 120ms ease;
-  outline: none;
+    position: relative;
+    text-decoration: none;
+    color: var(--text);
+    padding: 8px 12px;
+    border-radius: 999px;
+    transition: background 160ms ease, color 160ms ease, transform 120ms ease;
+    outline: none;
 }
 
 .links a:hover {
-  background: rgba(124, 58, 237, 0.15);
+    background: rgba(193, 116, 242, 0.15);
 }
 
 .links a:focus-visible {
@@ -169,24 +168,24 @@ a {
 }
 
 .btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  border: 1px solid transparent;
-  background: linear-gradient(180deg, var(--brand), var(--brand-700));
-  color: white;
-  padding: 10px 14px;
-  border-radius: 10px;
-  text-decoration: none;
-  font-weight: 600;
-  box-shadow: 0 10px 20px rgba(124, 58, 237, 0.25);
-  transition: transform 120ms ease, box-shadow 120ms ease, filter 160ms ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    border: 1px solid transparent;
+    background: linear-gradient(180deg, var(--brand), var(--brand-700));
+    color: white;
+    padding: 10px 14px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: 600;
+    box-shadow: 0 10px 20px rgba(193, 116, 242, 0.25);
+    transition: transform 120ms ease, box-shadow 120ms ease, filter 160ms ease;
 }
 
 .btn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 12px 24px rgba(124, 58, 237, 0.35);
-  filter: brightness(1.02);
+    transform: translateY(-1px);
+    box-shadow: 0 12px 24px rgba(193, 116, 242, 0.35);
+    filter: brightness(1.02);
 }
 
 .btn:focus-visible {

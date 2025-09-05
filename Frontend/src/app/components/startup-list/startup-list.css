@@ -1,23 +1,20 @@
-/* Conteneur global */
 :host {
     display: block;
 }
 
-/* Toolbar de recherche + filtres */
 .toolbar {
     display: flex;
     gap: 12px;
     align-items: center;
     margin-bottom: 18px;
     flex-wrap: wrap;
-    background: linear-gradient(180deg, rgba(124,58,237,0.05), rgba(124,58,237,0.03));
+    background: linear-gradient(180deg, rgba(193, 116, 242, 0.05), rgba(193, 116, 242, 0.03));
     border: 1px solid var(--border);
     border-radius: var(--radius);
     padding: 12px;
     box-shadow: var(--shadow);
 }
 
-/* Inputs harmonisés avec le thème */
 .search,
 .select {
     color: var(--text);
@@ -40,9 +37,8 @@
     padding: 10px 12px;
     font-size: 14px;
     appearance: none;
-    background-image:
-            linear-gradient(180deg, transparent, transparent),
-            radial-gradient(8px 8px at calc(100% - 16px) 50%, var(--text-muted) 40%, transparent 41%);
+    background-image: linear-gradient(180deg, transparent, transparent),
+    radial-gradient(8px 8px at calc(100% - 16px) 50%, var(--text-muted) 40%, transparent 41%);
     background-repeat: no-repeat;
     background-position: right 12px center, right 12px center;
     background-size: 16px 100%, 16px 16px;
@@ -58,14 +54,12 @@
     box-shadow: 0 0 0 3px var(--ring);
 }
 
-/* Grille de cartes */
 .grid {
     display: grid;
     gap: 16px;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
 }
 
-/* Carte avec effet moderne */
 .card {
     position: relative;
     background: var(--card);
@@ -83,7 +77,7 @@
     inset: -1px;
     border-radius: calc(var(--radius) + 1px);
     pointer-events: none;
-    background: linear-gradient(120deg, rgba(124,58,237,0.16), rgba(14,165,233,0.10), transparent 40%);
+    background: linear-gradient(120deg, rgba(193, 116, 242, 0.16), rgba(241, 133, 133, 0.10), transparent 40%);
     mask: linear-gradient(#000, #000) content-box, linear-gradient(#000, #000);
     -webkit-mask-composite: xor;
     mask-composite: exclude;
@@ -113,9 +107,8 @@
     color: var(--text);
 }
 
-/* Badge de maturité */
 .badge {
-    background: linear-gradient(180deg, rgba(124,58,237,0.18), rgba(124,58,237,0.12));
+    background: linear-gradient(180deg, rgba(193, 116, 242, 0.18), rgba(193, 116, 242, 0.12));
     color: var(--text);
     border: 1px solid color-mix(in oklab, var(--border), var(--brand) 30%);
     padding: 4px 10px;
@@ -125,7 +118,6 @@
     white-space: nowrap;
 }
 
-/* Corps de carte */
 .card-body {
     display: grid;
     gap: 8px;
@@ -147,7 +139,6 @@
     color: var(--text-muted);
 }
 
-/* État vide */
 .empty {
     margin-top: 24px;
     color: var(--text-muted);
@@ -155,10 +146,9 @@
     border: 1px dashed var(--border);
     border-radius: var(--radius);
     padding: 16px;
-    background: linear-gradient(180deg, rgba(124,58,237,0.05), rgba(124,58,237,0.03));
+    background: linear-gradient(180deg, rgba(193, 116, 242, 0.05), rgba(193, 116, 242, 0.03));
 }
 
-/* Responsif */
 @media (max-width: 520px) {
     .row {
         grid-template-columns: 1fr;
@@ -166,7 +156,6 @@
     }
 }
 
-/* Petites améliorations d’accessibilité */
 .search:focus-visible,
 .select:focus-visible {
     outline: none;
