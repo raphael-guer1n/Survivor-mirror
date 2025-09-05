@@ -26,7 +26,7 @@ export class AdminPage implements OnInit {
   query = '';
   filtersBy: string[] = ['sector', 'maturity'];
   filterValues: Record<string, string> = {};
-  selectedStartupId: number | null = null;
+  selectedStartupId = signal<number | null>(null);
 
   ngOnInit(): void {
     this.filtersBy.forEach(k => (this.filterValues[k] ??= ''));
@@ -37,7 +37,7 @@ export class AdminPage implements OnInit {
     this.selectedEntity.set(entity);
     this.errorMsg.set(null);
     this.loading.set(false);
-    this.selectedStartupId = null;
+    this.selectedStartupId.set(null);
     this.loadForCurrentTab();
   }
 
@@ -59,7 +59,7 @@ export class AdminPage implements OnInit {
         this.loading.set(false);
       },
       error: (e) => {
-        this.errorMsg.set(e?.message ?? 'Erreur lors du chargement des startups.');
+        this.errorMsg.set(e?.message ?? 'Failed to load startups.');
         this.loading.set(false);
       }
     });
@@ -105,11 +105,11 @@ export class AdminPage implements OnInit {
   }
 
   openStartup(id: number) {
-    this.selectedStartupId = id;
+    this.selectedStartupId.set(id);
   }
 
   closeStartup() {
-    this.selectedStartupId = null;
+    this.selectedStartupId.set(null);
   }
 
   trackById = (_: number, el: any) => el?.id ?? _;

@@ -86,9 +86,9 @@
             <div class="empty">Aucun résultat pour "{{ query }}".</div>
         }
 
-        @if (selectedStartupId !== null) {
+        @if (selectedStartupId() !== null) {
             <app-admin-startup-edit-popup
-                    [startupId]="selectedStartupId!"
+                    [startupId]="selectedStartupId()!"
                     (closed)="closeStartup()"
             ></app-admin-startup-edit-popup>
         }
