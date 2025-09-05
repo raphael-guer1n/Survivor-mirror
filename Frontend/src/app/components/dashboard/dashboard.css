@@ -1,25 +1,26 @@
-.dashboard {
-    display: grid;
-    gap: 1rem;
+:host {
+    display: block;
 }
-.cards {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-    gap: 1rem;
+
+.content > header {
+    margin-bottom: 18px;
 }
-.card {
-    background: #fff;
-    border: 1px solid #e6e6e6;
-    border-radius: 12px;
-    padding: 1rem 1.25rem;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+
+.content > .card + .card {
+    margin-top: 18px;
 }
-.label {
-    color: #6b7280;
-    font-size: 0.85rem;
+
+@media (max-width: 640px) {
+    .content > header p {
+        margin-top: 8px;
+    }
 }
-.value {
-    font-size: 1.6rem;
-    font-weight: 600;
-    margin-top: 0.25rem;
+
+:host ::ng-deep app-dashboard,
+:host ::ng-deep app-news-dashboard {
+    display: block;
+}
+
+:host ::ng-deep .section + .section {
+    margin-top: 16px;
 }
