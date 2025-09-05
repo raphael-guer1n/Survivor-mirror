@@ -11,6 +11,7 @@ class NewsBase(BaseModel):
 
 class NewsCreate(NewsBase):
     description: Optional[str] = None
+    image_s3_key: Optional[str] = None  
 
 class NewsUpdate(BaseModel):
     title: Optional[str] = None
@@ -19,10 +20,12 @@ class NewsUpdate(BaseModel):
     category: Optional[str] = None
     startup_id: Optional[int] = None
     description: Optional[str] = None
+    image_s3_key: Optional[str] = None
 
 class NewsOut(NewsBase):
     id: int
     description: Optional[str] = None
+    image_s3_key: Optional[str] = None
 
     class Config:
-        orm_mode = True
+        from_attributes = True
