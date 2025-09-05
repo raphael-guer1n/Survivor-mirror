@@ -1,6 +1,7 @@
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, HTTPException, Query, Depends
 from app.db.connection import get_connection
 from app.schemas.news import NewsCreate, NewsUpdate, NewsOut
+from app.routers.auth import require_admin
 
 router = APIRouter(prefix="/news", tags=["news"])
 
@@ -45,7 +46,7 @@ def get_news_item(news_id: int):
         conn.close()
 
 @router.post("/", response_model=NewsOut)
-def create_news(news: NewsCreate):
+def create_news(news: NewsCreate, admin=Depends(require_admin)):
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
     try:
@@ -78,7 +79,7 @@ def create_news(news: NewsCreate):
         conn.close()
 
 @router.put("/{news_id}", response_model=NewsOut)
-def update_news(news_id: int, news: NewsUpdate):
+def update_news(news_id: int, news: NewsUpdate, admin=Depends(require_admin)):
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
     try:
@@ -115,7 +116,7 @@ def update_news(news_id: int, news: NewsUpdate):
         conn.close()
 
 @router.delete("/{news_id}")
-def delete_news(news_id: int):
+def delete_news(news_id: int, admin=Depends(require_admin)):
     conn = get_connection()
     cursor = conn.cursor()
     try:
