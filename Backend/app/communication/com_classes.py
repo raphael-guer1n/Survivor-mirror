@@ -10,6 +10,14 @@ class Recive_Message(BaseModel):
     sender_id: int
     content_message: str
 
+class Read_message(BaseModel):
+    sender_name: str
+    content: str
+
+class Read_conversation_from(BaseModel):
+    reader_email: str
+    chat_with_email: str
+
 class Conversation(BaseModel):
     conversation_id: int
     user_1_id: int
