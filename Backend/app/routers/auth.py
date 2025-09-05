@@ -166,7 +166,7 @@ def get_current_user(token: str = Depends(oauth2_scheme)):
 
 def require_admin(user=Depends(get_current_user)):
     if user.get("role") != "admin":
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Admin only")
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="permission denied")
     return user
 
 @router.post("/register")

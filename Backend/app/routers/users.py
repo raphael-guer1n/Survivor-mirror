@@ -1,12 +1,13 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
 from app.db.connection import get_connection
 from app.schemas.user import UserOut, UserCreate, UserUpdate
 from app.utils.security import hash_password
+from app.routers.auth import require_admin
 
 router = APIRouter(prefix="/users", tags=["users"])
 
 @router.get("/", response_model=list[UserOut])
-def get_users(skip: int = 0, limit: int = 100):
+def get_users(skip: int = 0, limit: int = 100, admin=Depends(require_admin)):
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
     try:
@@ -18,7 +19,7 @@ def get_users(skip: int = 0, limit: int = 100):
         conn.close()
 
 @router.get("/{user_id}", response_model=UserOut)
-def get_user(user_id: int):
+def get_user(user_id: int, admin=Depends(require_admin)):
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
     try:
@@ -32,7 +33,7 @@ def get_user(user_id: int):
         conn.close()
 
 @router.get("/email/{email}", response_model=UserOut)
-def get_user_by_email(email: str):
+def get_user_by_email(email: str, admin=Depends(require_admin)):
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
     try:
@@ -46,7 +47,7 @@ def get_user_by_email(email: str):
         conn.close()
 
 @router.post("/", response_model=UserOut)
-def create_user(user: UserCreate):
+def create_user(user: UserCreate, admin=Depends(require_admin)):
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
     try:
@@ -83,7 +84,7 @@ from app.db.connection import get_connection
 from app.schemas.user import UserUpdate, UserOut
 
 @router.put("/{user_id}", response_model=UserOut)
-def update_user(user_id: int, user: UserUpdate):
+def update_user(user_id: int, user: UserUpdate, admin=Depends(require_admin)):
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
     try:
@@ -118,7 +119,7 @@ def update_user(user_id: int, user: UserUpdate):
         conn.close()
 
 @router.delete("/{user_id}")
-def delete_user(user_id: int):
+def delete_user(user_id: int, admin=Depends(require_admin)):
     conn = get_connection()
     cursor = conn.cursor()
     try:
