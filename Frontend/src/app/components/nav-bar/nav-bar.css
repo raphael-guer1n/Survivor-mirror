@@ -2,23 +2,6 @@
     display: block;
 }
 
-.top-nav {
-    position: sticky;
-    top: 0;
-    z-index: 1000;
-    height: 64px;
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    padding: 0 20px;
-    background: linear-gradient(
-            180deg,
-            color-mix(in oklab, var(--bg) 60%, var(--brand) 40%) 0%,
-            color-mix(in oklab, var(--bg) 70%, var(--brand-700) 30%) 100%
-    );
-    border-bottom: 1px solid var(--border);
-    backdrop-filter: saturate(160%) blur(10px);
-}
 
 .brand {
     display: inline-flex;
@@ -29,6 +12,7 @@
     font-weight: 700;
     letter-spacing: 0.2px;
 }
+
 .brand-logo {
     display: inline-grid;
     place-items: center;
@@ -38,10 +22,12 @@
     background: linear-gradient(135deg, var(--pink-500), var(--brand-700));
     color: white;
     font-weight: 800;
-    text-shadow: 0 1px 0 rgba(0,0,0,0.15);
+    text-shadow: 0 1px 0 rgba(0, 0, 0, 0.15);
 }
 
-.brand-text { font-size: 1.05rem; }
+.brand-text {
+    font-size: 1.05rem;
+}
 
 
 .links {
@@ -50,6 +36,7 @@
     align-items: center;
     gap: 6px;
 }
+
 .links a {
     text-decoration: none;
     color: var(--text-muted);
@@ -59,9 +46,22 @@
     transition: color .15s ease, background .15s ease, box-shadow .15s ease;
     outline: none;
 }
-.links a:hover { background: color-mix(in oklab, var(--brand) 12%, transparent); color: var(--text); }
-.links a:focus-visible { box-shadow: 0 0 0 3px var(--ring); background: color-mix(in oklab, var(--brand-700) 15%, transparent); }
-.links a.active { background: color-mix(in oklab, var(--brand) 18%, transparent); color: var(--text); font-weight: 600; }
+
+.links a:hover {
+    background: color-mix(in oklab, var(--brand) 12%, transparent);
+    color: var(--text);
+}
+
+.links a:focus-visible {
+    box-shadow: 0 0 0 3px var(--ring);
+    background: color-mix(in oklab, var(--brand-700) 15%, transparent);
+}
+
+.links a.active {
+    background: color-mix(in oklab, var(--brand) 18%, transparent);
+    color: var(--text);
+    font-weight: 600;
+}
 
 .menu-toggle {
     margin-left: auto;
@@ -78,19 +78,61 @@
     cursor: pointer;
     transition: background .15s ease, border-color .15s ease, box-shadow .15s ease;
 }
-.menu-toggle:hover { background: color-mix(in oklab, var(--bg) 70%, var(--brand-700) 30%); }
-.menu-toggle:focus-visible { box-shadow: 0 0 0 3px var(--ring); }
-.menu-toggle .bar {
-    width: 20px; height: 2px; background: var(--text); border-radius: 2px; display: block;
+
+.menu-toggle:hover {
+    background: color-mix(in oklab, var(--bg) 70%, var(--brand-700) 30%);
 }
-.menu-toggle .bar + .bar { margin-top: 4px; }
+
+.menu-toggle:focus-visible {
+    box-shadow: 0 0 0 3px var(--ring);
+}
+
+.menu-toggle .bar {
+    width: 20px;
+    height: 2px;
+    background: var(--text);
+    border-radius: 2px;
+    display: block;
+}
+
+.menu-toggle .bar + .bar {
+    margin-top: 4px;
+}
+
+.top-nav::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -1px;
+    height: 12px;
+    pointer-events: none;
+    background: linear-gradient(
+            to bottom,
+            color-mix(in oklab, var(--border), transparent 20%) 0%,
+            color-mix(in oklab, var(--border), transparent 60%) 55%,
+            transparent 100%
+    );
+}
+
+@media (max-width: 640px) {
+    .top-nav {
+        height: 60px;
+        padding: 0 14px;
+        border-bottom: none;
+    }
+}
 
 @media (max-width: 768px) {
-    .menu-toggle { display: inline-flex; }
+    .menu-toggle {
+        display: inline-flex;
+    }
 
     .links {
         position: absolute;
-        top: 64px; left: 0; right: 0;
+        top: 64px;
+        left: 0;
+        right: 0;
         margin-left: 0;
         display: grid;
         grid-auto-rows: minmax(44px, auto);
@@ -99,15 +141,24 @@
         background: color-mix(in oklab, var(--bg) 86%, var(--brand-800) 14%);
         border-bottom: 1px solid var(--border);
         transform: translateY(-8px);
-        opacity: 0; visibility: hidden; pointer-events: none;
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
         transition: opacity .18s ease, transform .18s ease, visibility 0s linear .18s;
     }
+
     .links.open {
         transform: translateY(0);
-        opacity: 1; visibility: visible; pointer-events: auto;
+        opacity: 1;
+        visibility: visible;
+        pointer-events: auto;
         transition: opacity .18s ease, transform .18s ease;
     }
-    .links a { padding: 12px 10px; border-radius: 8px; }
+
+    .links a {
+        padding: 12px 10px;
+        border-radius: 8px;
+    }
 }
 
 @media (prefers-color-scheme: light) {
@@ -119,7 +170,18 @@
         );
         border-bottom-color: #e5e7eb;
     }
-    .links a { color: #475569; }
-    .links a:hover { background: color-mix(in oklab, var(--brand) 10%, transparent); color: #0f172a; }
-    .links a.active { background: color-mix(in oklab, var(--brand) 16%, transparent); color: #0f172a; }
+
+    .links a {
+        color: #475569;
+    }
+
+    .links a:hover {
+        background: color-mix(in oklab, var(--brand) 10%, transparent);
+        color: #0f172a;
+    }
+
+    .links a.active {
+        background: color-mix(in oklab, var(--brand) 16%, transparent);
+        color: #0f172a;
+    }
 }
