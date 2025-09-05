@@ -1,18 +1,21 @@
-from fastapi import APIRouter, HTTPException, Query, Depends
+from fastapi import APIRouter, HTTPException, Query, UploadFile, File, Depends
+from typing import List
 from app.db.connection import get_connection
 from app.schemas.news import NewsCreate, NewsUpdate, NewsOut
+from app.schemas.event import EventImage
+from app.utils.s3 import upload_file_to_s3, generate_presigned_url
 from app.routers.auth import require_admin
 
 router = APIRouter(prefix="/news", tags=["news"])
 
-@router.get("/", response_model=list[NewsOut])
+@router.get("/", response_model=List[NewsOut])
 def get_news(skip: int = Query(0, ge=0), limit: int = Query(100, ge=1)):
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
     try:
         cursor.execute(
             """
-            SELECT id, title, news_date, location, category, startup_id, description
+            SELECT id, title, news_date, location, category, startup_id, description, image_s3_key
             FROM news
             ORDER BY news_date DESC
             LIMIT %s OFFSET %s
@@ -31,7 +34,7 @@ def get_news_item(news_id: int):
     try:
         cursor.execute(
             """
-            SELECT id, title, news_date, location, category, startup_id, description
+            SELECT id, title, news_date, location, category, startup_id, description, image_s3_key
             FROM news
             WHERE id = %s
             """,
@@ -67,7 +70,10 @@ def create_news(news: NewsCreate, admin=Depends(require_admin)):
         conn.commit()
         new_id = cursor.lastrowid
         cursor.execute(
-            "SELECT id, title, news_date, location, category, startup_id, description FROM news WHERE id = %s",
+            """
+            SELECT id, title, news_date, location, category, startup_id, description, image_s3_key
+            FROM news WHERE id = %s
+            """,
             (new_id,),
         )
         return cursor.fetchone()
@@ -86,7 +92,6 @@ def update_news(news_id: int, news: NewsUpdate, admin=Depends(require_admin)):
         cursor.execute("SELECT id FROM news WHERE id = %s", (news_id,))
         if not cursor.fetchone():
             raise HTTPException(status_code=404, detail="News item not found")
-
         fields = []
         values = []
         for field, value in news.dict(exclude_unset=True).items():
@@ -94,17 +99,17 @@ def update_news(news_id: int, news: NewsUpdate, admin=Depends(require_admin)):
                 value = None
             fields.append(f"{field}=%s")
             values.append(value)
-
         if not fields:
             raise HTTPException(status_code=400, detail="No fields to update")
-
         values.append(news_id)
         sql = f"UPDATE news SET {', '.join(fields)} WHERE id = %s"
         cursor.execute(sql, tuple(values))
         conn.commit()
-
         cursor.execute(
-            "SELECT id, title, news_date, location, category, startup_id, description FROM news WHERE id = %s",
+            """
+            SELECT id, title, news_date, location, category, startup_id, description, image_s3_key
+            FROM news WHERE id = %s
+            """,
             (news_id,),
         )
         return cursor.fetchone()
@@ -123,10 +128,63 @@ def delete_news(news_id: int, admin=Depends(require_admin)):
         cursor.execute("SELECT id FROM news WHERE id = %s", (news_id,))
         if not cursor.fetchone():
             raise HTTPException(status_code=404, detail="News item not found")
-
         cursor.execute("DELETE FROM news WHERE id = %s", (news_id,))
         conn.commit()
         return {"message": f"News item {news_id} deleted successfully"}
+    finally:
+        cursor.close()
+        conn.close()
+
+async def upload_news_image(news_id: int, file: UploadFile = File(...)):
+    conn = get_connection()
+    cursor = conn.cursor(dictionary=True)
+    try:
+        cursor.execute("SELECT id FROM news WHERE id = %s", (news_id,))
+        if not cursor.fetchone():
+            raise HTTPException(status_code=404, detail="News item not found")
+        if not file.content_type.startswith("image/"):
+            raise HTTPException(status_code=400, detail="Invalid file type")
+        key = f"news/{news_id}/{file.filename}"
+        url = upload_file_to_s3(file.file, key, file.content_type)
+        cursor.execute("UPDATE news SET image_s3_key=%s WHERE id=%s", (key, news_id))
+        conn.commit()
+        return {"image_url": url}
+    finally:
+        cursor.close()
+        conn.close()
+
+@router.get("/{news_id}/image", response_model=EventImage)
+def get_news_image(news_id: int):
+    conn = get_connection()
+    cursor = conn.cursor(dictionary=True)
+    try:
+        cursor.execute("SELECT image_s3_key FROM news WHERE id = %s", (news_id,))
+        row = cursor.fetchone()
+        if not row or not row["image_s3_key"]:
+            raise HTTPException(status_code=404, detail="Image not found")
+        url = generate_presigned_url(row["image_s3_key"])
+        return {"image_url": url}
+    finally:
+        cursor.close()
+        conn.close()
+
+@router.put("/{news_id}/image", response_model=EventImage)
+async def update_news_image(news_id: int, file: UploadFile = File(...)):
+    return await upload_news_image(news_id, file)
+
+@router.delete("/{news_id}/image")
+def delete_news_image(news_id: int):
+    conn = get_connection()
+    cursor = conn.cursor()
+    try:
+        cursor.execute("SELECT image_s3_key FROM news WHERE id = %s", (news_id,))
+        row = cursor.fetchone()
+        if not row or not row[0]:
+            raise HTTPException(status_code=404, detail="Image not found")
+        key = row[0]
+        cursor.execute("UPDATE news SET image_s3_key=NULL WHERE id=%s", (news_id,))
+        conn.commit()
+        return {"message": f"Image for news {news_id} deleted successfully"}
     finally:
         cursor.close()
         conn.close()
