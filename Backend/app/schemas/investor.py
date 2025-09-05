@@ -13,6 +13,7 @@ class InvestorBase(BaseModel):
 
 class InvestorCreate(InvestorBase):
     description: Optional[str] = None
+    image_s3_key: Optional[str] = None
 
 class InvestorUpdate(BaseModel):
     name: Optional[str] = None
@@ -23,11 +24,13 @@ class InvestorUpdate(BaseModel):
     investor_type: Optional[str] = None
     investment_focus: Optional[str] = None
     description: Optional[str] = None
+    image_s3_key: Optional[str] = None
 
 class InvestorOut(InvestorBase):
     id: int
     created_at: Optional[date] = None
     description: Optional[str] = None
+    image_s3_key: Optional[str] = None
 
     class Config:
-        orm_mode = True
+        from_attributes = True
