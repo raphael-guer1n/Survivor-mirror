@@ -223,7 +223,7 @@
     background: rgba(2, 6, 23, 0.65);
     display: grid;
     place-items: center;
-    z-index: 2000; /* au-dessus de la nav */
+    z-index: 2000;
 }
 .admin-modal {
     width: min(960px, 96vw);
@@ -233,5 +233,5 @@
     border: 1px solid var(--border);
     border-radius: var(--radius);
     box-shadow: var(--shadow);
-    padding: 0; /* le composant interne gère ses marges */
+    padding: 0;
 }
