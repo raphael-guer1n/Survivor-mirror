@@ -1,0 +1,44 @@
+<section class="auth-container">
+    <h1>Connexion</h1>
+
+    <form (ngSubmit)="onSubmit()" #loginForm="ngForm" novalidate>
+        <div class="field">
+            <label for="email">Email</label>
+            <input
+                    id="email"
+                    name="email"
+                    type="email"
+                    [(ngModel)]="email"
+                    required
+                    autocomplete="username"
+                    placeholder="mail@exemple.com"
+            />
+        </div>
+
+        <div class="field">
+            <label for="password">Password</label>
+            <input
+                    id="password"
+                    name="password"
+                    type="password"
+                    [(ngModel)]="password"
+                    required
+                    autocomplete="current-password"
+                    placeholder="Password"
+            />
+        </div>
+
+        <button class="btn" type="submit" [disabled]="loading || !loginForm.form.valid">
+            {{ loading ? 'Connexion...' : 'Connect' }}
+        </button>
+
+        @if (error) {
+            <p class="error">{{ error }}</p>
+        }
+    </form>
+
+    <p class="hint">
+        No account?
+        <a routerLink="/register">Create a account</a>
+    </p>
+</section>

@@ -1,0 +1,13 @@
+@if (user$ | async; as user) {
+    <h1>My account</h1>
+    <div class="card">
+        <p><strong>Name:</strong> {{ user.name }}</p>
+        <p><strong>Email:</strong> {{ user.email }}</p>
+        <p><strong>Role:</strong> {{ user.role || '—' }}</p>
+    </div>
+    <button class="btn" (click)="logout()">Logout</button>
+} @else {
+    <ng-template>
+        <p>Loading your profile…</p>
+    </ng-template>
+}

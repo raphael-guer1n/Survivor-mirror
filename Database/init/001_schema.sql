@@ -23,6 +23,7 @@ CREATE TABLE IF NOT EXISTS startups (
   sector VARCHAR(100),
   maturity VARCHAR(100),
   UNIQUE KEY ux_startups_email (email)
+  image_s3_key VARCHAR(512) NULL;
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- Founders
@@ -31,6 +32,7 @@ CREATE TABLE IF NOT EXISTS founders (
   name VARCHAR(255) NOT NULL,
   startup_id INT NOT NULL,
   FOREIGN KEY (startup_id) REFERENCES startups(id) ON DELETE CASCADE
+  image_s3_key VARCHAR(512) NULL;
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- Investors
@@ -46,6 +48,7 @@ CREATE TABLE IF NOT EXISTS investors (
   investor_type VARCHAR(100),
   investment_focus VARCHAR(255),
   UNIQUE KEY ux_investors_email (email)
+  image_s3_key VARCHAR(512) NULL;
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- Partners
@@ -60,6 +63,7 @@ CREATE TABLE IF NOT EXISTS partners (
   description TEXT,
   partnership_type VARCHAR(100),
   UNIQUE KEY ux_partners_email (email)
+  image_s3_key VARCHAR(512) NULL;
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- News
@@ -72,6 +76,7 @@ CREATE TABLE IF NOT EXISTS news (
   startup_id INT,
   description TEXT,
   FOREIGN KEY (startup_id) REFERENCES startups(id) ON DELETE SET NULL
+  image_s3_key VARCHAR(512) NULL;
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- Events
@@ -83,6 +88,7 @@ CREATE TABLE IF NOT EXISTS events (
   description TEXT,
   event_type VARCHAR(100),
   target_audience VARCHAR(255)
+  image_s3_key VARCHAR(512) NULL;
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- Users
@@ -98,6 +104,7 @@ CREATE TABLE IF NOT EXISTS users (
   UNIQUE KEY ux_users_email (email),
   FOREIGN KEY (founder_id) REFERENCES founders(id) ON DELETE SET NULL,
   FOREIGN KEY (investor_id) REFERENCES investors(id) ON DELETE SET NULL
+  image_s3_key VARCHAR(512) NULL;
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- Conversations
@@ -120,3 +127,17 @@ CREATE TABLE IF NOT EXISTS messages (
 CREATE INDEX idx_startups_sector ON startups(sector);
 CREATE INDEX idx_news_startup_id ON news(startup_id);
 CREATE INDEX idx_users_role ON users(role);
+
+-- Email verification codes
+CREATE TABLE IF NOT EXISTS email_verifications (
+    email VARCHAR(255) PRIMARY KEY,
+    code VARCHAR(6) NOT NULL,
+    created_at DATETIME NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Sync
+CREATE TABLE IF NOT EXISTS sync_state (
+  entity VARCHAR(32) PRIMARY KEY,
+  last_id INT NOT NULL DEFAULT 0,
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

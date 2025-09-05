@@ -1,0 +1,174 @@
+/* Conteneur global */
+:host {
+    display: block;
+}
+
+/* Toolbar de recherche + filtres */
+.toolbar {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    margin-bottom: 18px;
+    flex-wrap: wrap;
+    background: linear-gradient(180deg, rgba(124,58,237,0.05), rgba(124,58,237,0.03));
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 12px;
+    box-shadow: var(--shadow);
+}
+
+/* Inputs harmonisés avec le thème */
+.search,
+.select {
+    color: var(--text);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    outline: none;
+    transition: box-shadow 160ms ease, border-color 160ms ease, transform 120ms ease, background 160ms ease;
+    box-shadow: 0 1px 0 rgba(2, 6, 23, 0.04);
+}
+
+.search {
+    flex: 1 1 320px;
+    padding: 11px 12px;
+    font-size: 14px;
+}
+
+.select {
+    flex: 0 0 220px;
+    padding: 10px 12px;
+    font-size: 14px;
+    appearance: none;
+    background-image:
+            linear-gradient(180deg, transparent, transparent),
+            radial-gradient(8px 8px at calc(100% - 16px) 50%, var(--text-muted) 40%, transparent 41%);
+    background-repeat: no-repeat;
+    background-position: right 12px center, right 12px center;
+    background-size: 16px 100%, 16px 16px;
+}
+
+.search::placeholder {
+    color: var(--text-muted);
+}
+
+.search:focus,
+.select:focus {
+    border-color: var(--brand);
+    box-shadow: 0 0 0 3px var(--ring);
+}
+
+/* Grille de cartes */
+.grid {
+    display: grid;
+    gap: 16px;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+}
+
+/* Carte avec effet moderne */
+.card {
+    position: relative;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    transition: transform 120ms ease, box-shadow 160ms ease, border-color 160ms ease;
+}
+
+.card::before {
+    content: "";
+    position: absolute;
+    inset: -1px;
+    border-radius: calc(var(--radius) + 1px);
+    pointer-events: none;
+    background: linear-gradient(120deg, rgba(124,58,237,0.16), rgba(14,165,233,0.10), transparent 40%);
+    mask: linear-gradient(#000, #000) content-box, linear-gradient(#000, #000);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    padding: 1px;
+    opacity: 0.3;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 14px 30px rgba(2, 6, 23, 0.28);
+    border-color: color-mix(in oklab, var(--border), var(--brand) 24%);
+}
+
+.card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.card-title {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 0.2px;
+    color: var(--text);
+}
+
+/* Badge de maturité */
+.badge {
+    background: linear-gradient(180deg, rgba(124,58,237,0.18), rgba(124,58,237,0.12));
+    color: var(--text);
+    border: 1px solid color-mix(in oklab, var(--border), var(--brand) 30%);
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+/* Corps de carte */
+.card-body {
+    display: grid;
+    gap: 8px;
+    font-size: 14px;
+}
+
+.row {
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    gap: 10px;
+    align-items: baseline;
+}
+
+.label {
+    color: var(--text-muted);
+}
+
+.muted {
+    color: var(--text-muted);
+}
+
+/* État vide */
+.empty {
+    margin-top: 24px;
+    color: var(--text-muted);
+    text-align: center;
+    border: 1px dashed var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+    background: linear-gradient(180deg, rgba(124,58,237,0.05), rgba(124,58,237,0.03));
+}
+
+/* Responsif */
+@media (max-width: 520px) {
+    .row {
+        grid-template-columns: 1fr;
+        gap: 4px;
+    }
+}
+
+/* Petites améliorations d’accessibilité */
+.search:focus-visible,
+.select:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px var(--ring);
+}
