@@ -12,6 +12,7 @@ class PartnerBase(BaseModel):
 
 class PartnerCreate(PartnerBase):
     description: Optional[str] = None
+    image_s3_key: Optional[str] = None
 
 class PartnerUpdate(BaseModel):
     name: Optional[str] = None
@@ -21,11 +22,17 @@ class PartnerUpdate(BaseModel):
     phone: Optional[str] = None
     partnership_type: Optional[str] = None
     description: Optional[str] = None
+    image_s3_key: Optional[str] = None
 
 class PartnerOut(PartnerBase):
     id: int
     created_at: Optional[date] = None
     description: Optional[str] = None
+    image_s3_key: Optional[str] = None
 
     class Config:
-        orm_mode = True
+        from_attributes = True
+
+
+class PartnerImage(BaseModel):
+    image_url: str
