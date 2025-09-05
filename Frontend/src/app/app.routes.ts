@@ -27,4 +27,9 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./pages/account-page/account-page').then((m) => m.AccountPage),
   },
+  {
+    path: 'news',
+    loadComponent: () =>
+      import('./pages/news/news-dashboard').then((m) => m.NewsDashboardComponent),
+  },
 ];
