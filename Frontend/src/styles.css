@@ -25,20 +25,6 @@
     --container: 1100px;
 }
 
-@media (prefers-color-scheme: light) {
-    :root {
-        --bg: color-mix(in oklab, #000 84%, var(--brand-800) 16%);
-        --bg-soft: color-mix(in oklab, #000 80%, var(--brand-700) 20%);
-        --surface: color-mix(in oklab, #000 76%, var(--lavender-400) 24%);
-        --card: color-mix(in oklab, #000 72%, var(--lavender-300) 28%);
-        --text: #e5e7eb;
-        --text-muted: #9ca3af;
-        --border: #27314a;
-        --ring: rgba(193, 116, 242, 0.35);
-        --shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
-    }
-}
-
 body {
     margin: 0;
     color: var(--text);
@@ -143,9 +129,17 @@ a {
     color: var(--text);
 }
 
-.content h1 { font-size: clamp(28px, 4vw, 36px); }
-.content h2 { font-size: clamp(22px, 3vw, 28px); }
-.content h3 { font-size: clamp(18px, 2.2vw, 22px); }
+.content h1 {
+    font-size: clamp(28px, 4vw, 36px);
+}
+
+.content h2 {
+    font-size: clamp(22px, 3vw, 28px);
+}
+
+.content h3 {
+    font-size: clamp(18px, 2.2vw, 22px);
+}
 
 .content p {
     color: var(--text-muted);
@@ -154,8 +148,8 @@ a {
 }
 
 .content .card,
-.content section,
-.content article {
+.content section:not(.page),
+.content article:not(.page) {
     background: var(--card);
     border: 1px solid var(--border);
     border-radius: var(--radius);
@@ -204,10 +198,23 @@ a {
 }
 
 @media (max-width: 640px) {
-    .top-nav { height: 60px; padding: 0 14px; }
-    .links { gap: 4px; padding: 3px; }
-    .links a { padding: 7px 10px; }
-    .content { padding: 22px 14px 30px; }
+    .top-nav {
+        height: 60px;
+        padding: 0 14px;
+    }
+
+    .links {
+        gap: 4px;
+        padding: 3px;
+    }
+
+    .links a {
+        padding: 7px 10px;
+    }
+
+    .content {
+        padding: 22px 14px 30px;
+    }
 }
 
 .scrollable, .carousel-viewport {
