@@ -1,10 +1,10 @@
-import { Component, inject, OnInit, DestroyRef } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { StartupList as StartupListDTO } from '../../cores/interfaces/backend/dtos';
-import { StartupList } from '../../components/startup-list/startup-list';
-import { BackendInterface } from '../../cores/interfaces/backend/backend-interface';
-import { finalize } from 'rxjs';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import {Component, inject, OnInit, DestroyRef} from '@angular/core';
+import {CommonModule} from '@angular/common';
+import {StartupList as StartupListDTO} from '../../cores/interfaces/backend/dtos';
+import {StartupList} from '../../components/startup-list/startup-list';
+import {finalize} from 'rxjs';
+import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
+import {DataCacheService} from "../../cores/services/data-cache-service/data-cache.service";
 
 @Component({
   selector: 'app-startups',
@@ -18,34 +18,24 @@ export class StartupsPage implements OnInit {
   loading = true;
   error: string | null = null;
 
-  MAX_STARTUPS_PER_CALL = 100;
-
-  private backend = inject(BackendInterface);
   private destroyRef = inject(DestroyRef);
+  private dataCache = inject(DataCacheService);
 
   ngOnInit(): void {
-    this.getNextStartups();
+    this.loadFromCache();
   }
 
-  getNextStartups() : void {
-    this.backend
-      .getStartups(this.startups.length, this.MAX_STARTUPS_PER_CALL)
-      .pipe(
-        takeUntilDestroyed(this.destroyRef),
-        finalize(() => (this.loading = false))
-      )
+  private loadFromCache(): void {
+    this.loading = true;
+    this.dataCache
+      .getStartups$()
+      .pipe(takeUntilDestroyed(this.destroyRef), finalize(() => (this.loading = false)))
       .subscribe({
-        next: (data) => {
-          this.startups = [...this.startups, ...data ?? []]
-          if (data.length === this.MAX_STARTUPS_PER_CALL) {
-            this.getNextStartups();
-          } else {
-            this.startups = this.startups.sort((a, b) => a.name.localeCompare(b.name));
-            console.log(this.startups.length)
-          }
+        next: (list) => {
+          this.startups = list ?? [];
+          this.error = null;
         },
         error: (err) => (this.error = err?.message ?? 'Error during loading startups')
-      })
+      });
   }
-
 }
