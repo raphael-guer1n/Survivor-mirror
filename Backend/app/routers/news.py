@@ -1,5 +1,5 @@
-from fastapi import APIRouter, HTTPException, Query, UploadFile, File
-from typing import List, Depends
+from fastapi import APIRouter, HTTPException, Query, UploadFile, File, Depends
+from typing import List
 from app.db.connection import get_connection
 from app.schemas.news import NewsCreate, NewsUpdate, NewsOut
 from app.schemas.event import EventImage
