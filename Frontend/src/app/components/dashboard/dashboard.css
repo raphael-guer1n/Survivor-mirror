@@ -1,0 +1,26 @@
+:host {
+    display: block;
+}
+
+.content > header {
+    margin-bottom: 18px;
+}
+
+.content > .card + .card {
+    margin-top: 18px;
+}
+
+@media (max-width: 640px) {
+    .content > header p {
+        margin-top: 8px;
+    }
+}
+
+:host ::ng-deep app-dashboard,
+:host ::ng-deep app-news-dashboard {
+    display: block;
+}
+
+:host ::ng-deep .section + .section {
+    margin-top: 16px;
+}

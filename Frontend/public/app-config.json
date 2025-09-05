@@ -1,4 +1,3 @@
 {
-  "apiBaseUrl": "/api",
-  "authToken": "your_token"
+  "apiBaseUrl": "/api"
 }

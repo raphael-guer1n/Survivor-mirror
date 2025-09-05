@@ -1,0 +1,85 @@
+.toolbar {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 18px;
+  align-items: center;
+}
+.search {
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: none;
+  background: #232b45;
+  color: #fff;
+  min-width: 220px;
+}
+.select {
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: none;
+  background: #232b45;
+  color: #fff;
+}
+.news-list {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.card.news-item {
+  cursor: pointer;
+  background: #222a3f;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(15,23,42,0.10);
+  padding: 18px 24px;
+  transition: box-shadow 160ms, transform 120ms, background 120ms;
+  border-left: 4px solid var(--brand);
+  margin-bottom: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.card.news-item:hover {
+  box-shadow: 0 8px 24px rgba(124, 58, 237, 0.18);
+  background: #232b45;
+  transform: translateY(-2px);
+}
+.news-title {
+  font-size: 1.18rem;
+  font-weight: 600;
+  color: var(--brand);
+  margin-bottom: 2px;
+}
+.news-meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--text-muted);
+  font-size: 0.97rem;
+  margin-bottom: 2px;
+}
+.news-category-pill {
+  background: #fff;
+  color: #222a3f;
+  font-weight: 600;
+  font-size: 0.93rem;
+  border-radius: 8px;
+  padding: 2px 12px;
+  box-shadow: 0 1px 4px rgba(34,42,63,0.08);
+  margin-left: 2px;
+  display: inline-block;
+}
+.news-category-pill[data-category="Award"] {
+  background: #ffe066;
+  color: #222a3f;
+}
+.news-category-pill[data-category="Funding"] {
+  background: #a3e635;
+  color: #222a3f;
+}
+.news-category-pill[data-category="Launch"] {
+  background: #38bdf8;
+  color: #222a3f;
+}
+.news-category-pill[data-category="Partnership"] {
+  background: #f472b6;
+  color: #222a3f;
+}

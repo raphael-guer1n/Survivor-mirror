@@ -1,0 +1,146 @@
+<section class="auth-container">
+    <h1>Create a account</h1>
+
+    <form (ngSubmit)="onSubmit()" #registerForm="ngForm" novalidate>
+        <div class="field">
+            <label for="email">Email</label>
+            <input
+                    id="email"
+                    name="email"
+                    type="email"
+                    [(ngModel)]="email"
+                    #emailCtrl="ngModel"
+                    required
+                    [readonly]="phase !== 'request'"
+                    autocomplete="username"
+                    placeholder="mail@exemple.com"
+            />
+            @if (emailCtrl.invalid && (emailCtrl.touched || registerForm.submitted) && phase === 'request') {
+                <small class="error">Email is required</small>
+            }
+        </div>
+
+        <div class="field">
+            <label for="password">Password</label>
+            <input
+                    id="password"
+                    name="password"
+                    type="password"
+                    [(ngModel)]="password"
+                    #passwordCtrl="ngModel"
+                    required
+                    [readonly]="phase !== 'request'"
+                    autocomplete="new-password"
+                    placeholder="Password"
+            />
+            @if (passwordCtrl.invalid && (passwordCtrl.touched || registerForm.submitted) && phase === 'request') {
+                <small class="error">Password is required</small>
+            }
+        </div>
+
+        <div class="field">
+            <label for="confirm">Confirm password</label>
+            <input
+                    id="confirm"
+                    name="confirm"
+                    type="password"
+                    [(ngModel)]="confirm"
+                    #confirmCtrl="ngModel"
+                    required
+                    [readonly]="phase !== 'request'"
+                    autocomplete="new-password"
+                    placeholder="Confirm password"
+            />
+            @if (confirmCtrl.invalid && (confirmCtrl.touched || registerForm.submitted) && phase === 'request') {
+                <small class="error">Confirmation is required</small>
+            }
+            @if (confirm && !passwordsMatch && phase === 'request') {
+                <small class="error">
+                    Passwords do not match
+                </small>
+            }
+        </div>
+
+        @if (phase === 'verify') {
+            <div class="field">
+                <label for="code">Verification code</label>
+                <input
+                        id="code"
+                        name="code"
+                        type="text"
+                        [(ngModel)]="code"
+                        #codeCtrl="ngModel"
+                        required
+                        placeholder="Enter the code received by email"
+                        autocomplete="one-time-code"
+                />
+                @if (codeCtrl.invalid && (codeCtrl.touched || registerForm.submitted)) {
+                    <small class="error">Verification code is required</small>
+                }
+            </div>
+        }
+
+        @if (phase === 'complete') {
+            <div class="field">
+                <label for="role">Role</label>
+                <select class="select"
+                        id="role"
+                        name="role"
+                        type="text"
+                        [(ngModel)]="role"
+                        #roleCtrl="ngModel"
+                        required
+                >
+                    <option value="" disabled selected hidden>Choose a role</option>
+                    @for (role of roles; track role) {
+                        <option [value]="role">{{ role }}</option>
+                    }
+                </select>
+                @if (roleCtrl.invalid && (roleCtrl.touched || registerForm.submitted)) {
+                    <small class="error">Role is required</small>
+                }
+            </div>
+            <div class="field">
+                <label for="name">Name</label>
+                <input
+                        id="name"
+                        name="name"
+                        type="text"
+                        [(ngModel)]="name"
+                        #nameCtrl="ngModel"
+                        required
+                        placeholder="Your name" />
+                @if (nameCtrl.invalid && (nameCtrl.touched || registerForm.submitted)) {
+                    <small class="error">Name is required</small>
+                }
+            </div>
+        }
+
+        <button
+                class="btn"
+                type="submit"
+                [disabled]="loading ||
+                        !registerForm.form.valid ||
+                        (phase === 'request' && !passwordsMatch) ||
+                        (phase === 'verify' && !code) ||
+                        (phase === 'complete' && (!name || !role))">
+            {{
+            loading
+              ? (phase === 'request' ? 'Sending code...' : (phase === 'verify' ? 'Verifying code...' : 'Creating account...'))
+              : (phase === 'request' ? 'Send verification code' : (phase === 'verify' ? 'Verify code' : 'Create account'))
+            }}
+        </button>
+
+        @if (error) {
+            <p class="error">{{ error }}</p>
+        }
+        @if (info) {
+            <p class="hint">{{ info }}</p>
+        }
+    </form>
+
+    <p class="hint">
+        Already have an account?
+        <a routerLink="/login">Connect</a>
+    </p>
+</section>

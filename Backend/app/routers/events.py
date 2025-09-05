@@ -1,8 +1,9 @@
-from fastapi import APIRouter, HTTPException, Query, UploadFile, File
+from fastapi import APIRouter, HTTPException, Query, UploadFile, File, Depends
 from app.db.connection import get_connection
 from app.schemas.event import EventCreate, EventUpdate, EventOut, EventImage
 from typing import List
 from app.utils.s3 import upload_file_to_s3, generate_presigned_url
+from app.routers.auth import require_admin
 
 router = APIRouter(prefix="/events", tags=["events"])
 
@@ -47,7 +48,7 @@ def get_event(event_id: int):
         conn.close()
 
 @router.post("/", response_model=EventOut)
-def create_event(event: EventCreate):
+def create_event(event: EventCreate, admin=Depends(require_admin)):
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
     try:
@@ -83,7 +84,7 @@ def create_event(event: EventCreate):
         conn.close()
 
 @router.put("/{event_id}", response_model=EventOut)
-def update_event(event_id: int, event: EventUpdate):
+def update_event(event_id: int, event: EventUpdate, admin=Depends(require_admin)):
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
     try:
@@ -117,7 +118,7 @@ def update_event(event_id: int, event: EventUpdate):
         conn.close()
 
 @router.delete("/{event_id}")
-def delete_event(event_id: int):
+def delete_event(event_id: int, admin=Depends(require_admin)):
     conn = get_connection()
     cursor = conn.cursor()
     try:

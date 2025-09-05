@@ -11,13 +11,14 @@ import {catchError} from 'rxjs/operators';
 export interface RequestOptions {
   headers?: HttpHeaders | Record<string, string>;
   params?: HttpParams | Record<string, string | number | boolean>;
+  absolutePath?: boolean;
 }
 
 @Injectable({providedIn: 'root'})
 export class HttpInterface {
   private baseUrl = '/api';
   private authToken: string | null = null;
-  private readonly authHeaderName = 'X-Group-Authorization';
+  private readonly authHeaderName = 'Authorization';
 
   private defaultHeaders = new HttpHeaders({
     'Content-Type': 'application/json',
@@ -42,7 +43,7 @@ export class HttpInterface {
   }
 
   get<T>(path: string, options?: RequestOptions): Observable<T> {
-    const url = this.buildUrl(path);
+    const url = options?.absolutePath ? this.buildAbsoluteUrl(path) : this.buildUrl(path);
     const httpOptions = this.buildOptions(options);
     return this.http.get<T>(url, httpOptions).pipe(
       catchError((err) => this.handleError<T>('GET', url, err))
@@ -50,7 +51,7 @@ export class HttpInterface {
   }
 
   post<T>(path: string, body?: unknown, options?: RequestOptions): Observable<T> {
-    const url = this.buildUrl(path);
+    const url = options?.absolutePath ? this.buildAbsoluteUrl(path) : this.buildUrl(path);
     const httpOptions = this.buildOptions(options);
     return this.http.post<T>(url, body ?? null, httpOptions).pipe(
       catchError((err) => this.handleError<T>('POST', url, err))
@@ -58,7 +59,7 @@ export class HttpInterface {
   }
 
   put<T>(path: string, body?: unknown, options?: RequestOptions): Observable<T> {
-    const url = this.buildUrl(path);
+    const url = options?.absolutePath ? this.buildAbsoluteUrl(path) : this.buildUrl(path);
     const httpOptions = this.buildOptions(options);
     return this.http.put<T>(url, body ?? null, httpOptions).pipe(
       catchError((err) => this.handleError<T>('PUT', url, err))
@@ -66,7 +67,7 @@ export class HttpInterface {
   }
 
   delete<T>(path: string, options?: RequestOptions): Observable<T> {
-    const url = this.buildUrl(path);
+    const url = options?.absolutePath ? this.buildAbsoluteUrl(path) : this.buildUrl(path);
     const httpOptions = this.buildOptions(options);
     return this.http.delete<T>(url, httpOptions).pipe(
       catchError((err) => this.handleError<T>('DELETE', url, err))
@@ -78,7 +79,7 @@ export class HttpInterface {
   }
 
   getAuthHeaderPair(): { name: string; value: string } | null {
-    return this.authToken ? { name: this.authHeaderName, value: this.authToken } : null;
+    return this.authToken ? {name: this.authHeaderName, value: `Bearer ${this.authToken}`} : null;
   }
 
   private buildUrl(path: string): string {
@@ -87,10 +88,18 @@ export class HttpInterface {
     return cleanPath ? `${cleanBase}/${cleanPath}` : cleanBase;
   }
 
+  private buildAbsoluteUrl(path: string): string {
+    const cleanPath = (path || '').trim();
+    if (!cleanPath.startsWith('/')) {
+      return `/${cleanPath}`;
+    }
+    return cleanPath;
+  }
+
   private buildOptions(options?: RequestOptions) {
     const headers = this.mergeHeaders(this.defaultHeaders, options?.headers);
     const headersWithAuth =
-      this.authToken ? headers.set(this.authHeaderName, this.authToken) : headers;
+      this.authToken ? headers.set(this.authHeaderName, `Bearer ${this.authToken}`) : headers;
     const params = this.mergeParams(options?.params);
     return {headers: headersWithAuth, params};
   }
