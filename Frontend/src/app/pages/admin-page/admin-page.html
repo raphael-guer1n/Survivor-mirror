@@ -1,66 +1,97 @@
-<div class="admin-container">
-    <h1>Administration</h1>
+<section class="admin-page content">
+    <header class="admin-header">
+        <h1>Administration</h1>
+        <div class="entity-tabs">
+            @for (e of entities; track e) {
+                <button
+                        type="button"
+                        class="tab"
+                        [class.active]="e === selectedEntity()"
+                        (click)="onEntityChange(e)"
+                >
+                    {{ e | titlecase }}
+                </button>
+            }
+        </div>
+    </header>
 
-    <form class="toolbar" [formGroup]="form">
-        <label>
-            Entité
-            <select [value]="selectedEntity()" (change)="onEntityChange($any($event.target).value)">
-                <option *ngFor="let e of entities" [value]="e">{{ e }}</option>
-            </select>
-        </label>
+    @if (errorMsg()) {
+        <div class="alert error">{{ errorMsg() }}</div>
+    }
+    @if (loading()) {
+        <div class="loading">Chargement…</div>
+    }
 
-        <div class="group">
-            <label>
-                Skip
-                <input type="number" formControlName="skip" />
-            </label>
-            <label>
-                Limit
-                <input type="number" formControlName="limit" />
-            </label>
-            <button type="button" (click)="list()" [disabled]="loading()">Lister</button>
+    @if (selectedEntity() === 'startups') {
+        <div class="toolbar card">
+            <input
+                    type="search"
+                    [(ngModel)]="query"
+                    placeholder="Search"
+                    aria-label="Search"
+                    class="search"
+            />
+
+            @for (f of startupFilters; track f[0]) {
+                <select [(ngModel)]="filterValues[f[0]]" aria-label="Filter by {{ f[0] }}" class="select">
+                    <option value="">{{ f[0] | titlecase }}</option>
+                    @for (v of f.slice(1); track v) {
+                        <option [value]="v">{{ v }}</option>
+                    }
+                </select>
+            }
         </div>
 
-        <div class="group">
-            <label>
-                ID
-                <input type="number" formControlName="id" />
-            </label>
-            <button type="button" (click)="getById()" [disabled]="loading()">Obtenir par ID</button>
-            <button type="button" class="danger" (click)="delete()" [disabled]="loading()">Supprimer</button>
+        <div class="grid">
+            @for (s of filteredStartups; track trackById) {
+                <article class="card card-clickable" (click)="openStartup(s.id)" title="Éditer/Supprimer">
+                    <header class="card-header">
+                        <h3 class="card-title">{{ s.name }}</h3>
+                        @if (s.maturity) {
+                            <span class="badge">{{ s.maturity }}</span>
+                        }
+                    </header>
+
+                    <div class="card-body">
+                        <div class="row">
+                            <span class="label">Mail:</span>
+                            @if (s.email) {
+                                <a [href]="'mailto:' + s.email" (click)="$event.stopPropagation()">{{ s.email }}</a>
+                            } @else {
+                                <span class="muted">-</span>
+                            }
+                        </div>
+                        <div class="row">
+                            <span class="label">Sector:</span>
+                            <span>{{ s.sector || '—' }}</span>
+                        </div>
+                        <div class="row">
+                            <span class="label">Legal Status:</span>
+                            <span>{{ s.legal_status || '—' }}</span>
+                        </div>
+                        <div class="row">
+                            <span class="label">Phone:</span>
+                            <span>{{ s.phone || '—' }}</span>
+                        </div>
+                        <div class="row">
+                            <span class="label">Address:</span>
+                            <span>{{ s.address || '—' }}</span>
+                        </div>
+                    </div>
+                </article>
+            }
         </div>
 
-        <div class="group">
-            <button type="button" class="secondary" (click)="sync()" [disabled]="loading()">Admin Sync</button>
-        </div>
-    </form>
+        @if (filteredStartups.length === 0 && !loading()) {
+            <div class="empty">Aucun résultat pour "{{ query }}".</div>
+        }
 
-    <div class="payload" [formGroup]="form">
-        <label>Payload JSON</label>
-        <textarea rows="12" formControlName="payload" spellcheck="false"></textarea>
-        <div class="actions">
-            <button type="button" (click)="create()" [disabled]="loading()">Créer</button>
-            <button type="button" (click)="update()" [disabled]="loading()">Mettre à jour</button>
-        </div>
-    </div>
+        @if (selectedStartupId !== null) {
+            <app-admin-startup-edit-popup
+                    [startupId]="selectedStartupId!"
+                    (closed)="closeStartup()"
+            ></app-admin-startup-edit-popup>
+        }
+    }
 
-    <div class="status" *ngIf="loading()">Chargement...</div>
-    <div class="error" *ngIf="errorMsg() as err">Erreur: {{ err }}</div>
-
-    <div class="results">
-        <div *ngIf="listResult() as list">
-            <h3>Résultat (liste)</h3>
-            <pre>{{ list | json }}</pre>
-        </div>
-
-        <div *ngIf="itemResult() as item">
-            <h3>Résultat (élément)</h3>
-            <pre>{{ item | json }}</pre>
-        </div>
-
-        <div *ngIf="actionResult() as act">
-            <h3>Résultat (action)</h3>
-            <pre>{{ act | json }}</pre>
-        </div>
-    </div>
-</div>
+</section>
