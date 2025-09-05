@@ -1,6 +1,7 @@
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, HTTPException, Query, Depends
 from app.db.connection import get_connection
 from app.schemas.investor import InvestorCreate, InvestorUpdate, InvestorOut
+from app.routers.auth import require_admin
 
 router = APIRouter(prefix="/investors", tags=["investors"])
 
@@ -45,7 +46,7 @@ def get_investor(investor_id: int):
         conn.close()
 
 @router.post("/", response_model=InvestorOut)
-def create_investor(investor: InvestorCreate):
+def create_investor(investor: InvestorCreate, admin=Depends(require_admin)):
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
     try:
@@ -78,7 +79,7 @@ def create_investor(investor: InvestorCreate):
         conn.close()
 
 @router.put("/{investor_id}", response_model=InvestorOut)
-def update_investor(investor_id: int, investor: InvestorUpdate):
+def update_investor(investor_id: int, investor: InvestorUpdate, admin=Depends(require_admin)):
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
     try:
@@ -115,7 +116,7 @@ def update_investor(investor_id: int, investor: InvestorUpdate):
         conn.close()
 
 @router.delete("/{investor_id}")
-def delete_investor(investor_id: int):
+def delete_investor(investor_id: int, admin=Depends(require_admin)):
     conn = get_connection()
     cursor = conn.cursor()
     try:

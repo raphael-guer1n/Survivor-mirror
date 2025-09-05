@@ -1,6 +1,7 @@
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, HTTPException, Query, Depends
 from app.db.connection import get_connection
 from app.schemas.partner import PartnerCreate, PartnerUpdate, PartnerOut
+from app.routers.auth import require_admin
 
 router = APIRouter(prefix="/partners", tags=["partners"])
 
@@ -45,7 +46,7 @@ def get_partner(partner_id: int):
         conn.close()
 
 @router.post("/", response_model=PartnerOut)
-def create_partner(partner: PartnerCreate):
+def create_partner(partner: PartnerCreate, admin=Depends(require_admin)):
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
     try:
@@ -78,7 +79,7 @@ def create_partner(partner: PartnerCreate):
         conn.close()
 
 @router.put("/{partner_id}", response_model=PartnerOut)
-def update_partner(partner_id: int, partner: PartnerUpdate):
+def update_partner(partner_id: int, partner: PartnerUpdate, admin=Depends(require_admin)):
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
     try:
@@ -115,7 +116,7 @@ def update_partner(partner_id: int, partner: PartnerUpdate):
         conn.close()
 
 @router.delete("/{partner_id}")
-def delete_partner(partner_id: int):
+def delete_partner(partner_id: int, admin=Depends(require_admin) ):
     conn = get_connection()
     cursor = conn.cursor()
     try:

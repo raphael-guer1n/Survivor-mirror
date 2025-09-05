@@ -1,6 +1,7 @@
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, HTTPException, Query, Depends
 from app.db.connection import get_connection
 from app.schemas.startup import StartupCreate, StartupUpdate, StartupOut, StartupDetail, FounderImage
+from app.routers.auth import require_admin
 
 router = APIRouter(prefix="/startups", tags=["startups"])
 
@@ -51,7 +52,7 @@ def get_startup(startup_id: int):
         conn.close()
 
 @router.post("/", response_model=StartupOut)
-def create_startup(startup: StartupCreate):
+def create_startup(startup: StartupCreate, admin=Depends(require_admin)):
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
     try:
@@ -76,7 +77,7 @@ def create_startup(startup: StartupCreate):
         conn.close()
 
 @router.put("/{startup_id}", response_model=StartupOut)
-def update_startup(startup_id: int, startup: StartupUpdate):
+def update_startup(startup_id: int, startup: StartupUpdate, admin=Depends(require_admin)):
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
     try:
@@ -107,7 +108,7 @@ def update_startup(startup_id: int, startup: StartupUpdate):
         conn.close()
 
 @router.delete("/{startup_id}")
-def delete_startup(startup_id: int):
+def delete_startup(startup_id: int, admin=Depends(require_admin)):
     conn = get_connection()
     cursor = conn.cursor()
     try:
