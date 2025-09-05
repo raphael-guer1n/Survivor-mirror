@@ -1,0 +1,66 @@
+<div class="admin-container">
+    <h1>Administration</h1>
+
+    <form class="toolbar" [formGroup]="form">
+        <label>
+            Entité
+            <select [value]="selectedEntity()" (change)="onEntityChange($any($event.target).value)">
+                <option *ngFor="let e of entities" [value]="e">{{ e }}</option>
+            </select>
+        </label>
+
+        <div class="group">
+            <label>
+                Skip
+                <input type="number" formControlName="skip" />
+            </label>
+            <label>
+                Limit
+                <input type="number" formControlName="limit" />
+            </label>
+            <button type="button" (click)="list()" [disabled]="loading()">Lister</button>
+        </div>
+
+        <div class="group">
+            <label>
+                ID
+                <input type="number" formControlName="id" />
+            </label>
+            <button type="button" (click)="getById()" [disabled]="loading()">Obtenir par ID</button>
+            <button type="button" class="danger" (click)="delete()" [disabled]="loading()">Supprimer</button>
+        </div>
+
+        <div class="group">
+            <button type="button" class="secondary" (click)="sync()" [disabled]="loading()">Admin Sync</button>
+        </div>
+    </form>
+
+    <div class="payload" [formGroup]="form">
+        <label>Payload JSON</label>
+        <textarea rows="12" formControlName="payload" spellcheck="false"></textarea>
+        <div class="actions">
+            <button type="button" (click)="create()" [disabled]="loading()">Créer</button>
+            <button type="button" (click)="update()" [disabled]="loading()">Mettre à jour</button>
+        </div>
+    </div>
+
+    <div class="status" *ngIf="loading()">Chargement...</div>
+    <div class="error" *ngIf="errorMsg() as err">Erreur: {{ err }}</div>
+
+    <div class="results">
+        <div *ngIf="listResult() as list">
+            <h3>Résultat (liste)</h3>
+            <pre>{{ list | json }}</pre>
+        </div>
+
+        <div *ngIf="itemResult() as item">
+            <h3>Résultat (élément)</h3>
+            <pre>{{ item | json }}</pre>
+        </div>
+
+        <div *ngIf="actionResult() as act">
+            <h3>Résultat (action)</h3>
+            <pre>{{ act | json }}</pre>
+        </div>
+    </div>
+</div>

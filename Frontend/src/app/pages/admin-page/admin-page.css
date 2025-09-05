@@ -1,0 +1,67 @@
+.admin-container {
+    display: grid;
+    gap: 16px;
+    padding: 16px;
+}
+
+.toolbar {
+    display: grid;
+    gap: 12px;
+    align-items: end;
+    grid-template-columns: 1fr;
+}
+
+.toolbar .group {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+label {
+    display: grid;
+    gap: 4px;
+    font-size: 14px;
+}
+
+input, select, textarea, button {
+    font: inherit;
+    padding: 8px;
+}
+
+.payload textarea {
+    width: 100%;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
+.actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 8px;
+}
+
+.status {
+    color: #555;
+}
+
+.error {
+    color: #b00020;
+    white-space: pre-wrap;
+}
+
+.danger {
+    background: #ffe5e5;
+    border: 1px solid #ffb3b3;
+}
+
+.secondary {
+    background: #eef5ff;
+    border: 1px solid #c9ddff;
+}
+
+.results pre {
+    background: #0b1020;
+    color: #d8e6ff;
+    padding: 12px;
+    border-radius: 6px;
+    overflow: auto;
+}
