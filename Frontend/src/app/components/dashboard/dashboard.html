@@ -1,0 +1,30 @@
+<div class="dashboard">
+    <h2>Dashboard</h2>
+
+    <div class="cards">
+        <div class="card">
+            <div class="label">Startups</div>
+            <div class="value" *ngIf="totalStartups$ | async as total; else loading">
+                {{ total }}
+            </div>
+            <ng-template #loading>
+                <div class="value">Loading…</div>
+            </ng-template>
+        </div>
+
+        <div class="card">
+            <div class="label">Project Views</div>
+            <div class="value">{{ projectViews() | number }}</div>
+        </div>
+
+        <div class="card">
+            <div class="label">Engagement Rate</div>
+            <div class="value">{{ engagementRate() }}%</div>
+        </div>
+
+        <div class="card">
+            <div class="label">Avg. Time on Page</div>
+            <div class="value">{{ avgTimeOnPage() }}s</div>
+        </div>
+    </div>
+</div>
