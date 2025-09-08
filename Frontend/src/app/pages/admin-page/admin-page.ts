@@ -27,6 +27,12 @@ export class AdminPage implements OnInit {
   filtersBy: string[] = ['sector', 'maturity'];
   filterValues: Record<string, string> = {};
   selectedStartupId = signal<number | null>(null);
+  investors: any[] = [];
+  partners: any[] = [];
+  news: any[] = [];
+  events: any[] = [];
+  users: any[] = [];
+
 
   ngOnInit(): void {
     this.filtersBy.forEach(k => (this.filterValues[k] ??= ''));
@@ -47,6 +53,27 @@ export class AdminPage implements OnInit {
       this.loadStartups();
       return;
     }
+
+    if (entity === 'investors') {
+      this.loadInvestors();
+      return;
+    }
+    if (entity === 'partners') {
+      this.loadPartners();
+      return;
+    }
+    if (entity === 'news') {
+      this.loadNews();
+      return;
+    }
+    if (entity === 'events') {
+      this.loadEvents();
+      return;
+    }
+    if (entity === 'users') {
+      this.loadUsers();
+      return;
+    }
   }
 
   private loadStartups() {
@@ -60,6 +87,86 @@ export class AdminPage implements OnInit {
       },
       error: (e) => {
         this.errorMsg.set(e?.message ?? 'Failed to load startups.');
+        this.loading.set(false);
+      }
+    });
+  }
+
+  private loadInvestors() {
+    this.loading.set(true);
+    this.errorMsg.set(null);
+    this.backend.getInvestors(0, 500).subscribe({
+      next: (res: any) => {
+        const items = this.normalizeListResponse(res);
+        this.investors = items ?? [];
+        this.loading.set(false);
+      },
+      error: (e) => {
+        this.errorMsg.set(e?.message ?? 'Failed to load investors.');
+        this.loading.set(false);
+      }
+    });
+  }
+
+  private loadPartners() {
+    this.loading.set(true);
+    this.errorMsg.set(null);
+    this.backend.getPartners(0, 500).subscribe({
+      next: (res: any) => {
+        const items = this.normalizeListResponse(res);
+        this.partners = items ?? [];
+        this.loading.set(false);
+      },
+      error: (e) => {
+        this.errorMsg.set(e?.message ?? 'Failed to load partners.');
+        this.loading.set(false);
+      }
+    });
+  }
+
+  private loadNews() {
+    this.loading.set(true);
+    this.errorMsg.set(null);
+    this.backend.getNews(0, 500).subscribe({
+      next: (res: any) => {
+        const items = this.normalizeListResponse(res);
+        this.news = items ?? [];
+        this.loading.set(false);
+      },
+      error: (e) => {
+        this.errorMsg.set(e?.message ?? 'Failed to load news.');
+        this.loading.set(false);
+      }
+    });
+  }
+
+  private loadEvents() {
+    this.loading.set(true);
+    this.errorMsg.set(null);
+    this.backend.getEvents(0, 500).subscribe({
+      next: (res: any) => {
+        const items = this.normalizeListResponse(res);
+        this.events = items ?? [];
+        this.loading.set(false);
+      },
+      error: (e) => {
+        this.errorMsg.set(e?.message ?? 'Failed to load events.');
+        this.loading.set(false);
+      }
+    });
+  }
+
+  private loadUsers() {
+    this.loading.set(true);
+    this.errorMsg.set(null);
+    this.backend.getUsers().subscribe({
+      next: (res: any) => {
+        const items = this.normalizeListResponse(res);
+        this.users = items ?? [];
+        this.loading.set(false);
+      },
+      error: (e) => {
+        this.errorMsg.set(e?.message ?? 'Failed to load users.');
         this.loading.set(false);
       }
     });
@@ -102,6 +209,62 @@ export class AdminPage implements OnInit {
 
       return matchesQuery && matchesAllFilters;
     });
+  }
+
+  get filteredInvestors(): any[] {
+    const q = this.query.trim().toLowerCase();
+    return this.investors.filter(i =>
+      !q ||
+      i.name?.toLowerCase().includes(q) ||
+      i.email?.toLowerCase().includes(q) ||
+      i.address?.toLowerCase().includes(q) ||
+      i.investor_type?.toLowerCase().includes(q) ||
+      i.investment_focus?.toLowerCase().includes(q)
+    );
+  }
+
+  get filteredPartners(): any[] {
+    const q = this.query.trim().toLowerCase();
+    return this.partners.filter(p =>
+      !q ||
+      p.name?.toLowerCase().includes(q) ||
+      p.email?.toLowerCase().includes(q) ||
+      p.address?.toLowerCase().includes(q) ||
+      p.partnership_type?.toLowerCase().includes(q)
+    );
+  }
+
+  get filteredNews(): any[] {
+    const q = this.query.trim().toLowerCase();
+    return this.news.filter(n =>
+      !q ||
+      n.title?.toLowerCase().includes(q) ||
+      n.location?.toLowerCase().includes(q) ||
+      n.category?.toLowerCase().includes(q) ||
+      n.description?.toLowerCase().includes(q)
+    );
+  }
+
+  get filteredEvents(): any[] {
+    const q = this.query.trim().toLowerCase();
+    return this.events.filter(e =>
+      !q ||
+      e.name?.toLowerCase().includes(q) ||
+      e.location?.toLowerCase().includes(q) ||
+      e.event_type?.toLowerCase().includes(q) ||
+      e.target_audience?.toLowerCase().includes(q) ||
+      e.description?.toLowerCase().includes(q)
+    );
+  }
+
+  get filteredUsers(): any[] {
+    const q = this.query.trim().toLowerCase();
+    return this.users.filter(u =>
+      !q ||
+      u.name?.toLowerCase().includes(q) ||
+      u.email?.toLowerCase().includes(q) ||
+      u.role?.toLowerCase().includes(q)
+    );
   }
 
   openStartup(id: number) {

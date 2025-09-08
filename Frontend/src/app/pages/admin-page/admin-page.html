@@ -19,7 +19,7 @@
         <div class="alert error">{{ errorMsg() }}</div>
     }
     @if (loading()) {
-        <div class="loading">Chargement…</div>
+        <div class="loading">Loading…</div>
     }
 
     @if (selectedEntity() === 'startups') {
@@ -82,7 +82,7 @@
         </div>
 
         @if (filteredStartups.length === 0 && !loading()) {
-            <div class="empty">Aucun résultat pour "{{ query }}".</div>
+            <div class="empty">No results for "{{ query }}".</div>
         }
 
         @if (selectedStartupId() !== null) {
@@ -96,6 +96,229 @@
             </div>
         }
 
+    }
+    <!-- Investors -->
+    @if (selectedEntity() === 'investors') {
+        <div class="toolbar card">
+            <input
+                    type="search"
+                    [(ngModel)]="query"
+                    placeholder="Search investors"
+                    aria-label="Search investors"
+                    class="search"
+            />
+        </div>
+
+        <div class="grid">
+            @for (i of filteredInvestors; track i?.id ?? $index) {
+                <article class="card">
+                    <header class="card-header">
+                        <h3 class="card-title">{{ i.name }}</h3>
+                        @if (i.investor_type) {
+                            <span class="badge">{{ i.investor_type }}</span>
+                        }
+                    </header>
+                    <div class="card-body">
+                        <div class="row">
+                            <span class="label">Mail:</span>
+                            <span>{{ i.email || '—' }}</span>
+                        </div>
+                        <div class="row">
+                            <span class="label">Focus:</span>
+                            <span>{{ i.investment_focus || '—' }}</span>
+                        </div>
+                        <div class="row">
+                            <span class="label">Phone:</span>
+                            <span>{{ i.phone || '—' }}</span>
+                        </div>
+                        <div class="row">
+                            <span class="label">Address:</span>
+                            <span>{{ i.address || '—' }}</span>
+                        </div>
+                    </div>
+                </article>
+            }
+        </div>
+
+        @if (filteredInvestors.length === 0 && !loading()) {
+            <div class="empty">No results for "{{ query }}".</div>
+        }
+    }
+
+    <!-- Partners -->
+    @if (selectedEntity() === 'partners') {
+        <div class="toolbar card">
+            <input
+                    type="search"
+                    [(ngModel)]="query"
+                    placeholder="Search partners"
+                    aria-label="Search partners"
+                    class="search"
+            />
+        </div>
+
+        <div class="grid">
+            @for (p of filteredPartners; track p?.id ?? $index) {
+                <article class="card">
+                    <header class="card-header">
+                        <h3 class="card-title">{{ p.name }}</h3>
+                        @if (p.partnership_type) {
+                            <span class="badge">{{ p.partnership_type }}</span>
+                        }
+                    </header>
+                    <div class="card-body">
+                        <div class="row">
+                            <span class="label">Mail:</span>
+                            <span>{{ p.email || '—' }}</span>
+                        </div>
+                        <div class="row">
+                            <span class="label">Phone:</span>
+                            <span>{{ p.phone || '—' }}</span>
+                        </div>
+                        <div class="row">
+                            <span class="label">Address:</span>
+                            <span>{{ p.address || '—' }}</span>
+                        </div>
+                    </div>
+                </article>
+            }
+        </div>
+
+        @if (filteredPartners.length === 0 && !loading()) {
+            <div class="empty">No results for "{{ query }}".</div>
+        }
+    }
+
+    <!-- News -->
+    @if (selectedEntity() === 'news') {
+        <div class="toolbar card">
+            <input
+                    type="search"
+                    [(ngModel)]="query"
+                    placeholder="Search news"
+                    aria-label="Search news"
+                    class="search"
+            />
+        </div>
+
+        <div class="grid">
+            @for (n of filteredNews; track n?.id ?? $index) {
+                <article class="card">
+                    <header class="card-header">
+                        <h3 class="card-title">{{ n.title }}</h3>
+                        @if (n.category) {
+                            <span class="badge">{{ n.category }}</span>
+                        }
+                    </header>
+                    <div class="card-body">
+                        <div class="row">
+                            <span class="label">Date:</span>
+                            <span>{{ n.news_date || '—' }}</span>
+                        </div>
+                        <div class="row">
+                            <span class="label">Location:</span>
+                            <span>{{ n.location || '—' }}</span>
+                        </div>
+                        <div class="row">
+                            <span class="label">Startup ID:</span>
+                            <span>{{ n.startup_id || '—' }}</span>
+                        </div>
+                    </div>
+                </article>
+            }
+        </div>
+
+        @if (filteredNews.length === 0 && !loading()) {
+            <div class="empty">No results for "{{ query }}".</div>
+        }
+    }
+
+    <!-- Events -->
+    @if (selectedEntity() === 'events') {
+        <div class="toolbar card">
+            <input
+                    type="search"
+                    [(ngModel)]="query"
+                    placeholder="Search events"
+                    aria-label="Search events"
+                    class="search"
+            />
+        </div>
+
+        <div class="grid">
+            @for (e of filteredEvents; track e?.id ?? $index) {
+                <article class="card">
+                    <header class="card-header">
+                        <h3 class="card-title">{{ e.name }}</h3>
+                        @if (e.event_type) {
+                            <span class="badge">{{ e.event_type }}</span>
+                        }
+                    </header>
+                    <div class="card-body">
+                        <div class="row">
+                            <span class="label">Dates:</span>
+                            <span>{{ e.dates || '—' }}</span>
+                        </div>
+                        <div class="row">
+                            <span class="label">Location:</span>
+                            <span>{{ e.location || '—' }}</span>
+                        </div>
+                        <div class="row">
+                            <span class="label">Audience:</span>
+                            <span>{{ e.target_audience || '—' }}</span>
+                        </div>
+                    </div>
+                </article>
+            }
+        </div>
+
+        @if (filteredEvents.length === 0 && !loading()) {
+            <div class="empty">No results for "{{ query }}".</div>
+        }
+    }
+
+    <!-- Users -->
+    @if (selectedEntity() === 'users') {
+        <div class="toolbar card">
+            <input
+                    type="search"
+                    [(ngModel)]="query"
+                    placeholder="Search users"
+                    aria-label="Search users"
+                    class="search"
+            />
+        </div>
+
+        <div class="grid">
+            @for (u of filteredUsers; track u?.id ?? $index) {
+                <article class="card">
+                    <header class="card-header">
+                        <h3 class="card-title">{{ u.name || u.email }}</h3>
+                        @if (u.role) {
+                            <span class="badge">{{ u.role }}</span>
+                        }
+                    </header>
+                    <div class="card-body">
+                        <div class="row">
+                            <span class="label">Email:</span>
+                            <span>{{ u.email || '—' }}</span>
+                        </div>
+                        <div class="row">
+                            <span class="label">Founder ID:</span>
+                            <span>{{ u.founder_id || '—' }}</span>
+                        </div>
+                        <div class="row">
+                            <span class="label">Investor ID:</span>
+                            <span>{{ u.investor_id || '—' }}</span>
+                        </div>
+                    </div>
+                </article>
+            }
+        </div>
+
+        @if (filteredUsers.length === 0 && !loading()) {
+            <div class="empty">No results for "{{ query }}".</div>
+        }
     }
 
 </section>
