@@ -238,6 +238,27 @@ def require_investor_of_investor(investor_id, user=Depends(get_current_user)):
         cursor.close()
         conn.close()
 
+def check_founder_of_startup(user, startup_id):
+    if user.get("role") == "admin":
+        return
+    if user.get("role") != "founder":
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="permission denied")
+    user_id = user.get("sub")
+    conn = get_connection()
+    cursor = conn.cursor(dictionary=True)
+    try:
+        cursor.execute("SELECT founder_id FROM users WHERE id = %s", (user_id,))
+        row = cursor.fetchone()
+        if not row or not row["founder_id"]:
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="permission denied")
+        founder_id = row["founder_id"]
+        cursor.execute("SELECT id FROM founders WHERE id = %s AND startup_id = %s", (founder_id, startup_id))
+        link = cursor.fetchone()
+        if not link:
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="permission denied: not founder of this startup")
+    finally:
+        cursor.close()
+        conn.close()
 
 @router.post("/register")
 def register(user: UserRegister):
