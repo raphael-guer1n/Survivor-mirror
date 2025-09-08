@@ -1,56 +1,51 @@
-<div class="popup">
-    <header class="popup-header">
-        <h2>Edit News</h2>
-        <button type="button" class="icon-button close" aria-label="Close" (click)="close()" [disabled]="saving">×</button>
-    </header>
+<div class="modal-overlay" (click)="close()">
+    <div class="modal" (click)="$event.stopPropagation()">
+        <header class="modal-header">
+            <h2>Edit News #{{ newsId }}</h2>
+            <button type="button" class="btn ghost" (click)="close()">Close</button>
+        </header>
 
-    @if (error) {
-        <div class="alert error">{{ error }}</div>
-    }
+        @if (error) {
+            <div class="alert error">{{ error }}</div>
+        }
+        @if (loading) {
+            <div class="loading">Loading…</div>
+        }
 
-    <form [formGroup]="form" (ngSubmit)="save()" class="form">
-        <div class="form-row">
-            <label for="title">Title</label>
-            <input id="title" type="text" formControlName="title" [class.invalid]="form.controls.title.invalid && form.controls.title.touched" placeholder="Title"/>
-            @if (form.controls.title.errors?.['required'] && form.controls.title.touched) {
-                <div class="field-error">Title is required.</div>
-            }
-            @if (form.controls.title.errors?.['maxlength'] && form.controls.title.touched) {
-                <div class="field-error">Title is too long.</div>
-            }
-        </div>
+        @if (!loading) {
+            <form [formGroup]="form" (ngSubmit)="$event.preventDefault()" class="form-grid">
+                <label>
+                    Title
+                    <input formControlName="title" placeholder="News Title"/>
+                </label>
+                <label>
+                    News Date
+                    <input formControlName="news_date" type="date" placeholder="Date"/>
+                </label>
+                <label>
+                    Location
+                    <input formControlName="location" placeholder="Location"/>
+                </label>
+                <label>
+                    Category
+                    <input formControlName="category" placeholder="Category"/>
+                </label>
+                <label class="col-span-2">
+                    Description
+                    <textarea rows="6" formControlName="description" placeholder="Notes / description"></textarea>
+                </label>
 
-        <div class="form-row two-cols">
-            <div>
-                <label for="news_date">Date</label>
-                <input id="news_date" type="date" formControlName="news_date" />
-            </div>
-            <div>
-                <label for="category">Category</label>
-                <input id="category" type="text" formControlName="category" placeholder="Category" />
-            </div>
-        </div>
-
-        <div class="form-row">
-            <label for="location">Location</label>
-            <input id="location" type="text" formControlName="location" placeholder="Location" />
-        </div>
-
-        <div class="form-row">
-            <label for="startup_id">Startup ID</label>
-            <input id="startup_id" type="number" formControlName="startup_id" placeholder="Startup ID" />
-        </div>
-
-        <div class="form-row">
-            <label for="description">Description</label>
-            <textarea id="description" rows="6" formControlName="description" placeholder="Description"></textarea>
-        </div>
-
-        <footer class="popup-footer">
-            <button type="button" class="btn" (click)="close()" [disabled]="saving">Cancel</button>
-            <button type="submit" class="btn primary" [disabled]="saving || form.invalid">
-                {{ saving ? 'Saving…' : 'Save' }}
-            </button>
-        </footer>
-    </form>
+                <div class="actions col-span-2">
+                    <button type="button" class="btn" [disabled]="saving" (click)="save()">
+                        {{ saving ? 'Saving…' : 'Save' }}
+                    </button>
+                    <button type="button" class="btn ghost" (click)="close()">Cancel</button>
+                    <span class="spacer"></span>
+                    <button type="button" class="btn danger" [disabled]="deleting" (click)="remove()">
+                        {{ deleting ? 'Deleting…' : 'Delete' }}
+                    </button>
+                </div>
+            </form>
+        }
+    </div>
 </div>

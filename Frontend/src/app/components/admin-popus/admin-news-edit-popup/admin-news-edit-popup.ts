@@ -2,7 +2,6 @@ import {Component, EventEmitter, inject, Input, OnChanges, Output, SimpleChanges
 import {CommonModule} from '@angular/common';
 import {FormBuilder, ReactiveFormsModule, Validators} from '@angular/forms';
 import {BackendInterface} from '../../../cores/interfaces/backend/backend-interface';
-import type {NewsDetail} from '../../../cores/interfaces/backend/dtos';
 
 @Component({
   selector: 'app-admin-news-edit-popup',
@@ -12,6 +11,9 @@ import type {NewsDetail} from '../../../cores/interfaces/backend/dtos';
   styleUrls: ['./admin-news-edit-popup.css', './../admin-popups.css']
 })
 export class AdminNewsEditPopup implements OnChanges {
+  @Input() newsId!: number;
+  @Output() closed = new EventEmitter<void>();
+
   private backend = inject(BackendInterface);
   private fb = inject(FormBuilder);
 
@@ -19,12 +21,6 @@ export class AdminNewsEditPopup implements OnChanges {
   saving = false;
   deleting = false;
   error: string | null = null;
-
-  @Input() newsId!: number;
-  @Input() news?: NewsDetail | null;
-
-  @Output() closed = new EventEmitter<void>();
-  @Output() saved = new EventEmitter<NewsDetail>();
 
   form = this.fb.group({
     title: ['', [Validators.required, Validators.maxLength(255)]],
@@ -44,7 +40,7 @@ export class AdminNewsEditPopup implements OnChanges {
   private fetch(): void {
     this.loading = true;
     this.error = null;
-    this.backend.getNews(this.newsId).subscribe({
+    this.backend.getNewsItem(this.newsId).subscribe({
       next: (d: any) => {
         this.form.reset({
           title: d?.title ?? '',

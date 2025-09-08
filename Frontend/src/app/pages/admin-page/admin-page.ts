@@ -7,13 +7,14 @@ import {
   AdminInvestorEditPopup
 } from "../../components/admin-popus/admin-inverstor-edit-popup/admin-investor-edit-popup";
 import {AdminPartnersEditPopup} from "../../components/admin-popus/admin-partners-edit-popup/admin-partners-edit-popup";
+import {AdminNewsEditPopup} from "../../components/admin-popus/admin-news-edit-popup/admin-news-edit-popup";
 
 type EntityType = 'startups' | 'investors' | 'partners' | 'news' | 'events' | 'users';
 
 @Component({
   selector: 'app-admin-page',
   standalone: true,
-  imports: [CommonModule, AdminStartupEditPopup, FormsModule, AdminPartnersEditPopup, AdminInvestorEditPopup, AdminPartnersEditPopup],
+  imports: [CommonModule, AdminStartupEditPopup, FormsModule, AdminPartnersEditPopup, AdminInvestorEditPopup, AdminPartnersEditPopup, AdminNewsEditPopup],
   templateUrl: './admin-page.html',
   styleUrl: './admin-page.css'
 })
@@ -313,12 +314,6 @@ export class AdminPage implements OnInit {
     this.selectedPartnerId.set(null);
   }
 
-  selectedPartner(): any | null {
-    const id = this.selectedPartnerId?.();
-    if (id == null) return null;
-    return this.partners?.find(i => i?.id === id) ?? null;
-  }
-
   openNews(id: number) {
     console.debug('[AdminPage] openNews', id);
     this.selectedNewsId.set(id);
@@ -327,12 +322,6 @@ export class AdminPage implements OnInit {
   closeNews() {
     console.debug('[AdminPage] closeNews');
     this.selectedNewsId.set(null);
-  }
-
-  selectedNews(): any | null {
-    const id = this.selectedNewsId?.();
-    if (id == null) return null;
-    return this.news?.find(i => i?.id === id) ?? null;
   }
 
   openEvent(id: number) {

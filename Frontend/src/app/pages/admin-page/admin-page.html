@@ -255,13 +255,13 @@
             <div class="empty">No results for "{{ query }}".</div>
         }
 
-        @if (selectedPartnerId() !== null) {
-            <div class="admin-modal-overlay" (click)="closePartner()">
+        @if (selectedNewsId() !== null) {
+            <div class="admin-modal-overlay" (click)="closeNews()">
                 <div class="admin-modal" (click)="$event.stopPropagation()">
-                    <app-admin-partners-edit-popup
-                            [partnerId]="selectedPartnerId()!"
-                            (closed)="closePartner()"
-                    ></app-admin-partners-edit-popup>
+                    <app-admin-news-edit-popup
+                            [newsId]="selectedNewsId()!"
+                            (closed)="closeNews()"
+                    ></app-admin-news-edit-popup>
                 </div>
             </div>
         }
