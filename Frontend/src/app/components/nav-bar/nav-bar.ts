@@ -21,9 +21,14 @@ export class NavBar {
       this.auth.user$.pipe(map(u => !!u)),
       { initialValue: this.auth.isAuthenticated }
     );
+    this.isAdmin = toSignal(
+      this.auth.user$.pipe(map(u => u?.role === 'admin')),
+      { initialValue: false }
+    );
   }
 
   readonly isAuth;
+  readonly isAdmin;
 
   toggleMenu() {
     this.menuOpen.update(v => !v);

@@ -2,14 +2,21 @@ import { Injectable, inject } from '@angular/core';
 import { BehaviorSubject, Observable, tap, switchMap, catchError, of } from 'rxjs';
 import {BackendInterface} from "../../interfaces/backend/backend-interface";
 import {User} from "../../interfaces/backend/dtos";
+import { HttpInterface } from "../../interfaces/http/http-interface";
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private backend = inject(BackendInterface);
+  private http = inject(HttpInterface);
 
   private tokenKey = 'access_token';
   private userSubject = new BehaviorSubject<User | null>(null);
   user$ = this.userSubject.asObservable();
+
+  constructor() {
+    const existingToken = this.getToken();
+    this.http.setAuthToken(existingToken);
+  }
 
   get user(): User | null {
     return this.userSubject.value;
@@ -25,6 +32,7 @@ export class AuthService {
     } else {
       localStorage.removeItem(this.tokenKey);
     }
+    this.http.setAuthToken(token);
     this.userSubject.next(user);
   }
 
@@ -34,6 +42,7 @@ export class AuthService {
 
   clearSession() {
     localStorage.removeItem(this.tokenKey);
+    this.http.setAuthToken(null);
     this.userSubject.next(null);
   }
 

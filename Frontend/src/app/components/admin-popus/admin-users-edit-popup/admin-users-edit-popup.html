@@ -1,0 +1,51 @@
+<div class="modal-overlay" (click)="close()">
+    <div class="modal" (click)="$event.stopPropagation()">
+        <header class="modal-header">
+            <h2>Edit user #{{ usersId }}</h2>
+            <button type="button" class="btn ghost" (click)="close()">Close</button>
+        </header>
+
+        @if (error) {
+            <div class="alert error">{{ error }}</div>
+        }
+        @if (loading) {
+            <div class="loading">Loading…</div>
+        }
+
+        @if (!loading) {
+            <form [formGroup]="form" (ngSubmit)="$event.preventDefault()" class="form-grid">
+                <label>
+                    Name
+                    <input formControlName="name" placeholder="Startup name" />
+                </label>
+                <label>
+                    Email
+                    <input formControlName="email" type="email" placeholder="Email" />
+                </label>
+                <label>
+                    Role
+                    <input formControlName="role" placeholder="Role" />
+                </label>
+                <label>
+                    Founder Id
+                    <input formControlName="founder_id" placeholder="Founder Id" />
+                </label>
+                <label>
+                    Investor Id
+                    <input formControlName="investor_id" placeholder="Investor Id" />
+                </label>
+
+                <div class="actions col-span-2">
+                    <button type="button" class="btn" [disabled]="saving" (click)="save()">
+                        {{ saving ? 'Saving…' : 'Save' }}
+                    </button>
+                    <button type="button" class="btn ghost" (click)="close()">Cancel</button>
+                    <span class="spacer"></span>
+                    <button type="button" class="btn danger" [disabled]="deleting" (click)="remove()">
+                        {{ deleting ? 'Deleting…' : 'Delete' }}
+                    </button>
+                </div>
+            </form>
+        }
+    </div>
+</div>
