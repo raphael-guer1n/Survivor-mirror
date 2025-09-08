@@ -33,6 +33,9 @@ export class AdminPage implements OnInit {
   selectedStartupId = signal<number | null>(null);
   selectedInvestorId = signal<number | null>(null);
   selectedPartnerId = signal<number | null>(null);
+  selectedNewsId = signal<number | null>(null);
+  selectedEventId = signal<number | null>(null);
+  selectedUserId = signal<number | null>(null);
   investors: any[] = [];
   partners: any[] = [];
   news: any[] = [];
@@ -314,6 +317,54 @@ export class AdminPage implements OnInit {
     const id = this.selectedPartnerId?.();
     if (id == null) return null;
     return this.partners?.find(i => i?.id === id) ?? null;
+  }
+
+  openNews(id: number) {
+    console.debug('[AdminPage] openNews', id);
+    this.selectedNewsId.set(id);
+  }
+
+  closeNews() {
+    console.debug('[AdminPage] closeNews');
+    this.selectedNewsId.set(null);
+  }
+
+  selectedNews(): any | null {
+    const id = this.selectedNewsId?.();
+    if (id == null) return null;
+    return this.news?.find(i => i?.id === id) ?? null;
+  }
+
+  openEvent(id: number) {
+    console.debug('[AdminPage] openEvent', id);
+    this.selectedEventId.set(id);
+  }
+
+  closeEvent() {
+    console.debug('[AdminPage] closeEvent');
+    this.selectedEventId.set(null);
+  }
+
+  selectedEvent(): any | null {
+    const id = this.selectedEventId?.();
+    if (id == null) return null;
+    return this.events?.find(i => i?.id === id) ?? null;
+  }
+
+  openUser(id: number) {
+    console.debug('[AdminPage] openUser', id);
+    this.selectedUserId.set(id);
+  }
+
+  closeUser() {
+    console.debug('[AdminPage] closeUser');
+    this.selectedUserId.set(null);
+  }
+
+  selectedUser(): any | null {
+    const id = this.selectedUserId?.();
+    if (id == null) return null;
+    return this.users?.find(i => i?.id === id) ?? null;
   }
 
   trackById = (_: number, el: any) => el?.id ?? _;

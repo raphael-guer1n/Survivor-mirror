@@ -227,7 +227,7 @@
 
         <div class="grid">
             @for (n of filteredNews; track n?.id ?? $index) {
-                <article class="card">
+                <article class="card card-clickable" (click)="openNews(n.id)" title="Edit">
                     <header class="card-header">
                         <h3 class="card-title">{{ n.title }}</h3>
                         @if (n.category) {
@@ -254,6 +254,18 @@
 
         @if (filteredNews.length === 0 && !loading()) {
             <div class="empty">No results for "{{ query }}".</div>
+        }
+
+        @if (selectedPartnerId() !== null) {
+            <div class="admin-modal-overlay" (click)="closePartner()">
+                <div class="admin-modal" (click)="$event.stopPropagation()">
+                    <app-admin-partners-edit-popup
+                            [partnerId]="selectedPartnerId()!"
+                            [partner]="selectedPartner()"
+                            (closed)="closePartner()"
+                    ></app-admin-partners-edit-popup>
+                </div>
+            </div>
         }
     }
 
