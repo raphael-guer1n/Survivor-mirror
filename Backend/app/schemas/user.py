@@ -18,6 +18,7 @@ class UserCreate(BaseModel):
     password: str
     founder_id: Optional[int] = None
     investor_id: Optional[int] = None
+    image_s3_key: Optional[str] = None
 
 class UserUpdate(BaseModel):
     email: Optional[str] = None
@@ -25,6 +26,7 @@ class UserUpdate(BaseModel):
     role: Optional[str] = None
     founder_id: Optional[int] = None
     investor_id: Optional[int] = None
+    image_s3_key: Optional[str] = None
 
 class UserOut(BaseModel):
     id: int
@@ -33,3 +35,7 @@ class UserOut(BaseModel):
     role: str
     founder_id: Optional[int] = None
     investor_id: Optional[int] = None
+    image_s3_key: Optional[str] = None
+
+    class Config:
+        from_attributes = True

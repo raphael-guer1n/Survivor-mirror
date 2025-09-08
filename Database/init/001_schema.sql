@@ -1,4 +1,3 @@
-
 SET sql_mode = 'STRICT_TRANS_TABLES';
 SET NAMES utf8mb4;
 SET time_zone = '+00:00';
@@ -22,8 +21,8 @@ CREATE TABLE IF NOT EXISTS startups (
   needs TEXT,
   sector VARCHAR(100),
   maturity VARCHAR(100),
-  UNIQUE KEY ux_startups_email (email)
-  image_s3_key VARCHAR(512) NULL;
+  UNIQUE KEY ux_startups_email (email),
+  image_s3_key VARCHAR(512) NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- Founders
@@ -31,8 +30,8 @@ CREATE TABLE IF NOT EXISTS founders (
   id INT PRIMARY KEY AUTO_INCREMENT,
   name VARCHAR(255) NOT NULL,
   startup_id INT NOT NULL,
+  image_s3_key VARCHAR(512) NULL,
   FOREIGN KEY (startup_id) REFERENCES startups(id) ON DELETE CASCADE
-  image_s3_key VARCHAR(512) NULL;
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- Investors
@@ -47,8 +46,8 @@ CREATE TABLE IF NOT EXISTS investors (
   description TEXT,
   investor_type VARCHAR(100),
   investment_focus VARCHAR(255),
-  UNIQUE KEY ux_investors_email (email)
-  image_s3_key VARCHAR(512) NULL;
+  UNIQUE KEY ux_investors_email (email),
+  image_s3_key VARCHAR(512) NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- Partners
@@ -62,8 +61,8 @@ CREATE TABLE IF NOT EXISTS partners (
   created_at DATE,
   description TEXT,
   partnership_type VARCHAR(100),
-  UNIQUE KEY ux_partners_email (email)
-  image_s3_key VARCHAR(512) NULL;
+  UNIQUE KEY ux_partners_email (email),
+  image_s3_key VARCHAR(512) NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- News
@@ -75,8 +74,8 @@ CREATE TABLE IF NOT EXISTS news (
   category VARCHAR(100),
   startup_id INT,
   description TEXT,
+  image_s3_key VARCHAR(512) NULL,
   FOREIGN KEY (startup_id) REFERENCES startups(id) ON DELETE SET NULL
-  image_s3_key VARCHAR(512) NULL;
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- Events
@@ -87,8 +86,8 @@ CREATE TABLE IF NOT EXISTS events (
   location VARCHAR(255),
   description TEXT,
   event_type VARCHAR(100),
-  target_audience VARCHAR(255)
-  image_s3_key VARCHAR(512) NULL;
+  target_audience VARCHAR(255),
+  image_s3_key VARCHAR(512) NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- Users
@@ -102,16 +101,15 @@ CREATE TABLE IF NOT EXISTS users (
   password_hash VARCHAR(512),
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
   UNIQUE KEY ux_users_email (email),
+  image_s3_key VARCHAR(512) NULL,
   FOREIGN KEY (founder_id) REFERENCES founders(id) ON DELETE SET NULL,
   FOREIGN KEY (investor_id) REFERENCES investors(id) ON DELETE SET NULL
-  image_s3_key VARCHAR(512) NULL;
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- Indexes
 CREATE INDEX idx_startups_sector ON startups(sector);
 CREATE INDEX idx_news_startup_id ON news(startup_id);
 CREATE INDEX idx_users_role ON users(role);
-
 -- Email verification codes
 CREATE TABLE IF NOT EXISTS email_verifications (
     email VARCHAR(255) PRIMARY KEY,

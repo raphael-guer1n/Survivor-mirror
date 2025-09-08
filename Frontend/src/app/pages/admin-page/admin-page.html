@@ -1,0 +1,379 @@
+<section class="admin-page content" (keydown.escape)="closeStartup()">
+    <header class="admin-header">
+        <h1>Administration</h1>
+        <div class="entity-tabs">
+            @for (e of entities; track e) {
+                <button
+                        type="button"
+                        class="tab"
+                        [class.active]="e === selectedEntity()"
+                        (click)="onEntityChange(e)"
+                >
+                    {{ e | titlecase }}
+                </button>
+            }
+        </div>
+    </header>
+
+    @if (errorMsg()) {
+        <div class="alert error">{{ errorMsg() }}</div>
+    }
+    @if (loading()) {
+        <div class="loading">Loading…</div>
+    }
+
+    @if (selectedEntity() === 'startups') {
+        <div class="toolbar card">
+            <input
+                    type="search"
+                    [(ngModel)]="query"
+                    placeholder="Search"
+                    aria-label="Search"
+                    class="search"
+            />
+
+            @for (f of startupFilters; track f[0]) {
+                <select [(ngModel)]="filterValues[f[0]]" aria-label="Filter by {{ f[0] }}" class="select">
+                    <option value="">{{ f[0] | titlecase }}</option>
+                    @for (v of f.slice(1); track v) {
+                        <option [value]="v">{{ v }}</option>
+                    }
+                </select>
+            }
+        </div>
+
+        <div class="grid">
+            @for (s of filteredStartups; track s?.id ?? $index) {
+                <article class="card card-clickable" (click)="openStartup(s.id)" title="Éditer/Supprimer">
+                    <header class="card-header">
+                        <h3 class="card-title">{{ s.name }}</h3>
+                        @if (s.maturity) {
+                            <span class="badge">{{ s.maturity }}</span>
+                        }
+                    </header>
+                    <div class="card-body">
+                        <div class="row">
+                            <span class="label">Mail:</span>
+                            @if (s.email) {
+                                <a [href]="'mailto:' + s.email" (click)="$event.stopPropagation()">{{ s.email }}</a>
+                            } @else {
+                                <span class="muted">-</span>
+                            }
+                        </div>
+                        <div class="row">
+                            <span class="label">Sector:</span>
+                            <span>{{ s.sector || '—' }}</span>
+                        </div>
+                        <div class="row">
+                            <span class="label">Legal Status:</span>
+                            <span>{{ s.legal_status || '—' }}</span>
+                        </div>
+                        <div class="row">
+                            <span class="label">Phone:</span>
+                            <span>{{ s.phone || '—' }}</span>
+                        </div>
+                        <div class="row">
+                            <span class="label">Address:</span>
+                            <span>{{ s.address || '—' }}</span>
+                        </div>
+                    </div>
+                </article>
+            }
+        </div>
+
+        @if (filteredStartups.length === 0 && !loading()) {
+            <div class="empty">No results for "{{ query }}".</div>
+        }
+
+        @if (selectedStartupId() !== null) {
+            <div class="admin-modal-overlay" (click)="closeStartup()">
+                <div class="admin-modal" (click)="$event.stopPropagation()">
+                    <app-admin-startup-edit-popup
+                            [startupId]="selectedStartupId()!"
+                            (closed)="closeStartup()"
+                    ></app-admin-startup-edit-popup>
+                </div>
+            </div>
+        }
+
+    }
+    <!-- Investors -->
+    @if (selectedEntity() === 'investors') {
+        <div class="toolbar card">
+            <input
+                    type="search"
+                    [(ngModel)]="query"
+                    placeholder="Search investors"
+                    aria-label="Search investors"
+                    class="search"
+            />
+        </div>
+
+        <div class="grid">
+            @for (i of filteredInvestors; track i?.id ?? $index) {
+                <article class="card card-clickable" (click)="openInvestor(i.id)" title="Edit">
+                    <header class="card-header">
+                        <h3 class="card-title">{{ i.name }}</h3>
+                        @if (i.investor_type) {
+                            <span class="badge">{{ i.investor_type }}</span>
+                        }
+                    </header>
+                    <div class="card-body">
+                        <div class="row">
+                            <span class="label">Mail:</span>
+                            <span>{{ i.email || '—' }}</span>
+                        </div>
+                        <div class="row">
+                            <span class="label">Focus:</span>
+                            <span>{{ i.investment_focus || '—' }}</span>
+                        </div>
+                        <div class="row">
+                            <span class="label">Phone:</span>
+                            <span>{{ i.phone || '—' }}</span>
+                        </div>
+                        <div class="row">
+                            <span class="label">Address:</span>
+                            <span>{{ i.address || '—' }}</span>
+                        </div>
+                    </div>
+                </article>
+            }
+        </div>
+
+        @if (filteredInvestors.length === 0 && !loading()) {
+            <div class="empty">No results for "{{ query }}".</div>
+        }
+
+        @if (selectedInvestorId() !== null) {
+            <div class="admin-modal-overlay" (click)="closeInvestor()">
+                <div class="admin-modal" (click)="$event.stopPropagation()">
+                    <app-admin-investor-edit-popup
+                            [investorId]="selectedInvestorId()!"
+                            (closed)="closeInvestor()"
+                    ></app-admin-investor-edit-popup>
+                </div>
+            </div>
+        }
+    }
+
+    <!-- Partners -->
+    @if (selectedEntity() === 'partners') {
+        <div class="toolbar card">
+            <input
+                    type="search"
+                    [(ngModel)]="query"
+                    placeholder="Search partners"
+                    aria-label="Search partners"
+                    class="search"
+            />
+        </div>
+
+        <div class="grid">
+            @for (p of filteredPartners; track p?.id ?? $index) {
+                <article class="card card-clickable" (click)="openPartner(p.id)" title="Edit">
+                    <header class="card-header">
+                        <h3 class="card-title">{{ p.name }}</h3>
+                        @if (p.partnership_type) {
+                            <span class="badge">{{ p.partnership_type }}</span>
+                        }
+                    </header>
+                    <div class="card-body">
+                        <div class="row">
+                            <span class="label">Mail:</span>
+                            <span>{{ p.email || '—' }}</span>
+                        </div>
+                        <div class="row">
+                            <span class="label">Phone:</span>
+                            <span>{{ p.phone || '—' }}</span>
+                        </div>
+                        <div class="row">
+                            <span class="label">Address:</span>
+                            <span>{{ p.address || '—' }}</span>
+                        </div>
+                    </div>
+                </article>
+            }
+        </div>
+
+        @if (filteredPartners.length === 0 && !loading()) {
+            <div class="empty">No results for "{{ query }}".</div>
+        }
+
+        @if (selectedPartnerId() !== null) {
+            <div class="admin-modal-overlay" (click)="closePartner()">
+                <div class="admin-modal" (click)="$event.stopPropagation()">
+                    <app-admin-partners-edit-popup
+                            [partnerId]="selectedPartnerId()!"
+                            (closed)="closePartner()"
+                    ></app-admin-partners-edit-popup>
+                </div>
+            </div>
+        }
+    }
+
+    <!-- News -->
+    @if (selectedEntity() === 'news') {
+        <div class="toolbar card">
+            <input
+                    type="search"
+                    [(ngModel)]="query"
+                    placeholder="Search news"
+                    aria-label="Search news"
+                    class="search"
+            />
+        </div>
+
+        <div class="grid">
+            @for (n of filteredNews; track n?.id ?? $index) {
+                <article class="card card-clickable" (click)="openNews(n.id)" title="Edit">
+                    <header class="card-header">
+                        <h3 class="card-title">{{ n.title }}</h3>
+                        @if (n.category) {
+                            <span class="badge">{{ n.category }}</span>
+                        }
+                    </header>
+                    <div class="card-body">
+                        <div class="row">
+                            <span class="label">Date:</span>
+                            <span>{{ n.news_date || '—' }}</span>
+                        </div>
+                        <div class="row">
+                            <span class="label">Location:</span>
+                            <span>{{ n.location || '—' }}</span>
+                        </div>
+                        <div class="row">
+                            <span class="label">Startup ID:</span>
+                            <span>{{ n.startup_id || '—' }}</span>
+                        </div>
+                    </div>
+                </article>
+            }
+        </div>
+
+        @if (filteredNews.length === 0 && !loading()) {
+            <div class="empty">No results for "{{ query }}".</div>
+        }
+
+        @if (selectedNewsId() !== null) {
+            <div class="admin-modal-overlay" (click)="closeNews()">
+                <div class="admin-modal" (click)="$event.stopPropagation()">
+                    <app-admin-news-edit-popup
+                            [newsId]="selectedNewsId()!"
+                            (closed)="closeNews()"
+                    ></app-admin-news-edit-popup>
+                </div>
+            </div>
+        }
+    }
+
+    <!-- Events -->
+    @if (selectedEntity() === 'events') {
+        <div class="toolbar card">
+            <input
+                    type="search"
+                    [(ngModel)]="query"
+                    placeholder="Search events"
+                    aria-label="Search events"
+                    class="search"
+            />
+        </div>
+
+        <div class="grid">
+            @for (e of filteredEvents; track e?.id ?? $index) {
+                <article class="card card-clickable" (click)="openEvent(e.id)" title="Edit">
+                    <header class="card-header">
+                        <h3 class="card-title">{{ e.name }}</h3>
+                        @if (e.event_type) {
+                            <span class="badge">{{ e.event_type }}</span>
+                        }
+                    </header>
+                    <div class="card-body">
+                        <div class="row">
+                            <span class="label">Dates:</span>
+                            <span>{{ e.dates || '—' }}</span>
+                        </div>
+                        <div class="row">
+                            <span class="label">Location:</span>
+                            <span>{{ e.location || '—' }}</span>
+                        </div>
+                        <div class="row">
+                            <span class="label">Audience:</span>
+                            <span>{{ e.target_audience || '—' }}</span>
+                        </div>
+                    </div>
+                </article>
+            }
+        </div>
+
+        @if (filteredEvents.length === 0 && !loading()) {
+            <div class="empty">No results for "{{ query }}".</div>
+        }
+
+        @if (selectedEventId() !== null) {
+            <div class="admin-modal-overlay" (click)="closeEvent()">
+                <div class="admin-modal" (click)="$event.stopPropagation()">
+                    <app-admin-events-edit-popup
+                            [eventsId]="selectedEventId()!"
+                            (closed)="closeEvent()"
+                    ></app-admin-events-edit-popup>
+                </div>
+            </div>
+        }
+    }
+
+    <!-- Users -->
+    @if (selectedEntity() === 'users') {
+        <div class="toolbar card">
+            <input
+                    type="search"
+                    [(ngModel)]="query"
+                    placeholder="Search users"
+                    aria-label="Search users"
+                    class="search"
+            />
+        </div>
+
+        <div class="grid">
+            @for (u of filteredUsers; track u?.id ?? $index) {
+                <article class="card card-clickable" (click)="openUser(u.id)" title="Edit">
+                    <header class="card-header">
+                        <h3 class="card-title">{{ u.name || u.email }}</h3>
+                        @if (u.role) {
+                            <span class="badge">{{ u.role }}</span>
+                        }
+                    </header>
+                    <div class="card-body">
+                        <div class="row">
+                            <span class="label">Email:</span>
+                            <span>{{ u.email || '—' }}</span>
+                        </div>
+                        <div class="row">
+                            <span class="label">Founder ID:</span>
+                            <span>{{ u.founder_id || '—' }}</span>
+                        </div>
+                        <div class="row">
+                            <span class="label">Investor ID:</span>
+                            <span>{{ u.investor_id || '—' }}</span>
+                        </div>
+                    </div>
+                </article>
+            }
+        </div>
+
+        @if (filteredUsers.length === 0 && !loading()) {
+            <div class="empty">No results for "{{ query }}".</div>
+        }
+
+        @if (selectedUserId() !== null) {
+            <div class="admin-modal-overlay" (click)="closeUser()">
+                <div class="admin-modal" (click)="$event.stopPropagation()">
+                    <app-admin-users-edit-popup
+                            [usersId]="selectedUserId()!"
+                            (closed)="closeUser()"
+                    ></app-admin-users-edit-popup>
+                </div>
+            </div>
+        }
+    }
+
+</section>

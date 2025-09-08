@@ -23,6 +23,9 @@
         @if (isAuth()) {
             <a routerLink="/dashboard" routerLinkActive="active" (click)="closeMenu()">Dashboard</a>
             <a routerLink="/account" routerLinkActive="active" (click)="closeMenu()">Account</a>
+            @if (isAdmin()) {
+                <a routerLink="/admin" routerLinkActive="active" (click)="closeMenu()">Admin</a>
+            }
         } @else {
             <a routerLink="/login" routerLinkActive="active" (click)="closeMenu()">Login</a>
             <a routerLink="/register" routerLinkActive="active" (click)="closeMenu()">Register</a>
