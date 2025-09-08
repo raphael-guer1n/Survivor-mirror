@@ -123,3 +123,12 @@ CREATE TABLE IF NOT EXISTS sync_state (
   last_id INT NOT NULL DEFAULT 0,
   updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+INSERT INTO sync_state (entity, last_id) VALUES
+  ('startups', 0),
+  ('founders', 0),
+  ('investors', 0),
+  ('partners', 0),
+  ('news', 0),
+  ('events', 0),
+  ('users', 0);
