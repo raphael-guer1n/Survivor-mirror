@@ -8,7 +8,7 @@ import { BackendInterface } from '../../../cores/interfaces/backend/backend-inte
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './admin-startup-edit-popup.html',
-  styleUrl: './admin-startup-edit-popup.css'
+  styleUrls: ['./admin-startup-edit-popup.css', './../admin-popups.css']
 })
 export class AdminStartupEditPopup implements OnChanges {
   @Input() startupId!: number;
