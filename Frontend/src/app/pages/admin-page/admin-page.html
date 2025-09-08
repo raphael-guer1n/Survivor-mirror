@@ -369,7 +369,7 @@
                 <div class="admin-modal" (click)="$event.stopPropagation()">
                     <app-admin-users-edit-popup
                             [usersId]="selectedUserId()!"
-                            (closed)="closeEvent()"
+                            (closed)="closeUser()"
                     ></app-admin-users-edit-popup>
                 </div>
             </div>

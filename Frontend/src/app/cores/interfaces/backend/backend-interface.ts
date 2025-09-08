@@ -182,7 +182,7 @@ export class BackendInterface {
   }
 
   getUsers(options?: RequestOptions): Observable<User[]> {
-    return this.http.get<User[]>(`/users`, options);
+    return this.http.get<User[]>(`/users/`, options);
   }
 
   getUser(userId: number, options?: RequestOptions): Observable<User> {
