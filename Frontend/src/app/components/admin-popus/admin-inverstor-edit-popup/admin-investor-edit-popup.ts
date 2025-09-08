@@ -1,28 +1,25 @@
-import {Component, EventEmitter, inject, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
+import {Component, EventEmitter, inject, Input, OnChanges, Output, SimpleChanges} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {FormBuilder, ReactiveFormsModule, Validators} from '@angular/forms';
-import {BackendInterface} from "../../../cores/interfaces/backend/backend-interface";
-import {Investor} from "../../../cores/interfaces/backend/dtos";
+import {BackendInterface} from '../../../cores/interfaces/backend/backend-interface';
 
 @Component({
-  selector: 'app-admin-inverstor-edit-popup',
+  selector: 'app-admin-investor-edit-popup',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './admin-investor-edit-popup.html',
   styleUrls: ['./admin-investor-edit-popup.css', './../admin-popups.css']
 })
-export class AdminInvestorEditPopup implements OnInit, OnChanges {
+export class AdminInvestorEditPopup implements OnChanges {
+  @Input() investorId!: number;
+  @Output() closed = new EventEmitter<void>();
+
   private backend = inject(BackendInterface);
   private fb = inject(FormBuilder);
 
-  @Input() investorId!: number;
-  @Input() investor?: Investor | null;
-  
-  @Output() closed = new EventEmitter<void>();
-  @Output() saved = new EventEmitter<Investor>();
-
   loading = false;
   saving = false;
+  deleting = false;
   error: string | null = null;
 
   form = this.fb.group({
@@ -36,62 +33,74 @@ export class AdminInvestorEditPopup implements OnInit, OnChanges {
     description: [''],
   });
 
-  ngOnInit(): void {
-    this.patchFromInput();
-  }
-
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['investor'] || changes['investorId']) {
-      this.patchFromInput();
+    if ('investorId' in changes && this.investorId != null) {
+      this.fetch();
     }
   }
 
-  private patchFromInput(): void {
+  private fetch(): void {
+    this.loading = true;
     this.error = null;
-    const data = this.investor;
-    if (!data) return;
-    this.form.patchValue({
-      name: data.name ?? '',
-      email: data.email ?? '',
-      legal_status: data.legal_status ?? '',
-      address: data.address ?? '',
-      phone: data.phone ?? '',
-      investor_type: data.investor_type ?? '',
-      investment_focus: data.investment_focus ?? '',
-      description: data.description ?? '',
-    }, {emitEvent: false});
-  }
-
-  close(): void {
-    if (this.saving) return;
-    this.closed.emit();
+    this.backend.getInvestor(this.investorId).subscribe({
+      next: (d: any) => {
+        this.form.reset({
+          name: d.name ?? '',
+          email: d.email ?? '',
+          legal_status: d.legal_status ?? '',
+          address: d.address ?? '',
+          phone: d.phone ?? '',
+          investor_type: d.investor_type ?? '',
+          investment_focus: d.investment_focus ?? '',
+          description: d.description ?? '',
+        });
+        this.loading = false;
+      },
+      error: (e) => {
+        this.error = 'Cannot load inverstor details.';
+        this.loading = false;
+        console.error(e);
+      }
+    });
   }
 
   save(): void {
-    if (this.form.invalid || this.saving) return;
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return;
+    }
     this.saving = true;
     this.error = null;
-
-    const v = this.form.value;
-    this.backend.updateInvestor(this.investorId, {
-      name: v.name ?? null,
-      email: v.email ?? null,
-      legal_status: v.legal_status ?? null,
-      address: v.address ?? null,
-      phone: v.phone ?? null,
-      investor_type: v.investor_type ?? null,
-      investment_focus: v.investment_focus ?? null,
-      description: v.description ?? null,
-    }).subscribe({
-      next: (updated) => {
+    const payload = this.form.value;
+    this.backend.updateInvestor(this.investorId, payload).subscribe({
+      next: () => {
         this.saving = false;
-        this.saved.emit(updated);
-        this.closed.emit();
+        this.close();
       },
       error: (e) => {
+        this.error = e?.message ?? 'Save failed.';
         this.saving = false;
-        this.error = e?.message ?? 'Failed to save investor.';
       }
     });
+  }
+
+  remove(): void {
+    if (!confirm('Delete investor ?')) return;
+    this.deleting = true;
+    this.error = null;
+    this.backend.deleteInvestor(this.investorId).subscribe({
+      next: () => {
+        this.deleting = false;
+        this.close();
+      },
+      error: (e) => {
+        this.error = e?.message ?? 'Delete failed.';
+        this.deleting = false;
+      }
+    });
+  }
+
+  close(): void {
+    this.closed.emit();
   }
 }

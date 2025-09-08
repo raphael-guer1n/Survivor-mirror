@@ -14,7 +14,7 @@ type EntityType = 'startups' | 'investors' | 'partners' | 'news' | 'events' | 'u
 @Component({
   selector: 'app-admin-page',
   standalone: true,
-  imports: [CommonModule, AdminStartupEditPopup, FormsModule, AdminPartnersEditPopup, AdminInvestorEditPopup, AdminPartnersEditPopup, AdminNewsEditPopup],
+  imports: [CommonModule, AdminStartupEditPopup, FormsModule, AdminPartnersEditPopup, AdminInvestorEditPopup, AdminPartnersEditPopup, AdminNewsEditPopup, AdminInvestorEditPopup],
   templateUrl: './admin-page.html',
   styleUrl: './admin-page.css'
 })
@@ -296,12 +296,6 @@ export class AdminPage implements OnInit {
   closeInvestor() {
     console.debug('[AdminPage] closeInvestor');
     this.selectedInvestorId.set(null);
-  }
-
-  selectedInvestor(): any | null {
-    const id = this.selectedInvestorId?.();
-    if (id == null) return null;
-    return this.investors?.find(i => i?.id === id) ?? null;
   }
 
   openPartner(id: number) {

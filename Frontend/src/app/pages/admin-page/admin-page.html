@@ -147,11 +147,10 @@
         @if (selectedInvestorId() !== null) {
             <div class="admin-modal-overlay" (click)="closeInvestor()">
                 <div class="admin-modal" (click)="$event.stopPropagation()">
-                    <app-admin-inverstor-edit-popup
+                    <app-admin-investor-edit-popup
                             [investorId]="selectedInvestorId()!"
-                            [investor]="selectedInvestor()"
                             (closed)="closeInvestor()"
-                    ></app-admin-inverstor-edit-popup>
+                    ></app-admin-investor-edit-popup>
                 </div>
             </div>
         }
