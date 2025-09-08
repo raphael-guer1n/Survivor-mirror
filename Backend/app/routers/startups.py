@@ -1,7 +1,8 @@
 from fastapi import APIRouter, HTTPException, Query, UploadFile, File, Depends
 from app.db.connection import get_connection
 from app.schemas.startup import StartupCreate, StartupUpdate, StartupOut, StartupDetail, FounderImage
-from app.routers.auth import require_admin, require_founder, require_founder_of_startup, get_user_name
+from app.routers.auth import require_founder, require_founder_of_startup, get_user_name
+from app.utils.s3 import upload_file_to_s3, generate_presigned_url
 
 router = APIRouter(prefix="/startups", tags=["startups"])
 
