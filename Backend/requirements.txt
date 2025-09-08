@@ -7,3 +7,4 @@ python-dotenv
 requests
 APScheduler
 python_jose
+pytest
