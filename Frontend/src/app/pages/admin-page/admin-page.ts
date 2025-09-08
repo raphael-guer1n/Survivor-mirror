@@ -9,13 +9,14 @@ import {
 import {AdminPartnersEditPopup} from "../../components/admin-popus/admin-partners-edit-popup/admin-partners-edit-popup";
 import {AdminNewsEditPopup} from "../../components/admin-popus/admin-news-edit-popup/admin-news-edit-popup";
 import {AdminEventsEditPopup} from "../../components/admin-popus/admin-events-edit-popup/admin-events-edit-popup";
+import {AdminUsersEditPopup} from "../../components/admin-popus/admin-users-edit-popup/admin-users-edit-popup";
 
 type EntityType = 'startups' | 'investors' | 'partners' | 'news' | 'events' | 'users';
 
 @Component({
   selector: 'app-admin-page',
   standalone: true,
-  imports: [CommonModule, AdminStartupEditPopup, FormsModule, AdminPartnersEditPopup, AdminInvestorEditPopup, AdminPartnersEditPopup, AdminNewsEditPopup, AdminInvestorEditPopup, AdminEventsEditPopup],
+  imports: [CommonModule, AdminStartupEditPopup, FormsModule, AdminPartnersEditPopup, AdminInvestorEditPopup, AdminPartnersEditPopup, AdminNewsEditPopup, AdminInvestorEditPopup, AdminEventsEditPopup, AdminUsersEditPopup],
   templateUrl: './admin-page.html',
   styleUrl: './admin-page.css'
 })
@@ -338,12 +339,5 @@ export class AdminPage implements OnInit {
     console.debug('[AdminPage] closeUser');
     this.selectedUserId.set(null);
   }
-
-  selectedUser(): any | null {
-    const id = this.selectedUserId?.();
-    if (id == null) return null;
-    return this.users?.find(i => i?.id === id) ?? null;
-  }
-
   trackById = (_: number, el: any) => el?.id ?? _;
 }

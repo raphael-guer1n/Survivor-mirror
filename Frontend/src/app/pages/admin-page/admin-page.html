@@ -335,7 +335,7 @@
 
         <div class="grid">
             @for (u of filteredUsers; track u?.id ?? $index) {
-                <article class="card">
+                <article class="card card-clickable" (click)="openUser(u.id)" title="Edit">
                     <header class="card-header">
                         <h3 class="card-title">{{ u.name || u.email }}</h3>
                         @if (u.role) {
@@ -362,6 +362,17 @@
 
         @if (filteredUsers.length === 0 && !loading()) {
             <div class="empty">No results for "{{ query }}".</div>
+        }
+
+        @if (selectedUserId() !== null) {
+            <div class="admin-modal-overlay" (click)="closeUser()">
+                <div class="admin-modal" (click)="$event.stopPropagation()">
+                    <app-admin-users-edit-popup
+                            [usersId]="selectedUserId()!"
+                            (closed)="closeEvent()"
+                    ></app-admin-users-edit-popup>
+                </div>
+            </div>
         }
     }
 
