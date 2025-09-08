@@ -1,0 +1,55 @@
+<div class="modal-overlay" (click)="close()">
+    <div class="modal" (click)="$event.stopPropagation()">
+        <header class="modal-header">
+            <h2>Edit event #{{ eventsId }}</h2>
+            <button type="button" class="btn ghost" (click)="close()">Close</button>
+        </header>
+
+        @if (error) {
+            <div class="alert error">{{ error }}</div>
+        }
+        @if (loading) {
+            <div class="loading">Loading…</div>
+        }
+
+        @if (!loading) {
+            <form [formGroup]="form" (ngSubmit)="$event.preventDefault()" class="form-grid">
+                <label>
+                    Name
+                    <input formControlName="name" placeholder="Investor name"/>
+                </label>
+                <label>
+                    Dates
+                    <input formControlName="dates" type="date" placeholder="Dates"/>
+                </label>
+                <label>
+                    Location
+                    <input formControlName="location" placeholder="Location"/>
+                </label>
+                <label>
+                    Event type
+                    <input formControlName="event_type" placeholder="Event type"/>
+                </label>
+                <label>
+                    Target audience
+                    <input formControlName="target_audience" placeholder="Target audience"/>
+                </label>
+                <label class="col-span-2">
+                    Description
+                    <textarea rows="6" formControlName="description" placeholder="Notes / description"></textarea>
+                </label>
+
+                <div class="actions col-span-2">
+                    <button type="button" class="btn" [disabled]="saving" (click)="save()">
+                        {{ saving ? 'Saving…' : 'Save' }}
+                    </button>
+                    <button type="button" class="btn ghost" (click)="close()">Cancel</button>
+                    <span class="spacer"></span>
+                    <button type="button" class="btn danger" [disabled]="deleting" (click)="remove()">
+                        {{ deleting ? 'Deleting…' : 'Delete' }}
+                    </button>
+                </div>
+            </form>
+        }
+    </div>
+</div>
