@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, Query, Depends
 from app.db.connection import get_connection
 from app.schemas.startup import StartupCreate, StartupUpdate, StartupOut, StartupDetail, FounderImage
-from app.routers.auth import require_admin
+from app.routers.auth import require_admin, require_founder, require_founder_of_startup, get_user_name
 
 router = APIRouter(prefix="/startups", tags=["startups"])
 
@@ -52,10 +52,14 @@ def get_startup(startup_id: int):
         conn.close()
 
 @router.post("/", response_model=StartupOut)
-def create_startup(startup: StartupCreate, admin=Depends(require_admin)):
+def create_startup(startup: StartupCreate, user=Depends(require_founder)):
+    user_id = user.get("sub")
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
     try:
+        cursor.execute("SELECT id FROM startups WHERE email = %s", (startup.email,))
+        if cursor.fetchone():
+            raise HTTPException(status_code=409, detail="A startup with this email already exists.")
         cursor.execute(
             """
             INSERT INTO startups (name, legal_status, address, email, phone, sector, maturity,
@@ -68,8 +72,22 @@ def create_startup(startup: StartupCreate, admin=Depends(require_admin)):
                 startup.social_media_url, startup.project_status, startup.needs,
             ),
         )
-        conn.commit()
         new_id = cursor.lastrowid
+        user_name = get_user_name(user_id)
+        cursor.execute(
+            """
+            INSERT INTO founders (name, startup_id) VALUES (%s, %s)
+            """,
+            (user_name, new_id)
+        )
+        new_founder_id = cursor.lastrowid
+        cursor.execute(
+            """
+            UPDATE users SET founder_id = %s WHERE id = %s
+            """,
+            (new_founder_id, user_id)
+        )
+        conn.commit()
         cursor.execute("SELECT * FROM startups WHERE id = %s", (new_id,))
         return cursor.fetchone()
     finally:
@@ -77,7 +95,7 @@ def create_startup(startup: StartupCreate, admin=Depends(require_admin)):
         conn.close()
 
 @router.put("/{startup_id}", response_model=StartupOut)
-def update_startup(startup_id: int, startup: StartupUpdate, admin=Depends(require_admin)):
+def update_startup(startup_id: int, startup: StartupUpdate, user=Depends(require_founder_of_startup)):
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
     try:
@@ -108,7 +126,7 @@ def update_startup(startup_id: int, startup: StartupUpdate, admin=Depends(requir
         conn.close()
 
 @router.delete("/{startup_id}")
-def delete_startup(startup_id: int, admin=Depends(require_admin)):
+def delete_startup(startup_id: int, user=Depends(require_founder_of_startup)):
     conn = get_connection()
     cursor = conn.cursor()
     try:
