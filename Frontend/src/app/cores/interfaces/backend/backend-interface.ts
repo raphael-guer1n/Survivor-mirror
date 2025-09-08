@@ -362,7 +362,6 @@ export class BackendInterface {
     role?: string | null;
     founder_id?: number | null;
     investor_id?: number | null;
-    password?: string | null;
   }, options?: RequestOptions): Observable<User> {
     return this.http.put<User>(`/users/${encodeURIComponent(String(userId))}`, payload, options);
   }
