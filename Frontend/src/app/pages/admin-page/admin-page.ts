@@ -3,13 +3,14 @@ import {CommonModule} from '@angular/common';
 import {BackendInterface} from '../../cores/interfaces/backend/backend-interface';
 import {AdminStartupEditPopup} from "../../components/admin-popus/admin-startup-edit-popup/admin-startup-edit-popup";
 import {FormsModule} from "@angular/forms";
+import {AdminInvestorEditPopup} from "../../components/admin-popus/admin-inverstor-edit-popup/admin-investor-edit-popup";
 
 type EntityType = 'startups' | 'investors' | 'partners' | 'news' | 'events' | 'users';
 
 @Component({
   selector: 'app-admin-page',
   standalone: true,
-  imports: [CommonModule, AdminStartupEditPopup, FormsModule],
+  imports: [CommonModule, AdminStartupEditPopup, FormsModule, AdminInvestorEditPopup],
   templateUrl: './admin-page.html',
   styleUrl: './admin-page.css'
 })
@@ -27,12 +28,12 @@ export class AdminPage implements OnInit {
   filtersBy: string[] = ['sector', 'maturity'];
   filterValues: Record<string, string> = {};
   selectedStartupId = signal<number | null>(null);
+  selectedInvestorId = signal<number | null>(null);
   investors: any[] = [];
   partners: any[] = [];
   news: any[] = [];
   events: any[] = [];
   users: any[] = [];
-
 
   ngOnInit(): void {
     this.filtersBy.forEach(k => (this.filterValues[k] ??= ''));
@@ -44,6 +45,7 @@ export class AdminPage implements OnInit {
     this.errorMsg.set(null);
     this.loading.set(false);
     this.selectedStartupId.set(null);
+    this.selectedInvestorId.set(null);
     this.loadForCurrentTab();
   }
 
@@ -276,6 +278,23 @@ export class AdminPage implements OnInit {
     console.debug('[AdminPage] closeStartup');
     this.selectedStartupId.set(null);
   }
+
+  openInvestor(id: number) {
+    console.debug('[AdminPage] openInvestor', id);
+    this.selectedInvestorId.set(id);
+  }
+
+  closeInvestor() {
+    console.debug('[AdminPage] closeInvestor');
+    this.selectedInvestorId.set(null);
+  }
+
+  selectedInvestor(): any | null {
+    const id = this.selectedInvestorId?.();
+    if (id == null) return null;
+    return this.investors?.find(i => i?.id === id) ?? null;
+  }
+
 
   trackById = (_: number, el: any) => el?.id ?? _;
 }
