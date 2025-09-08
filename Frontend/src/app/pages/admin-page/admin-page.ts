@@ -1,7 +1,7 @@
 import {Component, inject, OnInit, signal} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {BackendInterface} from '../../cores/interfaces/backend/backend-interface';
-import {AdminStartupEditPopup} from "../../components/admin-startup-edit-popup/admin-startup-edit-popup";
+import {AdminStartupEditPopup} from "../../components/admin-popus/admin-startup-edit-popup/admin-startup-edit-popup";
 import {FormsModule} from "@angular/forms";
 
 type EntityType = 'startups' | 'investors' | 'partners' | 'news' | 'events' | 'users';

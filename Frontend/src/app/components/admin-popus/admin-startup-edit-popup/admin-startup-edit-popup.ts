@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { BackendInterface } from '../../cores/interfaces/backend/backend-interface';
+import { BackendInterface } from '../../../cores/interfaces/backend/backend-interface';
 
 @Component({
   selector: 'app-admin-startup-edit-popup',
