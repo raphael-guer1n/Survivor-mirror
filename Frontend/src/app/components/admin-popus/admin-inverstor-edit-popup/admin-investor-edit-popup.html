@@ -1,0 +1,54 @@
+<div class="modal-overlay" (click)="close()">
+    <div class="modal" (click)="$event.stopPropagation()">
+        <header class="modal-header">
+            <h2>Edit investor #{{ investorId }}</h2>
+            <button type="button" class="btn ghost" (click)="close()">Close</button>
+        </header>
+
+        @if (error) {
+            <div class="alert error">{{ error }}</div>
+        }
+
+        <form [formGroup]="form" (ngSubmit)="$event.preventDefault()" class="form-grid">
+            <label>
+                Name
+                <input formControlName="name" placeholder="Investor name" />
+            </label>
+            <label>
+                Email
+                <input formControlName="email" type="email" placeholder="Email" />
+            </label>
+            <label>
+                Legal status
+                <input formControlName="legal_status" placeholder="Legal status" />
+            </label>
+            <label>
+                Phone
+                <input formControlName="phone" placeholder="Phone" />
+            </label>
+            <label class="col-span-2">
+                Address
+                <input formControlName="address" placeholder="Address" />
+            </label>
+            <label>
+                Investor type
+                <input formControlName="investor_type" placeholder="VC / Angel / Fund / ..." />
+            </label>
+            <label class="col-span-2">
+                Investment focus
+                <input formControlName="investment_focus" placeholder="SaaS, FinTech, Seed, Series A, ..." />
+            </label>
+            <label class="col-span-2">
+                Description
+                <textarea rows="6" formControlName="description" placeholder="Notes / description"></textarea>
+            </label>
+
+            <div class="actions col-span-2">
+                <button type="button" class="btn" [disabled]="saving" (click)="save()">
+                    {{ saving ? 'Saving…' : 'Save' }}
+                </button>
+                <button type="button" class="btn ghost" (click)="close()">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
