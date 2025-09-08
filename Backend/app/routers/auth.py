@@ -170,7 +170,8 @@ def require_admin(user=Depends(get_current_user)):
     return user
 
 def require_founder(user=Depends(get_current_user)):
-    if user.get("role") != "founder":
+    role = user.get("role")
+    if role != "founder" and role != "admin":
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="permission denied")
     return user
 
@@ -207,6 +208,35 @@ def get_user_name(user_id):
         if not user_row:
             raise HTTPException(status_code=404, detail="User not found")
         return user_row["name"]
+
+def require_investor(user=Depends(get_current_user)):
+    role = user.get("role")
+    if role != "investor" and role != "admin":
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="permission denied")
+    return user
+
+
+def require_investor_of_investor(investor_id, user=Depends(get_current_user)):
+    if user.get("role") == "admin":
+        return user
+    if user.get("role") != "investor":
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="permission denied")
+
+    user_id = user.get("sub")
+    conn = get_connection()
+    cursor = conn.cursor(dictionary=True)
+    try:
+        cursor.execute("SELECT investor_id FROM users WHERE id = %s", (user_id,))
+        row = cursor.fetchone()
+        if not row or not row["investor_id"]:
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="permission denied")
+        user_investor_id = row["investor_id"]
+        if int(user_investor_id) != int(investor_id):
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="permission denied: not this investor")
+        return user
+    finally:
+        cursor.close()
+        conn.close()
 
 
 @router.post("/register")
@@ -245,9 +275,7 @@ def login(credentials: UserLogin):
     cursor = conn.cursor(dictionary=True)
     try:
         cursor.execute(
-            "SELECT id, email, name, role, password_hash FROM users WHERE email = %s",
-            (email,)
-        )
+            "SELECT id, email, name, role, password_hash FROM users WHERE email = %s", (email,))
         row = cursor.fetchone()
         if not row or not row.get("password_hash"):
             raise HTTPException(status_code=401, detail="Invalid email or password")
