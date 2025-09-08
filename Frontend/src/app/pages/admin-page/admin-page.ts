@@ -3,14 +3,17 @@ import {CommonModule} from '@angular/common';
 import {BackendInterface} from '../../cores/interfaces/backend/backend-interface';
 import {AdminStartupEditPopup} from "../../components/admin-popus/admin-startup-edit-popup/admin-startup-edit-popup";
 import {FormsModule} from "@angular/forms";
-import {AdminInvestorEditPopup} from "../../components/admin-popus/admin-inverstor-edit-popup/admin-investor-edit-popup";
+import {
+  AdminInvestorEditPopup
+} from "../../components/admin-popus/admin-inverstor-edit-popup/admin-investor-edit-popup";
+import {AdminPartnersEditPopup} from "../../components/admin-popus/admin-partners-edit-popup/admin-partners-edit-popup";
 
 type EntityType = 'startups' | 'investors' | 'partners' | 'news' | 'events' | 'users';
 
 @Component({
   selector: 'app-admin-page',
   standalone: true,
-  imports: [CommonModule, AdminStartupEditPopup, FormsModule, AdminInvestorEditPopup],
+  imports: [CommonModule, AdminStartupEditPopup, FormsModule, AdminPartnersEditPopup, AdminInvestorEditPopup],
   templateUrl: './admin-page.html',
   styleUrl: './admin-page.css'
 })
@@ -29,6 +32,7 @@ export class AdminPage implements OnInit {
   filterValues: Record<string, string> = {};
   selectedStartupId = signal<number | null>(null);
   selectedInvestorId = signal<number | null>(null);
+  selectedPartnerId = signal<number | null>(null);
   investors: any[] = [];
   partners: any[] = [];
   news: any[] = [];
@@ -46,6 +50,7 @@ export class AdminPage implements OnInit {
     this.loading.set(false);
     this.selectedStartupId.set(null);
     this.selectedInvestorId.set(null);
+    this.selectedPartnerId.set(null);
     this.loadForCurrentTab();
   }
 
@@ -295,6 +300,21 @@ export class AdminPage implements OnInit {
     return this.investors?.find(i => i?.id === id) ?? null;
   }
 
+  openPartner(id: number) {
+    console.debug('[AdminPage] openPartner', id);
+    this.selectedPartnerId.set(id);
+  }
+
+  closePartner() {
+    console.debug('[AdminPage] closePartner');
+    this.selectedPartnerId.set(null);
+  }
+
+  selectedPartner(): any | null {
+    const id = this.selectedPartnerId?.();
+    if (id == null) return null;
+    return this.partners?.find(i => i?.id === id) ?? null;
+  }
 
   trackById = (_: number, el: any) => el?.id ?? _;
 }

@@ -171,7 +171,7 @@
 
         <div class="grid">
             @for (p of filteredPartners; track p?.id ?? $index) {
-                <article class="card">
+                <article class="card card-clickable" (click)="openPartner(p.id)" title="Edit">
                     <header class="card-header">
                         <h3 class="card-title">{{ p.name }}</h3>
                         @if (p.partnership_type) {
@@ -198,6 +198,18 @@
 
         @if (filteredPartners.length === 0 && !loading()) {
             <div class="empty">No results for "{{ query }}".</div>
+        }
+
+        @if (selectedPartnerId() !== null) {
+            <div class="admin-modal-overlay" (click)="closePartner()">
+                <div class="admin-modal" (click)="$event.stopPropagation()">
+                    <app-admin-partners-edit-popup
+                            [partnerId]="selectedPartnerId()!"
+                            [partner]="selectedPartner()"
+                            (closed)="closePartner()"
+                    ></app-admin-partners-edit-popup>
+                </div>
+            </div>
         }
     }
 
