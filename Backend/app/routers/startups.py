@@ -72,21 +72,22 @@ def create_startup(startup: StartupCreate, user=Depends(require_founder)):
                 startup.social_media_url, startup.project_status, startup.needs,
             ),
         )
-        new_id = cursor.lastrowid
-        user_name = get_user_name(user_id)
-        cursor.execute(
-            """
-            INSERT INTO founders (name, startup_id) VALUES (%s, %s)
-            """,
-            (user_name, new_id)
-        )
-        new_founder_id = cursor.lastrowid
-        cursor.execute(
-            """
-            UPDATE users SET founder_id = %s WHERE id = %s
-            """,
-            (new_founder_id, user_id)
-        )
+        if user.get("role") != "admin":
+            new_id = cursor.lastrowid
+            user_name = get_user_name(user_id)
+            cursor.execute(
+                """
+                INSERT INTO founders (name, startup_id) VALUES (%s, %s)
+                """,
+                (user_name, new_id)
+            )
+            new_founder_id = cursor.lastrowid
+            cursor.execute(
+                """
+                UPDATE users SET founder_id = %s WHERE id = %s
+                """,
+                (new_founder_id, user_id)
+            )
         conn.commit()
         cursor.execute("SELECT * FROM startups WHERE id = %s", (new_id,))
         return cursor.fetchone()
