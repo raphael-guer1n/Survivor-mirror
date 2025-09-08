@@ -280,7 +280,7 @@
 
         <div class="grid">
             @for (e of filteredEvents; track e?.id ?? $index) {
-                <article class="card">
+                <article class="card card-clickable" (click)="openEvent(e.id)" title="Edit">
                     <header class="card-header">
                         <h3 class="card-title">{{ e.name }}</h3>
                         @if (e.event_type) {
@@ -307,6 +307,17 @@
 
         @if (filteredEvents.length === 0 && !loading()) {
             <div class="empty">No results for "{{ query }}".</div>
+        }
+
+        @if (selectedEventId() !== null) {
+            <div class="admin-modal-overlay" (click)="closeEvent()">
+                <div class="admin-modal" (click)="$event.stopPropagation()">
+                    <app-admin-events-edit-popup
+                            [eventsId]="selectedEventId()!"
+                            (closed)="closeEvent()"
+                    ></app-admin-events-edit-popup>
+                </div>
+            </div>
         }
     }
 
