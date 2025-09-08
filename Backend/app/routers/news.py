@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, Query, Depends
 from app.db.connection import get_connection
 from app.schemas.news import NewsCreate, NewsUpdate, NewsOut
-from app.routers.auth import require_admin
+from app.routers.auth import require_founder, check_founder_of_startup
 
 router = APIRouter(prefix="/news", tags=["news"])
 
@@ -46,7 +46,8 @@ def get_news_item(news_id: int):
         conn.close()
 
 @router.post("/", response_model=NewsOut)
-def create_news(news: NewsCreate, admin=Depends(require_admin)):
+def create_news(news: NewsCreate, user=Depends(require_founder)):
+    check_founder_of_startup(user, news.startup_id)
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
     try:
@@ -79,14 +80,16 @@ def create_news(news: NewsCreate, admin=Depends(require_admin)):
         conn.close()
 
 @router.put("/{news_id}", response_model=NewsOut)
-def update_news(news_id: int, news: NewsUpdate, admin=Depends(require_admin)):
+def update_news(news_id: int, news: NewsUpdate, user=Depends(require_founder)):
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
     try:
-        cursor.execute("SELECT id FROM news WHERE id = %s", (news_id,))
-        if not cursor.fetchone():
+        cursor.execute("SELECT id, startup_id FROM news WHERE id = %s", (news_id,))
+        news_row = cursor.fetchone()
+        if not news_row:
             raise HTTPException(status_code=404, detail="News item not found")
-
+        startup_id = news_row["startup_id"]
+        check_founder_of_startup(user, startup_id)
         fields = []
         values = []
         for field, value in news.dict(exclude_unset=True).items():
@@ -116,13 +119,16 @@ def update_news(news_id: int, news: NewsUpdate, admin=Depends(require_admin)):
         conn.close()
 
 @router.delete("/{news_id}")
-def delete_news(news_id: int, admin=Depends(require_admin)):
+def delete_news(news_id: int, user=Depends(require_founder)):
     conn = get_connection()
-    cursor = conn.cursor()
+    cursor = conn.cursor(dictionary=True)
     try:
-        cursor.execute("SELECT id FROM news WHERE id = %s", (news_id,))
-        if not cursor.fetchone():
+        cursor.execute("SELECT id, startup_id FROM news WHERE id = %s", (news_id,))
+        news_row = cursor.fetchone()
+        if not news_row:
             raise HTTPException(status_code=404, detail="News item not found")
+        startup_id = news_row["startup_id"]
+        check_founder_of_startup(user, startup_id)
 
         cursor.execute("DELETE FROM news WHERE id = %s", (news_id,))
         conn.commit()
