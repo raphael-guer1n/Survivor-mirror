@@ -169,6 +169,46 @@ def require_admin(user=Depends(get_current_user)):
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="permission denied")
     return user
 
+def require_founder(user=Depends(get_current_user)):
+    if user.get("role") != "founder":
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="permission denied")
+    return user
+
+def require_founder_of_startup(startup_id, user=Depends(get_current_user)):
+    if user.get("role") == "admin":
+        return user
+    if user.get("role") != "founder":
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="permission denied")
+
+    user_id = user.get("sub")
+    conn = get_connection()
+    cursor = conn.cursor(dictionary=True)
+    try:
+        cursor.execute("SELECT founder_id FROM users WHERE id = %s", (user_id,))
+        row = cursor.fetchone()
+        if not row or not row["founder_id"]:
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="permission denied")
+        founder_id = row["founder_id"]
+
+        cursor.execute("SELECT id FROM founders WHERE id = %s AND startup_id = %s", (founder_id, startup_id))
+        link = cursor.fetchone()
+        if not link:
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="permission denied: not founder of this startup")
+        return user
+    finally:
+        cursor.close()
+        conn.close()
+
+def get_user_name(user_id):
+        conn = get_connection()
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("SELECT id, name FROM users WHERE id = %s", (user_id,))
+        user_row = cursor.fetchone()
+        if not user_row:
+            raise HTTPException(status_code=404, detail="User not found")
+        return user_row["name"]
+
+
 @router.post("/register")
 def register(user: UserRegister):
     email = user.email.strip().lower()
