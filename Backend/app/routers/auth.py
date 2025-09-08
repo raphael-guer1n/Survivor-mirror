@@ -231,7 +231,13 @@ def get_me(user=Depends(get_current_user)):
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
     try:
-        cursor.execute("SELECT id, email, name, role FROM users WHERE id = %s", (user_id,))
+        cursor.execute(
+            """
+            SELECT id, email, name, role, founder_id, investor_id, image_s3_key
+            FROM users WHERE id = %s
+            """,
+            (user_id,),
+        )
         row = cursor.fetchone()
         if not row:
             raise HTTPException(status_code=404, detail="User not found")
