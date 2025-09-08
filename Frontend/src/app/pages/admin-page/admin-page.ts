@@ -13,7 +13,7 @@ type EntityType = 'startups' | 'investors' | 'partners' | 'news' | 'events' | 'u
 @Component({
   selector: 'app-admin-page',
   standalone: true,
-  imports: [CommonModule, AdminStartupEditPopup, FormsModule, AdminPartnersEditPopup, AdminInvestorEditPopup],
+  imports: [CommonModule, AdminStartupEditPopup, FormsModule, AdminPartnersEditPopup, AdminInvestorEditPopup, AdminPartnersEditPopup],
   templateUrl: './admin-page.html',
   styleUrl: './admin-page.css'
 })

@@ -8,43 +8,52 @@
         @if (error) {
             <div class="alert error">{{ error }}</div>
         }
+        @if (loading) {
+            <div class="loading">Loading…</div>
+        }
 
-        <form [formGroup]="form" (ngSubmit)="$event.preventDefault()" class="form-grid">
-            <label>
-                Name
-                <input formControlName="name" placeholder="Partner name" />
-            </label>
-            <label>
-                Email
-                <input formControlName="email" type="email" placeholder="Email" />
-            </label>
-            <label>
-                Legal status
-                <input formControlName="legal_status" placeholder="Legal status" />
-            </label>
-            <label>
-                Phone
-                <input formControlName="phone" placeholder="Phone" />
-            </label>
-            <label class="col-span-2">
-                Address
-                <input formControlName="address" placeholder="Address" />
-            </label>
-            <label>
-                Partnership type
-                <input formControlName="partnership_type" placeholder="Association / Sponsor / ..." />
-            </label>
-            <label class="col-span-2">
-                Description
-                <textarea rows="6" formControlName="description" placeholder="Notes / description"></textarea>
-            </label>
+        @if (!loading) {
+            <form [formGroup]="form" (ngSubmit)="$event.preventDefault()" class="form-grid">
+                <label>
+                    Name
+                    <input formControlName="name" placeholder="Partner name"/>
+                </label>
+                <label>
+                    Email
+                    <input formControlName="email" type="email" placeholder="Email"/>
+                </label>
+                <label>
+                    Legal status
+                    <input formControlName="legal_status" placeholder="Legal status"/>
+                </label>
+                <label>
+                    Phone
+                    <input formControlName="phone" placeholder="Phone"/>
+                </label>
+                <label class="col-span-2">
+                    Address
+                    <input formControlName="address" placeholder="Address"/>
+                </label>
+                <label>
+                    Partnership type
+                    <input formControlName="partnership_type" placeholder="Association / Sponsor / ..."/>
+                </label>
+                <label class="col-span-2">
+                    Description
+                    <textarea rows="6" formControlName="description" placeholder="Notes / description"></textarea>
+                </label>
 
-            <div class="actions col-span-2">
-                <button type="button" class="btn" [disabled]="saving" (click)="save()">
-                    {{ saving ? 'Saving…' : 'Save' }}
-                </button>
-                <button type="button" class="btn ghost" (click)="close()">Cancel</button>
-            </div>
-        </form>
+                <div class="actions col-span-2">
+                    <button type="button" class="btn" [disabled]="saving" (click)="save()">
+                        {{ saving ? 'Saving…' : 'Save' }}
+                    </button>
+                    <button type="button" class="btn ghost" (click)="close()">Cancel</button>
+                    <span class="spacer"></span>
+                    <button type="button" class="btn danger" [disabled]="deleting" (click)="remove()">
+                        {{ deleting ? 'Deleting…' : 'Delete' }}
+                    </button>
+                </div>
+            </form>
+        }
     </div>
 </div>

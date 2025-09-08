@@ -1,8 +1,7 @@
-import {Component, EventEmitter, inject, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
+import {Component, EventEmitter, inject, Input, OnChanges, Output, SimpleChanges} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {FormBuilder, ReactiveFormsModule, Validators} from '@angular/forms';
 import {BackendInterface} from '../../../cores/interfaces/backend/backend-interface';
-import type {Partner} from '../../../cores/interfaces/backend/dtos';
 
 @Component({
   selector: 'app-admin-partners-edit-popup',
@@ -11,17 +10,16 @@ import type {Partner} from '../../../cores/interfaces/backend/dtos';
   templateUrl: './admin-partners-edit-popup.html',
   styleUrls: ['./admin-partners-edit-popup.css', './../admin-popups.css']
 })
-export class AdminPartnersEditPopup implements OnInit, OnChanges {
+export class AdminPartnersEditPopup implements OnChanges {
+  @Input() partnerId!: number;
+  @Output() closed = new EventEmitter<void>();
+
   private backend = inject(BackendInterface);
   private fb = inject(FormBuilder);
 
-  @Input() partnerId!: number;
-  @Input() partner?: Partner | null;
-
-  @Output() closed = new EventEmitter<void>();
-  @Output() saved = new EventEmitter<Partner>();
-
+  loading = false;
   saving = false;
+  deleting = false;
   error: string | null = null;
 
   form = this.fb.group({
@@ -34,60 +32,73 @@ export class AdminPartnersEditPopup implements OnInit, OnChanges {
     description: [''],
   });
 
-  ngOnInit(): void {
-    this.patchFromInput();
-  }
-
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['partner'] || changes['partnerId']) {
-      this.patchFromInput();
+    if ('partnerId' in changes && this.partnerId != null) {
+      this.fetch();
     }
   }
 
-  private patchFromInput(): void {
+  private fetch(): void {
+    this.loading = true;
     this.error = null;
-    const d = this.partner;
-    if (!d) return;
-    this.form.patchValue({
-      name: d.name ?? '',
-      email: d.email ?? '',
-      legal_status: d.legal_status ?? '',
-      address: d.address ?? '',
-      phone: d.phone ?? '',
-      partnership_type: d.partnership_type ?? '',
-      description: d.description ?? '',
-    }, {emitEvent: false});
-  }
-
-  close(): void {
-    if (this.saving) return;
-    this.closed.emit();
+    this.backend.getPartner(this.partnerId).subscribe({
+      next: (d: any) => {
+        this.form.reset({
+          name: d?.name ?? '',
+          email: d?.email ?? '',
+          legal_status: d?.legal_status ?? '',
+          phone: d?.phone ?? '',
+          address: d?.address ?? '',
+          partnership_type: d?.partnership_type ?? '',
+          description: d?.description ?? '',
+        });
+        this.loading = false;
+      },
+      error: (e) => {
+        this.error = 'Cannot load partner details.';
+        this.loading = false;
+        console.error(e);
+      }
+    });
   }
 
   save(): void {
-    if (this.form.invalid || this.saving) return;
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return;
+    }
     this.saving = true;
     this.error = null;
-
-    const v = this.form.value;
-    this.backend.updatePartner(this.partnerId, {
-      name: v.name ?? null,
-      email: v.email ?? null,
-      legal_status: v.legal_status ?? null,
-      address: v.address ?? null,
-      phone: v.phone ?? null,
-      partnership_type: v.partnership_type ?? null,
-      description: v.description ?? null,
-    }).subscribe({
-      next: (updated) => {
+    const payload = this.form.value;
+    this.backend.updatePartner(this.partnerId, payload).subscribe({
+      next: () => {
         this.saving = false;
-        this.saved.emit(updated);
-        this.closed.emit();
+        this.close();
       },
       error: (e) => {
+        this.error = e?.message ?? 'Save failed.';
         this.saving = false;
-        this.error = e?.message ?? 'Failed to save partner.';
       }
     });
+  }
+
+  remove(): void {
+    if (!confirm('Delete partner ?')) return;
+    this.deleting = true;
+    this.error = null;
+    this.backend.deletePartner(this.partnerId).subscribe({
+      next: () => {
+        this.deleting = false;
+        this.close();
+      },
+      error: (e) => {
+        this.error = e?.message ?? 'Delete failed.';
+        this.deleting = false;
+      }
+    });
+  }
+
+  close(): void {
+    this.closed.emit();
   }
 }
