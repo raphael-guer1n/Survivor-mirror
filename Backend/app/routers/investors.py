@@ -1,7 +1,9 @@
 from fastapi import APIRouter, HTTPException, Query, UploadFile, File, Depends
 from app.db.connection import get_connection
 from app.schemas.investor import InvestorCreate, InvestorUpdate, InvestorOut
-from app.routers.auth import require_admin, require_investor, require_investor_of_investor
+from app.routers.auth import require_investor, require_investor_of_investor
+from app.utils.s3 import upload_file_to_s3, generate_presigned_url
+from app.schemas.partner import PartnerImage
 
 router = APIRouter(prefix="/investors", tags=["investors"])
 

@@ -3,6 +3,8 @@ from typing import List
 from app.db.connection import get_connection
 from app.schemas.news import NewsCreate, NewsUpdate, NewsOut
 from app.routers.auth import require_founder, check_founder_of_startup
+from app.utils.s3 import upload_file_to_s3, generate_presigned_url
+from app.schemas.event import EventImage
 
 router = APIRouter(prefix="/news", tags=["news"])
 
