@@ -16,7 +16,7 @@ class Read_message(BaseModel):
 
 class Read_conversation_from(BaseModel):
     reader_email: str
-    chat_with_email: str
+    readed_email: str
 
 class Conversation(BaseModel):
     conversation_id: int
