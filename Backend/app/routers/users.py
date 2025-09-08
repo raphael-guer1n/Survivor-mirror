@@ -13,9 +13,15 @@ def get_users(skip: int = 0, limit: int = 100, admin=Depends(require_admin)):
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
     try:
-        cursor.execute("SELECT id, email, name, role FROM users LIMIT %s OFFSET %s", (limit, skip))
-        users = cursor.fetchall()
-        return users
+        cursor.execute(
+            """
+            SELECT id, email, name, role, founder_id, investor_id, image_s3_key
+            FROM users
+            LIMIT %s OFFSET %s
+            """,
+            (limit, skip),
+        )
+        return cursor.fetchall()
     finally:
         cursor.close()
         conn.close()
@@ -25,7 +31,14 @@ def get_user(user_id: int, admin=Depends(require_admin)):
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
     try:
-        cursor.execute("SELECT id, email, name, role FROM users WHERE id = %s", (user_id,))
+        cursor.execute(
+            """
+            SELECT id, email, name, role, founder_id, investor_id, image_s3_key
+            FROM users
+            WHERE id = %s
+            """,
+            (user_id,),
+        )
         user = cursor.fetchone()
         if not user:
             raise HTTPException(status_code=404, detail="User not found")
@@ -39,7 +52,14 @@ def get_user_by_email(email: str, admin=Depends(require_admin)):
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
     try:
-        cursor.execute("SELECT id, email, name, role FROM users WHERE email = %s", (email,))
+        cursor.execute(
+            """
+            SELECT id, email, name, role, founder_id, investor_id, image_s3_key
+            FROM users
+            WHERE email = %s
+            """,
+            (email,),
+        )
         user = cursor.fetchone()
         if not user:
             raise HTTPException(status_code=404, detail="User not found")
@@ -87,10 +107,9 @@ def update_user(user_id: int, user: UserUpdate, admin=Depends(require_admin)):
         cursor.execute("SELECT id FROM users WHERE id = %s", (user_id,))
         if not cursor.fetchone():
             raise HTTPException(status_code=404, detail="User not found")
-        fields = []
-        values = []
+        fields, values = [], []
         for field, value in user.dict(exclude_unset=True).items():
-            if field in ("founder_id", "investor_id") and (value == 0):
+            if field in ("founder_id", "investor_id") and value == 0:
                 value = None
             fields.append(f"{field}=%s")
             values.append(value)
@@ -100,7 +119,13 @@ def update_user(user_id: int, user: UserUpdate, admin=Depends(require_admin)):
         sql = f"UPDATE users SET {', '.join(fields)} WHERE id = %s"
         cursor.execute(sql, tuple(values))
         conn.commit()
-        cursor.execute("SELECT id, email, name, role, founder_id, investor_id FROM users WHERE id = %s", (user_id,))
+        cursor.execute(
+            """
+            SELECT id, email, name, role, founder_id, investor_id, image_s3_key
+            FROM users WHERE id = %s
+            """,
+            (user_id,),
+        )
         return cursor.fetchone()
     except Exception as e:
         conn.rollback()
