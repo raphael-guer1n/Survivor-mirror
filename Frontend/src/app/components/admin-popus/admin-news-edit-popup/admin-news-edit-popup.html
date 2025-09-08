@@ -1,0 +1,56 @@
+<div class="popup">
+    <header class="popup-header">
+        <h2>Edit News</h2>
+        <button type="button" class="icon-button close" aria-label="Close" (click)="close()" [disabled]="saving">×</button>
+    </header>
+
+    @if (error) {
+        <div class="alert error">{{ error }}</div>
+    }
+
+    <form [formGroup]="form" (ngSubmit)="save()" class="form">
+        <div class="form-row">
+            <label for="title">Title</label>
+            <input id="title" type="text" formControlName="title" [class.invalid]="form.controls.title.invalid && form.controls.title.touched" placeholder="Title"/>
+            @if (form.controls.title.errors?.['required'] && form.controls.title.touched) {
+                <div class="field-error">Title is required.</div>
+            }
+            @if (form.controls.title.errors?.['maxlength'] && form.controls.title.touched) {
+                <div class="field-error">Title is too long.</div>
+            }
+        </div>
+
+        <div class="form-row two-cols">
+            <div>
+                <label for="news_date">Date</label>
+                <input id="news_date" type="date" formControlName="news_date" />
+            </div>
+            <div>
+                <label for="category">Category</label>
+                <input id="category" type="text" formControlName="category" placeholder="Category" />
+            </div>
+        </div>
+
+        <div class="form-row">
+            <label for="location">Location</label>
+            <input id="location" type="text" formControlName="location" placeholder="Location" />
+        </div>
+
+        <div class="form-row">
+            <label for="startup_id">Startup ID</label>
+            <input id="startup_id" type="number" formControlName="startup_id" placeholder="Startup ID" />
+        </div>
+
+        <div class="form-row">
+            <label for="description">Description</label>
+            <textarea id="description" rows="6" formControlName="description" placeholder="Description"></textarea>
+        </div>
+
+        <footer class="popup-footer">
+            <button type="button" class="btn" (click)="close()" [disabled]="saving">Cancel</button>
+            <button type="submit" class="btn primary" [disabled]="saving || form.invalid">
+                {{ saving ? 'Saving…' : 'Save' }}
+            </button>
+        </footer>
+    </form>
+</div>
