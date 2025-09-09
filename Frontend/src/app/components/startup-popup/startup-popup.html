@@ -1,11 +1,11 @@
 <div class="overlay" (click)="close()">
-    <div class="modal" (click)="$event.stopPropagation()">
+    <div class="modal" #printSection (click)="$event.stopPropagation()">
         <header class="modal-header">
             <h3>@if (data) {
                 {{ data.name }}
             } @else {
                 Startup détails
-            }</h3>
+            }&#125;</h3>
             <button class="icon-btn" aria-label="Close" (click)="close()">×</button>
         </header>
 
@@ -109,6 +109,7 @@
         </section>
 
         <footer class="modal-footer">
+            <button class="btn" (click)="exportPdf($event)">Export PDF</button>
             <button class="btn" (click)="close()">Close</button>
         </footer>
     </div>
