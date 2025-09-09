@@ -109,8 +109,7 @@ export class StartupPopup implements OnChanges {
 
     const htmlContent = section.outerHTML;
 
-    printWindow.document.open();
-    printWindow.document.write(`<!doctype html>
+    const html = `<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
@@ -120,8 +119,10 @@ export class StartupPopup implements OnChanges {
 <body>
 ${htmlContent}
 </body>
-</html>`);
-    printWindow.document.close();
+</html>`;
+
+    const htmlBlob = new Blob([html], {type: 'text/html'});
+    const htmlUrl = URL.createObjectURL(htmlBlob);
 
     const waitForImages = async () => {
       const image = Array.from(printWindow.document.images || []);
@@ -147,8 +148,11 @@ ${htmlContent}
             printWindow.close();
           } catch {
           }
+          URL.revokeObjectURL(htmlUrl);
         }, 300);
       }
     });
+
+    printWindow.location.href = htmlUrl;
   }
 }
