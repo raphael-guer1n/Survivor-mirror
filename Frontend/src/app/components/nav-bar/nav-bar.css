@@ -8,7 +8,6 @@
     gap: 8px;
 }
 
-/* Brand */
 .brand {
     display: inline-flex;
     align-items: center;
@@ -35,7 +34,6 @@
     font-size: 1.05rem;
 }
 
-/* Desktop links */
 .links {
     margin-left: auto;
     display: flex;
@@ -69,7 +67,6 @@
     font-weight: 600;
 }
 
-/* Toggle button */
 .menu-toggle {
     display: none;
     appearance: none;
@@ -80,7 +77,6 @@
     cursor: pointer;
     align-items: center;
     justify-content: center;
-    /* Stack the bars vertically */
     flex-direction: column;
     gap: 4px;
 }
@@ -99,22 +95,18 @@
     height: 2px;
     background: currentColor;
     border-radius: 1px;
-    /* no vertical margin needed because we use gap on the parent */
     margin: 0;
 }
 
-/* Mobile behavior */
 @media (max-width: 768px) {
     .top-nav {
         position: relative;
     }
 
-    /* Show hamburger on mobile */
     .menu-toggle {
         display: inline-flex;
     }
 
-    /* Collapse nav by default on mobile */
     .links {
         position: absolute;
         top: 100%;
@@ -124,18 +116,16 @@
         display: none;
         flex-direction: column;
 
-        /* Use site theme colors (avoid undefined custom properties) */
-        background: var(--surface);
+        background: inherit;
         color: var(--text);
         border: 1px solid var(--border);
         border-radius: 12px;
 
-        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+        box-shadow: 0 6px 16px rgba(0,0,0,0.25);
         padding: 0.5rem 0.75rem;
         z-index: 1000;
     }
 
-    /* Expand when toggled */
     .links.open {
         display: flex;
     }
@@ -156,7 +146,6 @@
         font-weight: 600;
     }
 
-    /* Keep brand on a single row, push toggle to the right */
     .top-nav .brand {
         flex: 0 1 auto;
     }
