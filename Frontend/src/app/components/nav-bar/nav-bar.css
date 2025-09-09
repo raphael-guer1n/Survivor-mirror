@@ -64,19 +64,15 @@
 }
 
 .menu-toggle {
-    margin-left: auto;
-    appearance: none;
-    border: 1px solid var(--border);
-    background: color-mix(in oklab, var(--bg) 80%, var(--brand) 20%);
-    border-radius: 10px;
-    width: 44px;
-    height: 40px;
-    display: none;
-    align-items: center;
-    justify-content: center;
-    gap: 4px;
-    cursor: pointer;
-    transition: background .15s ease, border-color .15s ease, box-shadow .15s ease;
+  display: none;
+  appearance: none;
+  background: transparent;
+  border: 0;
+  padding: 0.5rem;
+  margin-left: auto;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
 }
 
 .menu-toggle:hover {
@@ -88,100 +84,53 @@
 }
 
 .menu-toggle .bar {
-    width: 20px;
-    height: 2px;
-    background: var(--text);
-    border-radius: 2px;
-    display: block;
+  display: block;
+  width: 22px;
+  height: 2px;
+  background: currentColor;
+  border-radius: 1px;
+  margin: 4px 0;
 }
 
-.menu-toggle .bar + .bar {
-    margin-top: 4px;
-}
+/* Mobile behavior */
+@media (max-width: 768px) {
+  .top-nav {
+    position: relative;
+  }
 
-.top-nav::after {
-    content: "";
+  /* Show hamburger on mobile */
+  .menu-toggle {
+    display: inline-flex;
+  }
+
+  /* Collapse nav by default on mobile */
+  .links {
     position: absolute;
+    top: 100%;
     left: 0;
     right: 0;
-    bottom: -1px;
-    height: 12px;
-    pointer-events: none;
-    background: linear-gradient(
-            to bottom,
-            color-mix(in oklab, var(--border), transparent 20%) 0%,
-            color-mix(in oklab, var(--border), transparent 60%) 55%,
-            transparent 100%
-    );
-}
 
-@media (max-width: 640px) {
-    .top-nav {
-        height: 60px;
-        padding: 0 14px;
-        border-bottom: none;
-    }
-}
+    display: none;
+    flex-direction: column;
 
-@media (max-width: 768px) {
-    .menu-toggle {
-        display: inline-flex;
-    }
+    background: var(--nav-bg, #fff);
+    color: var(--nav-fg, inherit);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+    padding: 0.5rem 0.75rem;
+    z-index: 1000;
+  }
 
-    .links {
-        position: absolute;
-        top: 64px;
-        left: 0;
-        right: 0;
-        margin-left: 0;
-        display: grid;
-        grid-auto-rows: minmax(44px, auto);
-        gap: 6px;
-        padding: 12px;
-        background: color-mix(in oklab, var(--bg) 86%, var(--brand-800) 14%);
-        border-bottom: 1px solid var(--border);
-        transform: translateY(-8px);
-        opacity: 0;
-        visibility: hidden;
-        pointer-events: none;
-        transition: opacity .18s ease, transform .18s ease, visibility 0s linear .18s;
-    }
+  /* Expand when toggled */
+  .links.open {
+    display: flex;
+  }
 
-    .links.open {
-        transform: translateY(0);
-        opacity: 1;
-        visibility: visible;
-        pointer-events: auto;
-        transition: opacity .18s ease, transform .18s ease;
-    }
+  .links a {
+    padding: 0.75rem 0.5rem;
+  }
 
-    .links a {
-        padding: 12px 10px;
-        border-radius: 8px;
-    }
-}
-
-@media (prefers-color-scheme: light) {
-    .top-nav {
-        background: linear-gradient(
-                180deg,
-                color-mix(in oklab, #ffffff 72%, var(--pink-400) 28%) 0%,
-                color-mix(in oklab, #ffffff 80%, var(--brand-700) 20%) 100%
-        );
-        border-bottom-color: #e5e7eb;
-    }
-
-    .links a {
-        color: #475569;
-    }
-
-    .links a:hover {
-        background: color-mix(in oklab, var(--brand) 10%, transparent);
-        color: #0f172a;
-    }
-
-    .links a.active {
-        background: color-mix(in oklab, var(--brand) 16%, transparent);
-        color: #0f172a;
-    }
+  /* Keep brand on a single row, push toggle to the right */
+  .top-nav .brand {
+    flex: 0 1 auto;
+  }
 }
