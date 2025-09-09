@@ -10,6 +10,7 @@ import datetime
 import logging
 
 log = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO)
 
 API_BASE = config.JEB_API_BASE_URL
 HEADERS = {"X-Group-Authorization": config.JEB_API_KEY}
@@ -23,7 +24,7 @@ def fetch_json(url: str) -> Any:
         resp = requests.get(url, headers=HEADERS)
         if resp.status_code == 429:
             retry_after = int(resp.headers.get("Retry-After", "5"))
-            print(f"[WARN] 429 Too Many Requests. Retrying after {retry_after}s")
+            log.warning(f"429 Too Many Requests. Retrying after {retry_after}s")
             time.sleep(retry_after)
             continue
         resp.raise_for_status()
@@ -73,7 +74,11 @@ def sync_startups():
             if not startups:
                 break
             for s in startups:
-                detail = fetch_json(f"{API_BASE}/startups/{s['id']}")
+                try:
+                    detail = fetch_json(f"{API_BASE}/startups/{s['id']}")
+                except Exception as e:
+                    log.warning(f"[sync_startups] Could not fetch details for startup_id={s['id']}: {e}")
+                    continue
                 cursor.execute(
                     """
                     INSERT INTO startups (
@@ -117,13 +122,16 @@ def sync_startups():
                             founder["id"], founder["name"], detail["id"]
                         ),
                     )
-                    fetch_and_upload_image(
-                        f"{API_BASE}/startups/{detail['id']}/founders/{founder['id']}/image",
-                        "founders",
-                        founder["id"],
-                        "founders",
-                        cursor,
-                    )
+                    try:
+                        fetch_and_upload_image(
+                            f"{API_BASE}/startups/{detail['id']}/founders/{founder['id']}/image",
+                            "founders",
+                            founder["id"],
+                            "founders",
+                            cursor,
+                        )
+                    except Exception as e:
+                        log.warning(f"[sync_startups] Could not fetch/upload founder image for founder_id={founder['id']} of startup_id={detail['id']}: {e}")
                 fetch_and_upload_image(
                     f"{API_BASE}/startups/{s['id']}/image",
                     "startups",
@@ -370,7 +378,6 @@ def sync_users():
         conn.close()
 
 def sync_all():
-    print("SYNC LANCEE")
     results = {}
     for name, fn in [
         ("startups", sync_startups),
@@ -389,8 +396,5 @@ def sync_all():
         except Exception as e:
             log.exception(f"[sync_all] unexpected error in {name}: {e}")
             results[name] = f"error:{e}"
-    print()
-    print()
-    print({"status": results, "synced_at": datetime.datetime.utcnow().isoformat() + "Z"}, flush=True)
-    print()
+    log.info({"status": results, "synced_at": datetime.datetime.utcnow().isoformat() + "Z"})
     return results
