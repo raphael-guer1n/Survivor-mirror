@@ -54,9 +54,9 @@ export class StartupPopup implements OnChanges {
     if (!this.data?.founders?.length) return;
 
     for (const f of this.data.founders) {
-      this.backend.getFounderImage(this.startupId, f.id).subscribe({
-        next: (blob: Blob) => {
-          this.founderImages[f.id] = URL.createObjectURL(blob);
+      this.backend.getFounderImage(f.id).subscribe({
+        next: (res: { image_url: string }) => {
+          this.founderImages[f.id] = res.image_url;
         },
         error: (e) => {
           console.warn('Founder image not found', f.id, e);
