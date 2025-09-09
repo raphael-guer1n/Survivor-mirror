@@ -158,7 +158,7 @@ def read_message(reader: Read_conversation_from):
         cursor.close()
         connection.close()
         
-@comm.get("/read_message", response_model= Read_message)
+@comm.get("/read_message/{reader_email}/with/{readed_email}", response_model= Read_message)
 def read_message(reader_email :str, readed_email: str):
     connection = get_connection()
     cursor = connection.cursor(dictionary=True)
@@ -206,7 +206,7 @@ def read_message(reader_email :str, readed_email: str):
         connection.close()
         
         
-@comm.get("/read_conversation", response_model= list[Read_message])
+@comm.get("/read_conversation/{reader_email}/with/{readed_email}", response_model= list[Read_message])
 def read_message(reader_email: str, readed_email: str):
     connection = get_connection()
     cursor = connection.cursor(dictionary=True)
