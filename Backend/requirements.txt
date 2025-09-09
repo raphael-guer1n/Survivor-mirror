@@ -9,3 +9,5 @@ APScheduler
 python_jose
 pytest
 pytest-cov
+boto3
+python-multipart
