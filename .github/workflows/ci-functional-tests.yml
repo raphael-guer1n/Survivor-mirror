@@ -47,6 +47,7 @@ jobs:
           echo "SECRET_KEY=hellothere" >> $GITHUB_ENV
           echo "ALGORITHM=HS256" >> $GITHUB_ENV
           echo "ACCESS_TOKEN_EXPIRE_MINUTES=5000" >> $GITHUB_ENV
+          echo "REGISTER_CODE_EXPIRES_MINUTES=10" >> $GITHUB_ENV
 
       - name: Run Tests
         run: python -m pytest app/tests --maxfail=1 --disable-warnings -q
