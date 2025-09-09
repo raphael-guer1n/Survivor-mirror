@@ -100,6 +100,11 @@ export interface HTTPValidationError {
     detail?: ValidationError[];
 }
 
+export interface Communication {
+    sender_email: string;
+    reciver_email: string;
+}
+
 export type StartupListResponse = StartupList[];
 export type InvestorListResponse = Investor[];
 export type PartnerListResponse = Partner[];

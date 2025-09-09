@@ -1,7 +1,7 @@
 import {Observable} from "rxjs";
 import {Injectable} from "@angular/core";
 import {HttpInterface, RequestOptions} from "../http/http-interface";
-import {Event, Investor, News, NewsDetail, Partner, StartupDetail, StartupList, User} from "./dtos";
+import {Event, Investor, News, NewsDetail, Partner, StartupDetail, StartupList, User, Communication} from "./dtos";
 
 @Injectable({providedIn: 'root'})
 export class BackendInterface {
@@ -202,5 +202,12 @@ export class BackendInterface {
 
   getUserImage(userId: number, options?: RequestOptions): Observable<any> {
     return this.http.get<any>(`/users/${encodeURIComponent(String(userId))}/image`, options);
+  }
+
+  getConversation(reader_email: string, readed_email: string, options?: RequestOptions): Observable<Communication> {
+    return this.http.get<Communication>(`/read_conversation/${encodeURIComponent(String(reader_email))}/with/${encodeURIComponent(String(readed_email))}`, options)
+  }
+  getLastMessage(reader_email: string, readed_email: string, options?: RequestOptions): Observable<Communication> {
+    return this.http.get<Communication>(`/read_conversation/${encodeURIComponent(String(reader_email))}/with/${encodeURIComponent(String(readed_email))}`, options)
   }
 }
