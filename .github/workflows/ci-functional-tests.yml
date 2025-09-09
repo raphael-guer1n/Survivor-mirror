@@ -39,6 +39,7 @@ jobs:
           echo "AWS_SECRET_ACCESS_KEY=dummy" >> $GITHUB_ENV
           echo "AWS_S3_BUCKET=dummy" >> $GITHUB_ENV
           echo "JWT_SECRET=secret" >> $GITHUB_ENV
+          echo "BCRYPT_ROUNDS=12" >> $GITHUB_ENV
 
       - name: Run Tests
         run: python -m pytest app/tests --maxfail=1 --disable-warnings -q
