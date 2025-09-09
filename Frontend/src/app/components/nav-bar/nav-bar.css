@@ -2,7 +2,13 @@
     display: block;
 }
 
+.top-nav {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
 
+/* Brand */
 .brand {
     display: inline-flex;
     align-items: center;
@@ -29,7 +35,7 @@
     font-size: 1.05rem;
 }
 
-
+/* Desktop links */
 .links {
     margin-left: auto;
     display: flex;
@@ -63,16 +69,20 @@
     font-weight: 600;
 }
 
+/* Toggle button */
 .menu-toggle {
-  display: none;
-  appearance: none;
-  background: transparent;
-  border: 0;
-  padding: 0.5rem;
-  margin-left: auto;
-  cursor: pointer;
-  align-items: center;
-  justify-content: center;
+    display: none;
+    appearance: none;
+    background: transparent;
+    border: 0;
+    padding: 0.5rem;
+    margin-left: auto;
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+    /* Stack the bars vertically */
+    flex-direction: column;
+    gap: 4px;
 }
 
 .menu-toggle:hover {
@@ -84,53 +94,70 @@
 }
 
 .menu-toggle .bar {
-  display: block;
-  width: 22px;
-  height: 2px;
-  background: currentColor;
-  border-radius: 1px;
-  margin: 4px 0;
+    display: block;
+    width: 22px;
+    height: 2px;
+    background: currentColor;
+    border-radius: 1px;
+    /* no vertical margin needed because we use gap on the parent */
+    margin: 0;
 }
 
 /* Mobile behavior */
 @media (max-width: 768px) {
-  .top-nav {
-    position: relative;
-  }
+    .top-nav {
+        position: relative;
+    }
 
-  /* Show hamburger on mobile */
-  .menu-toggle {
-    display: inline-flex;
-  }
+    /* Show hamburger on mobile */
+    .menu-toggle {
+        display: inline-flex;
+    }
 
-  /* Collapse nav by default on mobile */
-  .links {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
+    /* Collapse nav by default on mobile */
+    .links {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
 
-    display: none;
-    flex-direction: column;
+        display: none;
+        flex-direction: column;
 
-    background: var(--nav-bg, #fff);
-    color: var(--nav-fg, inherit);
-    box-shadow: 0 6px 16px rgba(0,0,0,0.12);
-    padding: 0.5rem 0.75rem;
-    z-index: 1000;
-  }
+        /* Use site theme colors (avoid undefined custom properties) */
+        background: var(--surface);
+        color: var(--text);
+        border: 1px solid var(--border);
+        border-radius: 12px;
 
-  /* Expand when toggled */
-  .links.open {
-    display: flex;
-  }
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+        padding: 0.5rem 0.75rem;
+        z-index: 1000;
+    }
 
-  .links a {
-    padding: 0.75rem 0.5rem;
-  }
+    /* Expand when toggled */
+    .links.open {
+        display: flex;
+    }
 
-  /* Keep brand on a single row, push toggle to the right */
-  .top-nav .brand {
-    flex: 0 1 auto;
-  }
+    .links a {
+        padding: 0.75rem 0.5rem;
+        color: var(--text);
+    }
+
+    .links a:hover {
+        background: color-mix(in oklab, var(--brand) 18%, transparent);
+        color: var(--text);
+    }
+
+    .links a.active {
+        background: color-mix(in oklab, var(--brand) 35%, transparent);
+        color: var(--text);
+        font-weight: 600;
+    }
+
+    /* Keep brand on a single row, push toggle to the right */
+    .top-nav .brand {
+        flex: 0 1 auto;
+    }
 }
