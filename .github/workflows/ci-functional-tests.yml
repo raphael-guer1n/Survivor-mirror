@@ -40,6 +40,7 @@ jobs:
           echo "AWS_S3_BUCKET=dummy" >> $GITHUB_ENV
           echo "JWT_SECRET=secret" >> $GITHUB_ENV
           echo "BCRYPT_ROUNDS=12" >> $GITHUB_ENV 
+          echo "JEB_API_KEY=4018cet7c437b2ed28b88g482ddyy688" >> $GITHUB_ENV
           echo "JEB_API_BASE_URL=https://api.jeb-incubator.com" >> $GITHUB_ENV
           echo "JEB_API_TIMEOUT=10" >> $GITHUB_ENV
           echo "SYNC_INTERVAL_SECONDS=60" >> $GITHUB_ENV
