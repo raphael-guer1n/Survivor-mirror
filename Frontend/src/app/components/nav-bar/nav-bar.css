@@ -3,9 +3,22 @@
 }
 
 .top-nav {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    height: 64px;
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 16px;
+    padding: 0 20px;
+    --nav-bg-solid: color-mix(in oklab, var(--bg) 68%, var(--brand-700) 32%);
+    backdrop-filter: saturate(160%) blur(10px);
+    background: linear-gradient(
+            180deg,
+            rgba(15, 23, 42, 0.55),
+            rgba(15, 23, 42, 0.35)
+    );
+    border-bottom: 1px solid var(--border);
 }
 
 .brand {
@@ -116,10 +129,11 @@
         display: none;
         flex-direction: column;
 
-        background: inherit;
+        background: var(--nav-bg-solid);
         color: var(--text);
         border: 1px solid var(--border);
         border-radius: 12px;
+        backdrop-filter: none;
 
         box-shadow: 0 6px 16px rgba(0,0,0,0.25);
         padding: 0.5rem 0.75rem;
