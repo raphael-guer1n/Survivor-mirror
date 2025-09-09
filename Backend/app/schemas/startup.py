@@ -43,6 +43,7 @@ class StartupOut(StartupBase):
     project_status: Optional[str] = None
     needs: Optional[str] = None
     image_s3_key: Optional[str] = None
+    view_count: int = 0
 
     class Config:
         from_attributes = True

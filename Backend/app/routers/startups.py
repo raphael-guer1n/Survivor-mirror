@@ -193,3 +193,47 @@ def delete_startup_image(startup_id: int):
     finally:
         cursor.close()
         conn.close()
+
+@router.post("/{startup_id}/view")
+def increment_startup_view(startup_id: int):
+    conn = get_connection()
+    cursor = conn.cursor(dictionary=True)
+    try:
+        cursor.execute("SELECT id, view_count FROM startups WHERE id = %s", (startup_id,))
+        startup = cursor.fetchone()
+        if not startup:
+            raise HTTPException(status_code=404, detail="Startup not found")
+        cursor.execute(
+            "UPDATE startups SET view_count = view_count + 1 WHERE id = %s", (startup_id,)
+        )
+        conn.commit()
+        return {"startup_id": startup_id, "new_view_count": startup["view_count"] + 1}
+    finally:
+        cursor.close()
+        conn.close()
+
+@router.get("/{startup_id}/view")
+def get_startup_view_count(startup_id: int):
+    conn = get_connection()
+    cursor = conn.cursor(dictionary=True)
+    try:
+        cursor.execute("SELECT id, view_count FROM startups WHERE id = %s", (startup_id,))
+        row = cursor.fetchone()
+        if not row:
+            raise HTTPException(status_code=404, detail="Startup not found")
+        return {"startup_id": row["id"], "view_count": row["view_count"]}
+    finally:
+        cursor.close()
+        conn.close()
+
+@router.get("/views/total")
+def get_total_startup_views():
+    conn = get_connection()
+    cursor = conn.cursor()
+    try:
+        cursor.execute("SELECT SUM(view_count) FROM startups")
+        total = cursor.fetchone()[0] or 0
+        return {"total_views": total}
+    finally:
+        cursor.close()
+        conn.close()
