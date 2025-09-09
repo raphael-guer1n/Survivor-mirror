@@ -127,7 +127,6 @@ CREATE TABLE IF NOT EXISTS sync_state (
 
 INSERT INTO sync_state (entity, last_id) VALUES
   ('startups', 0),
-  ('founders', 0),
   ('investors', 0),
   ('partners', 0),
   ('news', 0),
