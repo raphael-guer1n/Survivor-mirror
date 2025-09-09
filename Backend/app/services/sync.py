@@ -73,10 +73,14 @@ def sync_startups():
             if not startups:
                 break
             for s in startups:
+                detail = fetch_json(f"{API_BASE}/startups/{s['id']}")
                 cursor.execute(
                     """
-                    INSERT INTO startups (id, name, legal_status, address, email, phone, sector, maturity)
-                    VALUES (%s,%s,%s,%s,%s,%s,%s,%s)
+                    INSERT INTO startups (
+                        id, name, legal_status, address, email, phone, sector, maturity,
+                        description, website_url, social_media_url, project_status, needs, created_at
+                    )
+                    VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
                     ON DUPLICATE KEY UPDATE
                         name=VALUES(name),
                         legal_status=VALUES(legal_status),
@@ -84,13 +88,42 @@ def sync_startups():
                         email=VALUES(email),
                         phone=VALUES(phone),
                         sector=VALUES(sector),
-                        maturity=VALUES(maturity)
+                        maturity=VALUES(maturity),
+                        description=VALUES(description),
+                        website_url=VALUES(website_url),
+                        social_media_url=VALUES(social_media_url),
+                        project_status=VALUES(project_status),
+                        needs=VALUES(needs),
+                        created_at=VALUES(created_at)
                     """,
                     (
-                        s["id"], s["name"], s.get("legal_status"), s.get("address"),
-                        s["email"], s.get("phone"), s.get("sector"), s.get("maturity"),
+                        detail["id"], detail["name"], detail.get("legal_status"), detail.get("address"),
+                        detail["email"], detail.get("phone"), detail.get("sector"), detail.get("maturity"),
+                        detail.get("description"), detail.get("website_url"), detail.get("social_media_url"),
+                        detail.get("project_status"), detail.get("needs"), detail.get("created_at"),
                     ),
                 )
+                founders = detail.get("founders", [])
+                for founder in founders:
+                    cursor.execute(
+                        """
+                        INSERT INTO founders (id, name, startup_id)
+                        VALUES (%s, %s, %s)
+                        ON DUPLICATE KEY UPDATE
+                            name=VALUES(name),
+                            startup_id=VALUES(startup_id)
+                        """,
+                        (
+                            founder["id"], founder["name"], detail["id"]
+                        ),
+                    )
+                    fetch_and_upload_image(
+                        f"{API_BASE}/startups/{detail['id']}/founders/{founder['id']}/image",
+                        "founders",
+                        founder["id"],
+                        "founders",
+                        cursor,
+                    )
                 fetch_and_upload_image(
                     f"{API_BASE}/startups/{s['id']}/image",
                     "startups",
@@ -302,7 +335,6 @@ def sync_users():
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
     try:
-        # L'endpoint users ne prend pas skip/limit, on récupère tout d'un coup
         users = fetch_json(f"{API_BASE}/users")
         last_id = get_last_synced("users", cursor)
         max_id = last_id
