@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS startups (
   maturity VARCHAR(100),
   UNIQUE KEY ux_startups_email (email),
   image_s3_key VARCHAR(512) NULL,
-  view_counter INT
+  view_count INT NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- Founders
