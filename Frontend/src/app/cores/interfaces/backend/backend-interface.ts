@@ -207,6 +207,14 @@ export class BackendInterface {
     return this.http.delete<unknown>(`/startups/${encodeURIComponent(String(startupId))}`, options);
   }
 
+  incrementStartupView(startupId: number, options?: RequestOptions): Observable<unknown> {
+    return this.http.post<unknown>(`/startups/${encodeURIComponent(String(startupId))}/view/`, options);
+  }
+
+  getStartupView(startupId: number, options?: RequestOptions): Observable<unknown> {
+    return this.http.get<unknown>(`/startups/${encodeURIComponent(String(startupId))}/view/`, options);
+  }
+
   createInvestor(payload: {
     name: string;
     email: string;

@@ -3,6 +3,7 @@ import {CommonModule} from '@angular/common';
 import {FormsModule} from '@angular/forms';
 import type {StartupList as StartupListDTO} from '../../cores/interfaces/backend/dtos';
 import {StartupPopup} from "../startup-popup/startup-popup";
+import {BackendInterface} from "../../cores/interfaces/backend/backend-interface";
 
 @Component({
   selector: 'app-startup-list',
@@ -18,7 +19,7 @@ export class StartupList {
   filtersBy: string[] = ['sector', 'maturity'];
   filterValues: Record<string, string> = {};
 
-  constructor() {
+  constructor(private backend: BackendInterface) {
     this.filtersBy.forEach(k => (this.filterValues[k] ??= ''));
   }
 
@@ -61,6 +62,7 @@ export class StartupList {
   selectedId: number | null = null;
 
   openDetails(id: number): void {
+    this.backend.incrementStartupView(id).subscribe();
     this.selectedId = id;
   }
 

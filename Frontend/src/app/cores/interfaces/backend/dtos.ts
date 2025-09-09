@@ -67,7 +67,8 @@ export interface StartupDetail {
     needs?: string | null;
     sector?: string | null;
     maturity?: string | null;
-    founders?: Founder[];         // default [] on backend, optional in DTO
+    founders?: Founder[];
+    view_count : number;
 }
 
 export interface StartupList {
