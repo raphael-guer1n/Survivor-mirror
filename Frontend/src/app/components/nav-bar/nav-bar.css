@@ -2,6 +2,24 @@
     display: block;
 }
 
+.top-nav {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 0 20px;
+    --nav-bg-solid: color-mix(in oklab, var(--bg) 68%, var(--brand-700) 32%);
+    backdrop-filter: saturate(160%) blur(10px);
+    background: linear-gradient(
+            180deg,
+            rgba(15, 23, 42, 0.55),
+            rgba(15, 23, 42, 0.35)
+    );
+    border-bottom: 1px solid var(--border);
+}
 
 .brand {
     display: inline-flex;
@@ -28,7 +46,6 @@
 .brand-text {
     font-size: 1.05rem;
 }
-
 
 .links {
     margin-left: auto;
@@ -64,19 +81,17 @@
 }
 
 .menu-toggle {
-    margin-left: auto;
-    appearance: none;
-    border: 1px solid var(--border);
-    background: color-mix(in oklab, var(--bg) 80%, var(--brand) 20%);
-    border-radius: 10px;
-    width: 44px;
-    height: 40px;
     display: none;
+    appearance: none;
+    background: transparent;
+    border: 0;
+    padding: 0.5rem;
+    margin-left: auto;
+    cursor: pointer;
     align-items: center;
     justify-content: center;
+    flex-direction: column;
     gap: 4px;
-    cursor: pointer;
-    transition: background .15s ease, border-color .15s ease, box-shadow .15s ease;
 }
 
 .menu-toggle:hover {
@@ -88,100 +103,90 @@
 }
 
 .menu-toggle .bar {
-    width: 20px;
-    height: 2px;
-    background: var(--text);
-    border-radius: 2px;
     display: block;
-}
-
-.menu-toggle .bar + .bar {
-    margin-top: 4px;
-}
-
-.top-nav::after {
-    content: "";
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: -1px;
-    height: 12px;
-    pointer-events: none;
-    background: linear-gradient(
-            to bottom,
-            color-mix(in oklab, var(--border), transparent 20%) 0%,
-            color-mix(in oklab, var(--border), transparent 60%) 55%,
-            transparent 100%
-    );
-}
-
-@media (max-width: 640px) {
-    .top-nav {
-        height: 60px;
-        padding: 0 14px;
-        border-bottom: none;
-    }
+    width: 22px;
+    height: 2px;
+    background: currentColor;
+    border-radius: 1px;
+    margin: 0;
 }
 
 @media (max-width: 768px) {
+    .top-nav {
+        position: relative;
+    }
+
     .menu-toggle {
         display: inline-flex;
     }
 
     .links {
         position: absolute;
-        top: 64px;
+        top: 100%;
         left: 0;
         right: 0;
-        margin-left: 0;
-        display: grid;
-        grid-auto-rows: minmax(44px, auto);
-        gap: 6px;
-        padding: 12px;
-        background: color-mix(in oklab, var(--bg) 86%, var(--brand-800) 14%);
-        border-bottom: 1px solid var(--border);
-        transform: translateY(-8px);
-        opacity: 0;
-        visibility: hidden;
-        pointer-events: none;
-        transition: opacity .18s ease, transform .18s ease, visibility 0s linear .18s;
+
+        display: none;
+        flex-direction: column;
+
+        background: var(--nav-bg-solid);
+        color: var(--text);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        backdrop-filter: none;
+
+        box-shadow: 0 6px 16px rgba(0,0,0,0.25);
+        padding: 0.5rem 0.75rem;
+        z-index: 1000;
     }
 
     .links.open {
-        transform: translateY(0);
-        opacity: 1;
-        visibility: visible;
-        pointer-events: auto;
-        transition: opacity .18s ease, transform .18s ease;
+        display: flex;
     }
 
     .links a {
-        padding: 12px 10px;
-        border-radius: 8px;
-    }
-}
+    padding: 0.75rem 0.75rem;
+    color: var(--text);
+    border-radius: 10px;
+    position: relative;
+    transition: background 150ms ease, color 150ms ease, transform 80ms ease;
+    outline: none;
+  }
 
-@media (prefers-color-scheme: light) {
-    .top-nav {
-        background: linear-gradient(
-                180deg,
-                color-mix(in oklab, #ffffff 72%, var(--pink-400) 28%) 0%,
-                color-mix(in oklab, #ffffff 80%, var(--brand-700) 20%) 100%
-        );
-        border-bottom-color: #e5e7eb;
-    }
+  .links a + a::before {
+    content: "";
+    position: absolute;
+    top: -4px;
+    left: 10px;
+    right: 10px;
+    height: 1px;
+    background: color-mix(in oklab, var(--border) 70%, transparent);
+    border-radius: 1px;
+    pointer-events: none;
+  }
 
-    .links a {
-        color: #475569;
-    }
+  .links a:hover {
+    background: color-mix(in oklab, var(--brand) 18%, transparent);
+    color: var(--text);
+  }
 
-    .links a:hover {
-        background: color-mix(in oklab, var(--brand) 10%, transparent);
-        color: #0f172a;
-    }
+  .links a:focus-visible {
+    box-shadow: 0 0 0 3px var(--ring);
+    background: color-mix(in oklab, var(--brand) 22%, transparent);
+  }
 
-    .links a.active {
-        background: color-mix(in oklab, var(--brand) 16%, transparent);
-        color: #0f172a;
-    }
+  .links a:active {
+    transform: translateY(1px);
+    background: color-mix(in oklab, var(--brand) 28%, transparent);
+  }
+
+  .links a.active {
+    background: color-mix(in oklab, var(--brand) 35%, transparent);
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  .top-nav .brand {
+    flex: 0 1 auto;
+  }
 }
