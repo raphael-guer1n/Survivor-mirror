@@ -14,7 +14,8 @@ def get_startups(skip: int = Query(0, ge=0), limit: int = Query(100, ge=1)):
         cursor.execute(
             """
             SELECT id, name, legal_status, address, email, phone, sector, maturity, created_at,
-                   description, website_url, social_media_url, project_status, needs, image_s3_key
+                   description, website_url, social_media_url, project_status, needs,
+                   image_s3_key, view_count      -- 👈 include view_count here
             FROM startups
             ORDER BY created_at DESC
             LIMIT %s OFFSET %s
@@ -35,7 +36,7 @@ def get_startup(startup_id: int):
             """
             SELECT id, name, legal_status, address, email, phone, created_at,
                    description, website_url, social_media_url, project_status,
-                   needs, sector, maturity, image_s3_key
+                   needs, sector, maturity, image_s3_key, view_count   -- 👈 include it here
             FROM startups
             WHERE id = %s
             """,
