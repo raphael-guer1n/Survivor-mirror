@@ -158,7 +158,7 @@ def read_message(reader: Read_conversation_from):
         cursor.close()
         connection.close()
         
-@comm.get("/read_message", response_model= Read_message)
+@comm.get("/read_message/{reader_email}/with/{readed_email}", response_model= Read_message)
 def read_message(reader_email :str, readed_email: str):
     connection = get_connection()
     cursor = connection.cursor(dictionary=True)
@@ -206,7 +206,7 @@ def read_message(reader_email :str, readed_email: str):
         connection.close()
         
         
-@comm.get("/read_conversation", response_model= list[Read_message])
+@comm.get("/read_conversation/{reader_email}/with/{readed_email}", response_model= list[Read_message])
 def read_message(reader_email: str, readed_email: str):
     connection = get_connection()
     cursor = connection.cursor(dictionary=True)
@@ -249,6 +249,26 @@ def read_message(reader_email: str, readed_email: str):
                     conversation.append(Read_message(
                         sender_name=readed_name,
                         content=message_s['content']))
+            return conversation
+        else:
+            raise HTTPException(status_code=501, 
+                detail="No conversation with this email yet.")
+    finally:
+        cursor.close()
+        connection.close()
+
+@comm.get("/get_conversations_id/{user_id}", response_model= list[int])
+def read_message(user_id: int):
+    connection = get_connection()
+    cursor = connection.cursor(dictionary=True)
+    conversation: list[int]= []
+    try:
+        cursor.execute(
+            "SELECT id FROM conversations where user1_id = %s OR user2_id = %s", (user_id, user_id))
+        get_conv = cursor.fetchall()
+        if get_conv:
+            for convs in get_conv:
+                    conversation.append(convs['id'])
             return conversation
         else:
             raise HTTPException(status_code=501, 
