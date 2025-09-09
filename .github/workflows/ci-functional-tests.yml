@@ -51,6 +51,8 @@ jobs:
           echo "SMTP_USER=noreply.leponge.bob@gmail.com" >> $GITHUB_ENV
           echo "SMTP_PASSWORD=noyr aze rez tet" >> $GITHUB_ENV
           echo "SMTP_SENDER=noreply.leponge.bob@gmail.com" >> $GITHUB_ENV
+          echo "ACCESS_TOKEN_EXPIRE_MINUTES=5000" >> $GITHUB_ENV
+          echo "S3_BUCKET=jean-eude" >> $GITHUB_ENV
 
       - name: Run Tests
         run: python -m pytest app/tests --maxfail=1 --disable-warnings -q
