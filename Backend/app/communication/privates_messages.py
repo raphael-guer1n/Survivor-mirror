@@ -256,3 +256,23 @@ def read_message(reader_email: str, readed_email: str):
     finally:
         cursor.close()
         connection.close()
+
+@comm.get("/get_conversations_id/{user_id}", response_model= list[int])
+def read_message(user_id: int):
+    connection = get_connection()
+    cursor = connection.cursor(dictionary=True)
+    conversation: list[int]= []
+    try:
+        cursor.execute(
+            "SELECT id FROM conversations where user1_id = %s OR user2_id = %s", (user_id, user_id))
+        get_conv = cursor.fetchall()
+        if get_conv:
+            for convs in get_conv:
+                    conversation.append(convs['id'])
+            return conversation
+        else:
+            raise HTTPException(status_code=501, 
+                detail="No conversation with this email yet.")
+    finally:
+        cursor.close()
+        connection.close()
