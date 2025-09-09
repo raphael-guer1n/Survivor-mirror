@@ -16,14 +16,18 @@ API_BASE = config.JEB_API_BASE_URL
 HEADERS = {"X-Group-Authorization": config.JEB_API_KEY}
 REQUEST_TIMEOUT = config.JEB_API_TIMEOUT or 30
 
-REQUEST_SLEEP = 0.005
+REQUEST_SLEEP = 0.010
 
 def fetch_json(url: str) -> Any:
     """Fetch JSON with retry for 429 and rate limit backoff."""
+    retry_after = 2
     while True:
         resp = requests.get(url, headers=HEADERS)
+        if resp.status_code == 500:
+            log.warning(f"500 Internal Server Error. Retrying after {retry_after}s")
+            time.sleep(retry_after)
+            continue
         if resp.status_code == 429:
-            retry_after = int(resp.headers.get("Retry-After", "5"))
             log.warning(f"429 Too Many Requests. Retrying after {retry_after}s")
             time.sleep(retry_after)
             continue
@@ -68,7 +72,7 @@ def sync_startups():
         last_id = get_last_synced("startups", cursor)
         max_id = last_id
         skip = last_id
-        page_size = 100
+        page_size = 50
         while True:
             startups = fetch_json(f"{API_BASE}/startups?skip={skip}&limit={page_size}")
             if not startups:
@@ -155,7 +159,7 @@ def sync_investors():
         last_id = get_last_synced("investors", cursor)
         max_id = last_id
         skip = last_id
-        page_size = 100
+        page_size = 50
         while True:
             investors = fetch_json(f"{API_BASE}/investors?skip={skip}&limit={page_size}")
             if not investors:
@@ -204,7 +208,7 @@ def sync_partners():
         last_id = get_last_synced("partners", cursor)
         max_id = last_id
         skip = last_id
-        page_size = 100
+        page_size = 50
         while True:
             partners = fetch_json(f"{API_BASE}/partners?skip={skip}&limit={page_size}")
             if not partners:
@@ -252,7 +256,7 @@ def sync_news():
         last_id = get_last_synced("news", cursor)
         max_id = last_id
         skip = last_id
-        page_size = 100
+        page_size = 50
         while True:
             news_list = fetch_json(f"{API_BASE}/news?skip={skip}&limit={page_size}")
             if not news_list:
@@ -300,7 +304,7 @@ def sync_events():
         last_id = get_last_synced("events", cursor)
         max_id = last_id
         skip = last_id
-        page_size = 100
+        page_size = 50
         while True:
             events = fetch_json(f"{API_BASE}/events?skip={skip}&limit={page_size}")
             if not events:
