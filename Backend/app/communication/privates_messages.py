@@ -397,3 +397,28 @@ def add_message_to_conversation(sender_email: str, reciver_email:str, content:st
     finally:
         cursor.close()
         connection.close()
+
+@comm.get("/create_a_conversation/{user_id}/chat_with/{user_email}", response_model= str)
+def read_conversation_by_id(user_id: int, user_email: str):
+    connection = get_connection()
+    cursor = connection.cursor(dictionary=True)
+    try:
+        cursor.execute("SELECT id FROM users where email = %s", (user_email,))
+        get_reader = cursor.fetchone()
+        if not get_reader:
+            raise HTTPException(status_code=501,
+                detail="Reader does not exist.")
+        cursor.execute(
+            "SELECT id FROM conversations where user1_id = %s AND user2_id = %s OR user2_id = %s AND user1_id = %s", (user_id, get_reader['id'], get_reader['id'], user_id))
+        get_readed = cursor.fetchone()
+        if  get_readed:
+            raise HTTPException(status_code=501,
+                detail="You already have a conversation with this guy.")
+        cursor.execute("INSERT INTO conversations (user1_id, user2_id) VALUES (%s, %s)",
+            (user_id, get_reader['id'],))
+        connection.commit()
+        print(user_id, get_reader['id'])
+        return "success"
+    finally:
+        cursor.close()
+        connection.close()
