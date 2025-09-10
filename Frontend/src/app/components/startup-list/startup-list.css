@@ -9,7 +9,7 @@
     margin-bottom: 18px;
     flex-wrap: wrap;
     background: linear-gradient(
-            -45deg,
+            45deg,
             rgba(193, 116, 242, 1), /* #c174f2 */
             rgba(241, 133, 133, 1)  /* #cb90f1 */
     );
