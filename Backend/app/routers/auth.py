@@ -263,31 +263,42 @@ def check_founder_of_startup(user, startup_id):
 @router.post("/register")
 def register(user: UserRegister):
     email = user.email.strip().lower()
+
+    if user.role not in ["founder", "investor"]:
+        raise HTTPException(
+            status_code=400,
+            detail="Invalid role. Only 'founder' or 'investor' are allowed."
+        )
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
     try:
         cursor.execute("SELECT id FROM users WHERE email = %s", (email,))
         if cursor.fetchone():
             raise HTTPException(status_code=400, detail="Email already registered")
-
         password_hash = hash_password(user.password)
         cursor.execute(
-            "INSERT INTO users (email, name, role, password_hash) VALUES (%s, %s, %s, %s)",
+            """
+            INSERT INTO users (email, name, role, password_hash)
+            VALUES (%s, %s, %s, %s)
+            """,
             (email, user.name, user.role, password_hash)
         )
         conn.commit()
         new_user_id = cursor.lastrowid
-
         token = create_access_token({"sub": str(new_user_id), "role": user.role})
         return {
             "access_token": token,
             "token_type": "bearer",
-            "user": {"id": new_user_id, "email": email, "name": user.name, "role": user.role}
+            "user": {
+                "id": new_user_id,
+                "email": email,
+                "name": user.name,
+                "role": user.role
+            }
         }
     finally:
         cursor.close()
         conn.close()
-
 
 @router.post("/login")
 def login(credentials: UserLogin):
