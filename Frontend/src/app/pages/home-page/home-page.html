@@ -6,6 +6,23 @@
       <a routerLink="/startups" class="btn">See Startups</a>
       <a href="#contact" class="btn ghost">Contact</a>
     </div>
+    <div class="most-viewed-section">
+      <h2 class="most-viewed-title">Featured startups</h2>
+      <div class="most-viewed-scroll" #scrollContainer (mouseenter)="pauseInfiniteScroll()" (mouseleave)="resumeInfiniteScroll()">
+        <ng-container *ngIf="!loadingMostViewed && mostViewedStartups.length > 0; else loadingMV">
+          <ng-container *ngFor="let s of infiniteMostViewed">
+            <div class="most-viewed-card">
+              <div class="mv-name">{{ s.name }}</div>
+              <div class="mv-sector">{{ s.sector || '—' }}</div>
+              <div class="mv-views">👁️ {{ s.view_count }}</div>
+            </div>
+          </ng-container>
+        </ng-container>
+        <ng-template #loadingMV>
+          <div class="most-viewed-loading">Loading...</div>
+        </ng-template>
+      </div>
+    </div>
     <div class="stats-row" style="margin-top: 32px; display: flex; gap: 32px; justify-content: center;">
       <div class="stat-card">
         <div class="stat-label">Startups</div>
