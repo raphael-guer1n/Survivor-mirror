@@ -1,9 +1,24 @@
+
 <section class="hero">
   <div class="hero-inner">
     <h1>Present you with style</h1>
     <div class="hero-ctas">
       <a routerLink="/startups" class="btn">See Startups</a>
       <a href="#contact" class="btn ghost">Contact</a>
+    </div>
+    <div class="stats-row" style="margin-top: 32px; display: flex; gap: 32px; justify-content: center;">
+      <div class="stat-card">
+        <div class="stat-label">Startups</div>
+        <div class="stat-value">{{ loadingStats ? '...' : startupsCount }}</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Partners</div>
+        <div class="stat-value">{{ loadingStats ? '...' : partnersCount }}</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Events</div>
+        <div class="stat-value">{{ loadingStats ? '...' : eventsCount }}</div>
+      </div>
     </div>
   </div>
   <div class="hero-glow" aria-hidden="true"></div>
