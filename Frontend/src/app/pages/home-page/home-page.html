@@ -1,9 +1,44 @@
+
 <section class="hero">
   <div class="hero-inner">
-    <h1>Present you with style</h1>
+    <h1>Welcome to JEB Incubator!</h1>
     <div class="hero-ctas">
       <a routerLink="/startups" class="btn">See Startups</a>
       <a href="#contact" class="btn ghost">Contact</a>
+    </div>
+    <div class="most-viewed-section">
+      <h2 class="most-viewed-title">Featured startups</h2>
+      <div class="most-viewed-scroll" #scrollContainer (mouseenter)="pauseInfiniteScroll()" (mouseleave)="resumeInfiniteScroll()">
+        <ng-container *ngIf="!loadingMostViewed && mostViewedStartups.length > 0; else loadingMV">
+          <ng-container *ngFor="let s of infiniteMostViewed">
+            <div class="most-viewed-card">
+              <div class="mv-name">{{ s.name }}</div>
+              <div class="mv-badges">
+                <span class="mv-badge mv-sector">{{ s.sector || '—' }}</span>
+                <span class="mv-badge mv-maturity">{{ s.maturity || '—' }}</span>
+              </div>
+              <div class="mv-views">👁️ {{ s.view_count }}</div>
+            </div>
+          </ng-container>
+        </ng-container>
+        <ng-template #loadingMV>
+          <div class="most-viewed-loading">Loading...</div>
+        </ng-template>
+      </div>
+    </div>
+    <div class="stats-row" style="margin-top: 32px; display: flex; gap: 32px; justify-content: center;">
+      <div class="stat-card">
+        <div class="stat-label">Startups</div>
+        <div class="stat-value">{{ loadingStats ? '...' : startupsCount }}</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Partners</div>
+        <div class="stat-value">{{ loadingStats ? '...' : partnersCount }}</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Events</div>
+        <div class="stat-value">{{ loadingStats ? '...' : eventsCount }}</div>
+      </div>
     </div>
   </div>
   <div class="hero-glow" aria-hidden="true"></div>
