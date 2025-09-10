@@ -5,8 +5,32 @@
     } @else if (!loading && newsList.length === 0) {
         <div class="card">No news found.</div>
     }
-    <app-news-list [items]="newsList" (newsClicked)="openNews($event)"></app-news-list>
 
+    <div class="toolbar" style="margin: 0 0 1rem 0; display: flex; gap: .5rem; align-items: center;">
+        <button class="btn" (click)="viewMode = 'calendar'">Calendar</button>
+        <button class="btn" (click)="viewMode = 'list'">List</button>
+        @if (selectedDateISO) {
+            <button class="btn ghost" (click)="clearDateFilter()">
+                Clear date filter ({{ selectedDateISO }})
+            </button>
+        }
+    </div>
+
+    @if (viewMode === 'calendar') {
+        <section>
+            <app-news-calendar
+                    [news]="newsList"
+                    (dateSelected)="onCalendarDateSelected($event)">
+            </app-news-calendar>
+        </section>
+    } @else if (viewMode === 'list') {
+        <section>
+            <app-news-list
+                    [items]="activeNewsList"
+                    (newsClicked)="openNews($event)">
+            </app-news-list>
+        </section>
+    }
     @if (selectedNews) {
         <div class="news-modal">
             <div class="modal-backdrop" (click)="closeNews()"></div>
