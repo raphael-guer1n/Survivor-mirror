@@ -1,16 +1,7 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-
-export interface News {
-  id: number;
-  title: string;
-  news_date?: string;
-  category?: string;
-  location?: string;
-  startup_id?: number;
-  description?: string;
-}
+import {News} from "../../cores/interfaces/backend/dtos";
 
 @Component({
   selector: 'app-news-list',

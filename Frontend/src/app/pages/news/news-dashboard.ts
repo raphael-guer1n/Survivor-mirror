@@ -2,35 +2,30 @@ import { marked } from 'marked';
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NewsList } from '../../components/news-list/news-list';
-import { HttpClient } from '@angular/common/http';
-
-interface News {
-  id: number;
-  title: string;
-  news_date?: string;
-  category?: string;
-  location?: string;
-  startup_id?: number;
-  description?: string;
-}
+import {BackendInterface} from "../../cores/interfaces/backend/backend-interface";
+import {News} from "../../cores/interfaces/backend/dtos";
+import {NewsCalendar} from "../../components/news-calendar/news-calendar";
 
 @Component({
   selector: 'app-news-dashboard',
   templateUrl: './news-dashboard.html',
   styleUrls: ['./news-dashboard.css'],
   standalone: true,
-  imports: [CommonModule, NewsList]
+  imports: [CommonModule, NewsList, NewsCalendar]
 })
 export class NewsDashboardComponent implements OnInit {
   newsList: News[] = [];
   selectedNews: News | null = null;
   selectedNewsHtml: string = '';
   loading = true;
+  viewMode: 'list' | 'calendar' = 'calendar';
+  selectedDateISO: string | null = null;
+  filteredNews: News[] | null = null;
 
-  constructor(private http: HttpClient) {}
+  constructor(private backend: BackendInterface) {}
 
   ngOnInit() {
-    this.http.get<News[]>('/api/news/').subscribe({
+    this.backend.getNews().subscribe({
       next: (data) => {
         this.newsList = data;
         this.loading = false;
@@ -38,12 +33,12 @@ export class NewsDashboardComponent implements OnInit {
       error: () => {
         this.loading = false;
       }
-    });
+    })
   }
 
   async openNews(news: News) {
     this.loading = true;
-    this.http.get<News>(`/api/news/${news.id}/`).subscribe({
+    this.backend.getNewsItem(news.id).subscribe({
       next: async (fullNews) => {
         this.selectedNews = { ...news, ...fullNews };
         this.selectedNewsHtml = await marked.parse(this.selectedNews.description || '');
@@ -60,5 +55,25 @@ export class NewsDashboardComponent implements OnInit {
   closeNews() {
     this.selectedNews = null;
     this.selectedNewsHtml = '';
+  }
+
+  onCalendarDateSelected(dateISO: string) {
+    this.selectedDateISO = dateISO;
+    this.selectedNews = null;
+    this.selectedNewsHtml = '';
+    this.filteredNews = this.newsList.filter(n => {
+      const nd = n.news_date?.slice(0, 10) || null;
+      return nd === dateISO;
+    });
+    this.viewMode = 'list';
+  }
+
+  clearDateFilter() {
+    this.selectedDateISO = null;
+    this.filteredNews = null;
+  }
+
+  get activeNewsList(): News[] {
+    return this.filteredNews ?? this.newsList;
   }
 }

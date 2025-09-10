@@ -1,28 +1,60 @@
 <div class="news-dashboard content">
-  <h1>News</h1>
+    <h1>News</h1>
+    @if (loading) {
+        <div class="card">Loading news...</div>
+    } @else if (!loading && newsList.length === 0) {
+        <div class="card">No news found.</div>
+    }
 
-  <div *ngIf="loading" class="card">Loading news...</div>
-  <div *ngIf="!loading && newsList.length === 0" class="card">No news found.</div>
-  <app-news-list [items]="newsList" (newsClicked)="openNews($event)"></app-news-list>
-
-  <div *ngIf="selectedNews" class="news-modal">
-    <div class="modal-backdrop" (click)="closeNews()"></div>
-    <div class="modal-content card">
-      <button class="btn ghost close-btn" (click)="closeNews()">Close</button>
-  <h2>{{ selectedNews.title }}</h2>
-      <div class="news-meta">
-  <span class="news-date">{{ selectedNews.news_date || '-' }}</span>
-  <span class="news-category">{{ selectedNews.category || '-' }}</span>
-      </div>
-      <div class="news-description">
-  <div class="news-description" [innerHTML]="selectedNewsHtml"></div>
-      </div>
-      <div *ngIf="selectedNews.location" class="news-location">
-        <strong>Location:</strong> {{ selectedNews.location }}
-      </div>
-      <div *ngIf="selectedNews.startup_id" class="news-startup">
-        <strong>Startup ID:</strong> {{ selectedNews.startup_id }}
-      </div>
+    <div class="toolbar" style="margin: 0 0 1rem 0; display: flex; gap: .5rem; align-items: center;">
+        <button class="btn" (click)="viewMode = 'calendar'">Calendar</button>
+        <button class="btn" (click)="viewMode = 'list'">List</button>
+        @if (selectedDateISO) {
+            <button class="btn ghost" (click)="clearDateFilter()">
+                Clear date filter ({{ selectedDateISO }})
+            </button>
+        }
     </div>
-  </div>
+
+    @if (viewMode === 'calendar') {
+        <section>
+            <app-news-calendar
+                    [news]="newsList"
+                    (dateSelected)="onCalendarDateSelected($event)">
+            </app-news-calendar>
+        </section>
+    } @else if (viewMode === 'list') {
+        <section>
+            <app-news-list
+                    [items]="activeNewsList"
+                    (newsClicked)="openNews($event)">
+            </app-news-list>
+        </section>
+    }
+    @if (selectedNews) {
+        <div class="news-modal">
+            <div class="modal-backdrop" (click)="closeNews()"></div>
+            <div class="modal-content card">
+                <button class="btn ghost close-btn" (click)="closeNews()">Close</button>
+                <h2>{{ selectedNews.title }}</h2>
+                <div class="news-meta">
+                    <span class="news-date">{{ selectedNews.news_date || '-' }}</span>
+                    <span class="news-category">{{ selectedNews.category || '-' }}</span>
+                </div>
+                <div class="news-description">
+                    <div class="news-description" [innerHTML]="selectedNewsHtml"></div>
+                </div>
+                @if (selectedNews.location) {
+                    <div class="news-location">
+                        <strong>Location:</strong> {{ selectedNews.location }}
+                    </div>
+                }
+                @if (selectedNews.startup_id) {
+                    <div class="news-startup">
+                        <strong>Startup ID:</strong> {{ selectedNews.startup_id }}
+                    </div>
+                }
+            </div>
+        </div>
+    }
 </div>

@@ -123,7 +123,7 @@ export class BackendInterface {
 
   getNews(skip?: number, limit?: number, options?: RequestOptions): Observable<News[]> {
     const qs = this.buildQuery({skip, limit});
-    return this.http.get<News[]>(`/news${qs}`, options);
+    return this.http.get<News[]>(`/news/${qs}`, options);
   }
 
   getNewsItem(newsId: number, options?: RequestOptions): Observable<NewsDetail> {
@@ -132,14 +132,14 @@ export class BackendInterface {
 
   getNewsImage(newsId: number, options?: RequestOptions): Observable<{ image_url: string }> {
     return this.http.get<{ image_url: string }>(
-      `/news/${encodeURIComponent(String(newsId))}/image`,
+      `/news/${encodeURIComponent(String(newsId))}/image/`,
       options
     );
   }
 
   getEvents(skip?: number, limit?: number, options?: RequestOptions): Observable<Event[]> {
     const qs = this.buildQuery({skip, limit});
-    return this.http.get<Event[]>(`/events${qs}`, options);
+    return this.http.get<Event[]>(`/events/${qs}`, options);
   }
 
   getEvent(eventId: number, options?: RequestOptions): Observable<Event> {
@@ -148,7 +148,7 @@ export class BackendInterface {
 
   getEventImage(eventId: number, options?: RequestOptions): Observable<{ image_url: string }> {
     return this.http.get<{ image_url: string }>(
-      `/events/${encodeURIComponent(String(eventId))}/image`,
+      `/events/${encodeURIComponent(String(eventId))}/image/`,
       options
     );
   }
@@ -166,7 +166,7 @@ export class BackendInterface {
   }
 
   getUserImage(userId: number, options?: RequestOptions): Observable<any> {
-    return this.http.get<any>(`/users/${encodeURIComponent(String(userId))}/image`, options);
+    return this.http.get<any>(`/users/${encodeURIComponent(String(userId))}/image/`, options);
   }
 
   createStartup(payload: {
@@ -183,7 +183,7 @@ export class BackendInterface {
     project_status?: string | null;
     needs?: string | null;
   }, options?: RequestOptions): Observable<StartupList> {
-    return this.http.post<StartupList>(`/startups`, payload, options);
+    return this.http.post<StartupList>(`/startups/`, payload, options);
   }
 
   updateStartup(startupId: number, payload: {
