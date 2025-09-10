@@ -373,4 +373,8 @@ export class BackendInterface {
     return this.http.get<null>(`/communication/send_message/sender/${encodeURIComponent(String(sender_email))}/reciver/${encodeURIComponent(String(reciver_email))}/content/${encodeURIComponent(String(content))}/conv/${encodeURIComponent(Number(id))}`,
     options)
   }
+  create_conversation(id: number, user_mail:string, options?: RequestOptions): Observable<string> {
+    return this.http.get<string>(`/communication//create_a_conversation/${encodeURIComponent(String(id))}/chat_with/${encodeURIComponent(String(user_mail))}`,
+    options)
+  }
 }
