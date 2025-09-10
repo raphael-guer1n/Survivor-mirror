@@ -42,4 +42,9 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./pages/admin-page/admin-page').then((m) => m.AdminPage),
   },
+  {
+    path: 'about',
+    loadComponent: () =>
+      import('./pages/about-page/about-page').then((m) => m.AboutPage),
+  }
 ];
