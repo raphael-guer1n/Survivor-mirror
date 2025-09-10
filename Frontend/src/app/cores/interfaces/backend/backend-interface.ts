@@ -1,7 +1,7 @@
 import {Observable} from "rxjs";
 import {Injectable} from "@angular/core";
 import {HttpInterface, RequestOptions} from "../http/http-interface";
-import {Event, Investor, News, NewsDetail, Partner, StartupDetail, StartupList, User} from "./dtos";
+import {Event, Investor, News, NewsDetail, Partner, StartupDetail, StartupList, User, Communication, Conversations} from "./dtos";
 
 @Injectable({providedIn: 'root'})
 export class BackendInterface {
@@ -352,5 +352,25 @@ export class BackendInterface {
 
   adminSync(options?: RequestOptions): Observable<unknown> {
     return this.http.post<unknown>(`/admin/sync`, {}, options);
+  }
+
+  getConversation(reader_email: string, readed_email: string, options?: RequestOptions): Observable<Communication> {
+    return this.http.get<Communication>(`communication/read_conversation/${encodeURIComponent(String(reader_email))}/with/${encodeURIComponent(String(readed_email))}`, options)
+  }
+  getLastMessage(reader_email: string, readed_email: string, options?: RequestOptions): Observable<Communication> {
+    return this.http.get<Communication>(`communication/read_message/${encodeURIComponent(String(reader_email))}/with/${encodeURIComponent(String(readed_email))}`, options)
+  }
+  get_Conversations_of_user(id_of_user: number, options?: RequestOptions): Observable<Conversations[]> {
+    return this.http.get<Conversations[]>(`communication/get_conversations_id/${encodeURIComponent(Number(id_of_user))}`, options)
+  }
+  get_Conversations_content(conversation_id: number, options?: RequestOptions): Observable<Communication[]> {
+    return this.http.get<Communication[]>(`communication/read_conversation/${encodeURIComponent(Number(conversation_id))}`, options)
+  }
+  get_last_message_by_id(id_of_conv: number, user: number, options?: RequestOptions): Observable<Communication> {
+    return this.http.get<Communication>(`/communication/read_last_message_by_id/${encodeURIComponent(Number(id_of_conv))}/user/${encodeURIComponent(Number(user))}`, options)
+  }
+  send_message(sender_email: string, reciver_email:string, content:string, id: number, options?: RequestOptions): Observable<null> {
+    return this.http.get<null>(`/communication/send_message/sender/${encodeURIComponent(String(sender_email))}/reciver/${encodeURIComponent(String(reciver_email))}/content/${encodeURIComponent(String(content))}/conv/${encodeURIComponent(Number(id))}`,
+    options)
   }
 }

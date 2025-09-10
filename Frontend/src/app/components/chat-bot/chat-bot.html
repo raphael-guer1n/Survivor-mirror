@@ -1,34 +1,29 @@
 <button
-        class="chat-toggle"
+        class="com-toggle"
         type="button"
-        aria-label="Open chat"
+        aria-label="Open communication"
         [attr.aria-expanded]="isOpen"
-        aria-controls="chatbot-panel"
-        (click)="toggleChat()">
+        aria-controls="communication-panel"
+        (click)="toggleChat()"
+        (click)="toggleChat_access()">
     <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true">
         <path fill="currentColor"
               d="M20 2H4a2 2 0 0 0-2 2v15.5a.5.5 0 0 0 .79.41L7 17h13a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2Z"/>
     </svg>
 </button>
 
-@if (isOpen) {
+<div *ngIf="isOpen && !logged">
     <section
-            id="chatbot-panel"
-            class="chat-panel"
+            id="communication-panel"
+            class="com-panel"
             aria-label="Chat pannel">
 
-        <header class="chat-header">
-            <div class="chat-title">
+        <header class="com-header">
+            <div class="com-title">
                 <span class="dot"></span>
-                <span>Assistant</span>
+                <span>Communication</span>
             </div>
-            <div class="chat-actions">
-                <button class="icon-btn" type="button" (click)="clearConversation()" title="Clear conversation"
-                        aria-label="Clear conversation">
-                    <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
-                        <path fill="currentColor" d="M6 7h12l-1 14H7L6 7Zm3-3h6l1 2H8l1-2Z"/>
-                    </svg>
-                </button>
+            <div class="com-actions">
                 <button class="icon-btn" type="button" (click)="closeChat()" title="Close" aria-label="Close">
                     <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
                         <path fill="currentColor" d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2"
@@ -37,30 +32,93 @@
                 </button>
             </div>
         </header>
-
-        <div class="chat-body">
+        <div class="com-body">
             <div class="messages" role="log" aria-live="polite">
-                <div *ngFor="let msg of messages; " class="message" [class.user]="msg.role === 'user'"
-                     [class.bot]="msg.role === 'bot'">
+                <div *ngFor="let msg of messages; " class="message" [class.sender]="msg.role === 'sender'"
+                     [class.reciver]="msg.role === 'reciver'">
                     <div class="bubble">
                         {{ msg.text }}
                     </div>
                     <time class="time" [attr.datetime]="msg.time.toISOString()">{{ msg.time | date:'shortTime' }}</time>
                 </div>
                 <div class="empty" *ngIf="messages.length === 0">
-                    Ask your questions here!
+                    Please login or register.
                 </div>
             </div>
         </div>
 
-        <footer class="chat-input">
+    <footer class="com-input">
+        <textarea
+          #msgInput
+          class="input"
+          rows="1"
+          placeholder="Write a message..."
+          [value]="draft"
+          (input)="draft = msgInput.value"
+          (keydown)="handleKeydown($event)">
+        </textarea>
+                <button type="button" class="send-btn" (click)="sendMessage()" [disabled]="!draft.trim()"
+                        aria-label="Envoyer">
+                    <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+                        <path fill="currentColor" d="M2 21l21-9L2 3v7l15 2-15 2z"/>
+                    </svg>
+                </button>
+            </footer>
+    </section>
+</div>
+
+<div *ngIf="isOpen && logged">
+    <section
+            id="communication-panel"
+            class="com-panel"
+            aria-label="Chat pannel">
+
+        <header class="com-header">
+            <div class="com-title">
+                <span class="dot"></span>
+                <span>Communication</span>
+            </div>
+            <div class="com-actions">
+                <button class="icon-btn" type="button" (click)="closeChat()" title="Close" aria-label="Close">
+                    <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+                        <path fill="currentColor" d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2"
+                              stroke-linecap="round"/>
+                    </svg>
+                </button>
+            </div>
+        </header>
+        <div class="convo-list" *ngIf="display_conversation === -1">
+            <div *ngFor="let c of ids; let i = index"
+                 class="conversation"
+                 [style.zIndex]="ids.length - i"
+                 (click)="openConversation(c, i)">
+          
+              <div class="meta">
+                <div class="name">{{ email[i] }}</div>
+                <div class="last">{{ last_message[i] }}</div>
+              </div>
+            </div>
+          </div>
+          <div class="chat-container" *ngIf="display_conversation !== -1">
+            <button (click)="display_conversation = -1">⬅ Back</button>
+          
+            <h3>{{ email[display_conversation]}}</h3>
+            <div class="messages">
+                <div *ngFor="let m of conversation; "class="message" [class.sender]=" m.sender_name === sender"
+                    [class.reciver]= "m.sender_name !== sender">
+                     <div class="bubble">
+                        {{ m.content }}
+                    </div>
+                </div>
+            </div>
+          </div>
+        <footer class="com-input" *ngIf="display_conversation != -1">
     <textarea
       #msgInput
       class="input"
       rows="1"
       placeholder="Write a message..."
-      [value]="draft"
-      (input)="draft = msgInput.value"
+      [(ngModel)]="draft"
       (keydown)="handleKeydown($event)">
     </textarea>
             <button type="button" class="send-btn" (click)="sendMessage()" [disabled]="!draft.trim()"
@@ -71,4 +129,4 @@
             </button>
         </footer>
     </section>
-}
+</div>

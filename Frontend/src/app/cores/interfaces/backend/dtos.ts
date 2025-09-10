@@ -102,6 +102,16 @@ export interface HTTPValidationError {
     detail?: ValidationError[];
 }
 
+export interface Communication {
+    sender_name: string;
+    content: string;
+}
+
+export interface Conversations {
+    id: number;
+    chat_with: string;
+}
+
 export type StartupListResponse = StartupList[];
 export type InvestorListResponse = Investor[];
 export type PartnerListResponse = Partner[];

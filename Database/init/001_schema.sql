@@ -107,6 +107,22 @@ CREATE TABLE IF NOT EXISTS users (
   FOREIGN KEY (investor_id) REFERENCES investors(id) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+-- Conversations
+CREATE TABLE IF NOT EXISTS conversations (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    user1_id BIGINT NOT NULL,
+    user2_id BIGINT NOT NULL,
+    UNIQUE KEY unique_users (user1_id, user2_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Messages
+CREATE TABLE IF NOT EXISTS messages (
+    conversation_id BIGINT NOT NULL,
+    sender_id BIGINT NOT NULL,
+    receiver_id BIGINT NOT NULL,
+    content TEXT NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 -- Indexes
 CREATE INDEX IF NOT EXISTS idx_startups_sector ON startups(sector);
 CREATE INDEX IF NOT EXISTS idx_news_startup_id ON news(startup_id);
