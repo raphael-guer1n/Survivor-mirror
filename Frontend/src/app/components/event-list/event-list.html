@@ -1,0 +1,36 @@
+<div class="toolbar">
+    <input
+            type="search"
+            [(ngModel)]="query"
+            placeholder="Search for event..."
+            aria-label="Search"
+            class="search"
+    />
+    <select [(ngModel)]="filterValues.category" aria-label="Filtrer by category" class="select">
+        <option value="">Category</option>
+        @for (cat of categories; track cat) {
+            <option [value]="cat">{{ cat }}</option>
+        }
+    </select>
+    <select [(ngModel)]="sortOrder" aria-label="Sort by date" class="select">
+        <option value="desc">Newest first</option>
+        <option value="asc">Oldest first</option>
+    </select>
+</div>
+
+<div class="event">
+    @for (event of filtered; track event) {
+        <div class="card event-item" (click)="eventClicked.emit(event)">
+            <div class="event-title">{{ event.name }}</div>
+            <div class="event-meta">
+                <span class="event-date">{{ event.dates ? (event.dates | date:'d MMMM y' : 'fr') : '-' }}</span>
+                <span class="event-category-pill"
+                      [attr.data-category]="event.event_type">{{ event.event_type || '-' }}</span>
+            </div>
+        </div>
+    }
+</div>
+
+@if (filtered.length === 0) {
+    <div>No event for "{{ query }}".</div>
+}
