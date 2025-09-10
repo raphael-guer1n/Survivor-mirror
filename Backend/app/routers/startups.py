@@ -27,6 +27,30 @@ def get_startups(skip: int = Query(0, ge=0), limit: int = Query(100, ge=1)):
         cursor.close()
         conn.close()
 
+@router.get("/most-viewed", response_model=list[StartupOut])
+def get_most_viewed_startups(limit: int = Query(10, ge=1, le=100)):
+    conn = get_connection()
+    cursor = conn.cursor(dictionary=True)
+    try:
+        cursor.execute(
+            """
+            SELECT id, name, legal_status, address, email, phone, sector, maturity,
+                   created_at, description, website_url, social_media_url,
+                   project_status, needs, image_s3_key, view_count
+            FROM startups
+            ORDER BY view_count DESC
+            LIMIT %s
+            """,
+            (limit,),
+        )
+        startups = cursor.fetchall()
+        if not startups:
+            raise HTTPException(status_code=404, detail="No startups found")
+        return startups
+    finally:
+        cursor.close()
+        conn.close()
+
 @router.get("/{startup_id}", response_model=StartupDetail)
 def get_startup(startup_id: int):
     conn = get_connection()
