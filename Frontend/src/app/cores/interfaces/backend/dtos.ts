@@ -34,6 +34,7 @@ export interface News {
     location?: string | null;
     category?: string | null;
     startup_id?: number | null;
+    description?: string | null;
 }
 
 export interface NewsDetail extends News {
