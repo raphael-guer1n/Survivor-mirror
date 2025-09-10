@@ -1,51 +1,96 @@
-.toolbar {
-  display: flex;
-  gap: 16px;
-  margin-bottom: 18px;
-  align-items: center;
-}
-.search {
-  padding: 8px 12px;
-  border-radius: 8px;
-  border: none;
-  background: #232b45;
-  color: #fff;
-  min-width: 220px;
-}
-.select {
-  padding: 8px 12px;
-  border-radius: 8px;
-  border: none;
-  background: #232b45;
-  color: #fff;
-}
 .news-list {
   display: flex;
   flex-direction: column;
   gap: 18px;
+  margin-top: 18px;
 }
-.card.news-item {
+
+.toolbar {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    margin-bottom: 18px;
+    flex-wrap: wrap;
+    background: linear-gradient(
+            45deg,
+            rgba(193, 116, 242, 1), /* #c174f2 */
+            rgba(241, 133, 133, 1)  /* #cb90f1 */
+    );
+    border: 0px solid var(--border);
+    border-radius: var(--radius);
+    padding: 12px;
+    box-shadow: var(--shadow);
+}
+
+.search,
+.select {
+    color: var(--text);
+    background: var(--surface);
+    border: 0px solid var(--border);
+    border-radius: 10px;
+    outline: none;
+    transition: box-shadow 160ms ease, border-color 160ms ease, transform 120ms ease, background 160ms ease;
+    box-shadow: 0 1px 0 rgba(2, 6, 23, 0.04);
+}
+
+.search {
+    flex: 1 1 320px;
+    padding: 11px 12px;
+    font-size: 14px;
+}
+
+.select {
+    flex: 0 0 220px;
+    padding: 10px 12px;
+    font-size: 14px;
+    appearance: none;
+    background-image: linear-gradient(180deg, transparent, transparent),
+    radial-gradient(8px 8px at calc(100% - 16px) 50%, var(--text-muted) 40%, transparent 41%);
+    background-repeat: no-repeat;
+    background-position: right 12px center, right 12px center;
+    background-size: 16px 100%, 16px 16px;
+}
+
+.search::placeholder {
+    color: var(--text-muted);
+}
+
+.search:focus,
+.select:focus {
+    border-color: var(--brand);
+    box-shadow: 0 0 0 3px var(--ring);
+}
+
+.news-item {
   cursor: pointer;
-  background: #222a3f;
+  background: linear-gradient(
+          45deg,
+          rgba(193, 116, 242, 0.5), /* #c174f2 */
+          rgba(241, 133, 133, 0.5)  /* #cb90f1 */
+  );
   border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(15,23,42,0.10);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
   padding: 18px 24px;
   transition: box-shadow 160ms, transform 120ms, background 120ms;
-  border-left: 4px solid var(--brand);
+  border-left: 8px solid rgb(193, 116, 242);
   margin-bottom: 0;
   display: flex;
   flex-direction: column;
   gap: 6px;
 }
-.card.news-item:hover {
-  box-shadow: 0 8px 24px rgba(124, 58, 237, 0.18);
-  background: #232b45;
-  transform: translateY(-2px);
+.news-item:hover {
+  box-shadow: 0 8px 24px rgba(193,116,242,0.5);
+    background: linear-gradient(
+          45deg,
+          rgba(193, 116, 242, 1), /* #c174f2 */
+          rgba(241, 133, 133, 1)  /* #cb90f1 */
+  );
+  transform: translateY(-5px) scale(1.06);
 }
 .news-title {
   font-size: 1.18rem;
   font-weight: 600;
-  color: var(--brand);
+  color: #000000;
   margin-bottom: 2px;
 }
 .news-meta {
@@ -57,29 +102,21 @@
   margin-bottom: 2px;
 }
 .news-category-pill {
-  background: #fff;
-  color: #222a3f;
+  background: var(--lavender-300);
+  color: #000000;
   font-weight: 600;
   font-size: 0.93rem;
   border-radius: 8px;
   padding: 2px 12px;
-  box-shadow: 0 1px 4px rgba(34,42,63,0.08);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
   margin-left: 2px;
   display: inline-block;
 }
-.news-category-pill[data-category="Award"] {
-  background: #ffe066;
-  color: #222a3f;
-}
-.news-category-pill[data-category="Funding"] {
-  background: #a3e635;
-  color: #222a3f;
-}
-.news-category-pill[data-category="Launch"] {
-  background: #38bdf8;
-  color: #222a3f;
-}
-.news-category-pill[data-category="Partnership"] {
-  background: #f472b6;
-  color: #222a3f;
+.news-description-preview {
+  color: var(--text);
+  font-size: 1rem;
+  margin-top: 6px;
+  margin-bottom: 0;
+  line-height: 1.5;
+  word-break: break-word;
 }
