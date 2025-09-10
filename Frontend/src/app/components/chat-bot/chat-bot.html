@@ -32,15 +32,6 @@
                 </button>
             </div>
         </header>
-        <textarea
-        #msgInput
-        class="reciver_name"
-        rows="1"
-        placeholder="Send a message to:..."
-        [value]="reciver_name"
-        (input)="reciver_name = msgInput.value"
-        (keydown)="handleKeydown($event)">
-      </textarea>
         <div class="com-body">
             <div class="messages" role="log" aria-live="polite">
                 <div *ngFor="let msg of messages; " class="message" [class.sender]="msg.role === 'sender'"
@@ -88,12 +79,6 @@
                 <span>Communication</span>
             </div>
             <div class="com-actions">
-                <button class="icon-btn" type="button" (click)="clearConversation()" title="Clear conversation"
-                        aria-label="Clear conversation">
-                    <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
-                        <path fill="currentColor" d="M6 7h12l-1 14H7L6 7Zm3-3h6l1 2H8l1-2Z"/>
-                    </svg>
-                </button>
                 <button class="icon-btn" type="button" (click)="closeChat()" title="Close" aria-label="Close">
                     <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
                         <path fill="currentColor" d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2"
@@ -102,38 +87,32 @@
                 </button>
             </div>
         </header>
-        <footer class="com-input">
-            <textarea
-              #msgInput
-              class="input"
-              rows="1"
-              placeholder="Send a message to:..."
-              [(ngModel)]="reciver_name"
-              (keydown)="handleKeydown($event)">
-            </textarea>
-            <button type="button" class="send-btn" (click)="load_conversation()" [disabled]="!draft.trim()"
-                    aria-label="Rechercher">
-                <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
-                    <path fill="currentColor" d="M2 21l21-9L2 3v7l15 2-15 2z"/>
-                </svg>
-            </button>
-        </footer>
-        <div class="com-body">
-            <div class="messages" role="log" aria-live="polite">
-                <div *ngFor="let msg of messages; " class="message" [class.sender]="msg.role === 'sender'"
-                     [class.reciver]="msg.role === 'reciver'">
-                    <div class="bubble">
-                        {{ msg.text }}
+        <div class="convo-list" *ngIf="display_conversation === -1">
+            <div *ngFor="let c of ids; let i = index"
+                 class="conversation"
+                 [style.zIndex]="ids.length - i"
+                 (click)="openConversation(c, i)">
+          
+              <div class="meta">
+                <div class="name">{{ email[i] }}</div>
+                <div class="last">{{ last_message[i] }}</div>
+              </div>
+            </div>
+          </div>
+          <div class="chat-container" *ngIf="display_conversation !== -1">
+            <button (click)="display_conversation = -1">⬅ Back</button>
+          
+            <h3>{{ email[display_conversation]}}</h3>
+            <div class="messages">
+                <div *ngFor="let m of conversation; "class="message" [class.sender]=" m.sender_name === sender"
+                    [class.reciver]= "m.sender_name !== sender">
+                     <div class="bubble">
+                        {{ m.content }}
                     </div>
-                    <time class="time" [attr.datetime]="msg.time.toISOString()">{{ msg.time | date:'shortTime' }}</time>
-                </div>
-                <div class="empty" *ngIf="messages.length === 0">
-                    Display conversation here.
                 </div>
             </div>
-        </div>
-
-        <footer class="com-input">
+          </div>
+        <footer class="com-input" *ngIf="display_conversation != -1">
     <textarea
       #msgInput
       class="input"

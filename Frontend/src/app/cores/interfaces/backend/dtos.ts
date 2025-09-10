@@ -101,8 +101,13 @@ export interface HTTPValidationError {
 }
 
 export interface Communication {
-    sender_email: string;
-    reciver_email: string;
+    sender_name: string;
+    content: string;
+}
+
+export interface Conversations {
+    id: number;
+    chat_with: string;
 }
 
 export type StartupListResponse = StartupList[];
