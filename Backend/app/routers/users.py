@@ -216,16 +216,16 @@ def get_user_startup(user_id: int):
         user = cursor.fetchone()
         if not user:
             raise HTTPException(status_code=404, detail="User not found")
-        if not user["founder_id"]:
-            return {"user_id": user_id, "startup_id": None}
         founder_id = user["founder_id"]
+        if not founder_id:
+            raise HTTPException(status_code=404, detail="User is not a founder or has no startup")
         cursor.execute(
             "SELECT startup_id FROM founders WHERE id = %s",
             (founder_id,)
         )
         founder = cursor.fetchone()
-        if not founder:
-            return {"user_id": user_id, "startup_id": None}
+        if not founder or not founder["startup_id"]:
+            raise HTTPException(status_code=404, detail="Startup not found for this user")
         return {"user_id": user_id, "startup_id": founder["startup_id"]}
     finally:
         cursor.close()
