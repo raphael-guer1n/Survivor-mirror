@@ -9,11 +9,11 @@
     margin-bottom: 18px;
     flex-wrap: wrap;
     background: linear-gradient(
-            180deg,
-            rgba(193, 116, 242, 0.14), /* #c174f2 */
-            rgba(203, 144, 241, 0.08)  /* #cb90f1 */
+            -45deg,
+            rgba(193, 116, 242, 1), /* #c174f2 */
+            rgba(241, 133, 133, 1)  /* #cb90f1 */
     );
-    border: 1px solid var(--border);
+    border: 0px solid var(--border);
     border-radius: var(--radius);
     padding: 12px;
     box-shadow: var(--shadow);
@@ -23,7 +23,7 @@
 .select {
     color: var(--text);
     background: var(--surface);
-    border: 1px solid var(--border);
+    border: 0px solid var(--border);
     border-radius: 10px;
     outline: none;
     transition: box-shadow 160ms ease, border-color 160ms ease, transform 120ms ease, background 160ms ease;
@@ -95,8 +95,13 @@
 }
 
 .card:hover {
-    transform: translateY(-2px);
+    transform: translateY(-2px) scale(1.06);
     box-shadow: 0 14px 30px rgba(2, 6, 23, 0.28);
+    background: linear-gradient(
+          45deg,
+          rgba(193, 116, 242, 1), /* #c174f2 */
+          rgba(241, 133, 133, 1)  /* #cb90f1 */
+  );
     border-color: color-mix(in oklab, var(--border), var(--brand) 24%);
 }
 
@@ -119,11 +124,11 @@
 .badge {
     background: linear-gradient(
             180deg,
-            rgba(228, 190, 248, 0.24), /* #e4bef8 */
-            rgba(238, 213, 251, 0.16)  /* #eed5fb */
+            rgba(228, 190, 248, 1), /* #e4bef8 */
+            rgba(238, 213, 251, 1)  /* #eed5fb */
     );
     color: var(--text);
-    border: 1px solid color-mix(in oklab, var(--border), var(--brand-700) 35%);
+    border: 0px solid color-mix(in oklab, var(--border), var(--brand-700) 35%);
     padding: 4px 10px;
     border-radius: 999px;
     font-size: 12px;
@@ -146,6 +151,7 @@
 
 .label {
     color: var(--text-muted);
+    font-weight: bold;
 }
 
 .muted {
