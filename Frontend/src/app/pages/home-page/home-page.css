@@ -1,3 +1,30 @@
+.mv-badges {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 2px;
+    flex-wrap: wrap;
+}
+.mv-badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 0.93rem;
+    font-weight: 500;
+    background: color-mix(in oklab, var(--brand) 10%, var(--card) 90%);
+    color: var(--brand);
+    border: 0px solid color-mix(in oklab, var(--brand) 30%, transparent);
+    box-shadow: 0 1px 4px rgba(213, 168, 242, 0.08);
+}
+.mv-badge.mv-maturity {
+    background: color-mix(in oklab, var(--pink-400) 12%, var(--card) 88%);
+    color: var(--pink-700, #b83280);
+    border: 0px solid color-mix(in oklab, var(--pink-400) 30%, transparent);
+}
+.mv-maturity {
+    font-size: 0.95rem;
+    color: var(--brand);
+    font-weight: 500;
+}
 .hero {
     position: relative;
     border-radius: var(--radius);
@@ -349,8 +376,9 @@
 }
 .mv-name {
     font-weight: 700;
-    font-size: 1.1rem;
+    font-size: 1.5rem;
     color: var(--brand);
+    line-height: 1.2;
 }
 .mv-sector {
     font-size: 0.95rem;

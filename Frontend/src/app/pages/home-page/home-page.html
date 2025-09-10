@@ -1,7 +1,7 @@
 
 <section class="hero">
   <div class="hero-inner">
-    <h1>Present you with style</h1>
+    <h1>Welcome to JEB Incubator!</h1>
     <div class="hero-ctas">
       <a routerLink="/startups" class="btn">See Startups</a>
       <a href="#contact" class="btn ghost">Contact</a>
@@ -13,7 +13,10 @@
           <ng-container *ngFor="let s of infiniteMostViewed">
             <div class="most-viewed-card">
               <div class="mv-name">{{ s.name }}</div>
-              <div class="mv-sector">{{ s.sector || '—' }}</div>
+              <div class="mv-badges">
+                <span class="mv-badge mv-sector">{{ s.sector || '—' }}</span>
+                <span class="mv-badge mv-maturity">{{ s.maturity || '—' }}</span>
+              </div>
               <div class="mv-views">👁️ {{ s.view_count }}</div>
             </div>
           </ng-container>
