@@ -1,0 +1,55 @@
+<div class="event-dashboard content">
+    <h1>Event</h1>
+    @if (loading) {
+        <div class="card">Loading event...</div>
+    } @else if (!loading && eventList.length === 0) {
+        <div class="card">No event found.</div>
+    }
+
+    <div class="toolbar" style="margin: 0 0 1rem 0; display: flex; gap: .5rem; align-items: center;">
+        <button class="btn" (click)="viewMode = 'calendar'">Calendar</button>
+        <button class="btn" (click)="viewMode = 'list'">List</button>
+        @if (selectedDateISO) {
+            <button class="btn ghost" (click)="clearDateFilter()">
+                Clear date filter ({{ selectedDateISO }})
+            </button>
+        }
+    </div>
+
+    @if (viewMode === 'calendar') {
+        <section>
+            <app-event-calendar
+                    [event]="eventList"
+                    (dateSelected)="onCalendarDateSelected($event)">
+            </app-event-calendar>
+        </section>
+    } @else if (viewMode === 'list') {
+        <section>
+            <app-event-list
+                    [items]="activeEventList"
+                    (eventClicked)="openEvent($event)">
+            </app-event-list>
+        </section>
+    }
+    @if (selectedEvent) {
+        <div class="event-modal">
+            <div class="modal-backdrop" (click)="closeEvent()"></div>
+            <div class="modal-content card">
+                <button class="btn ghost close-btn" (click)="closeEvent()">Close</button>
+                <h2>{{ selectedEvent.name }}</h2>
+                <div class="event-meta">
+                    <span class="event-date">{{ selectedEvent.dates || '-' }}</span>
+                    <span class="event-category">{{ selectedEvent.event_type || '-' }}</span>
+                </div>
+                <div class="event-description">
+                    <div class="event-description" [innerHTML]="selectedEventHtml"></div>
+                </div>
+                @if (selectedEvent.location) {
+                    <div class="event-location">
+                        <strong>Location:</strong> {{ selectedEvent.location }}
+                    </div>
+                }
+            </div>
+        </div>
+    }
+</div>
