@@ -18,7 +18,7 @@ export class NewsDashboardComponent implements OnInit {
   selectedNews: News | null = null;
   selectedNewsHtml: string = '';
   loading = true;
-  viewMode: 'list' | 'calendar' = 'calendar';
+  viewMode: 'list' | 'calendar' = 'list';
   selectedDateISO: string | null = null;
   filteredNews: News[] | null = null;
 
