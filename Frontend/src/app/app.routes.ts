@@ -33,6 +33,11 @@ export const routes: Routes = [
       import('./pages/news/news-dashboard').then((m) => m.NewsDashboardComponent),
   },
   {
+    path: 'event',
+    loadComponent: () =>
+      import('./pages/event-page/event-page').then((m) => m.eventDashboardComponent),
+  },
+  {
     path: 'dashboard',
     loadComponent: () =>
       import('./pages/user-dashboard-page/user-dashboard-page').then((m) => m.UserDashboardPage),
