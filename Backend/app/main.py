@@ -17,7 +17,7 @@ app.add_middleware(
 
 app.include_router(users.router, prefix="/api", tags=["users"])
 app.include_router(auth.router)
-app.include_router(privates_messages.comm)
+app.include_router(privates_messages.comm, prefix="/api", tags=["communication"])
 app.include_router(events.router, prefix="/api", tags=["events"])
 app.include_router(news.router, prefix="/api", tags=["news"])
 app.include_router(partners.router, prefix="/api", tags=["partners"])
