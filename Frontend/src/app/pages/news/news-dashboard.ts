@@ -2,17 +2,9 @@ import { marked } from 'marked';
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NewsList } from '../../components/news-list/news-list';
-import { HttpClient } from '@angular/common/http';
+import {BackendInterface} from "../../cores/interfaces/backend/backend-interface";
+import {News} from "../../cores/interfaces/backend/dtos";
 
-interface News {
-  id: number;
-  title: string;
-  news_date?: string;
-  category?: string;
-  location?: string;
-  startup_id?: number;
-  description?: string;
-}
 
 @Component({
   selector: 'app-news-dashboard',
@@ -27,10 +19,10 @@ export class NewsDashboardComponent implements OnInit {
   selectedNewsHtml: string = '';
   loading = true;
 
-  constructor(private http: HttpClient) {}
+  constructor(private backend: BackendInterface) {}
 
   ngOnInit() {
-    this.http.get<News[]>('/api/news/').subscribe({
+    this.backend.getNews().subscribe({
       next: (data) => {
         this.newsList = data;
         this.loading = false;
@@ -38,12 +30,12 @@ export class NewsDashboardComponent implements OnInit {
       error: () => {
         this.loading = false;
       }
-    });
+    })
   }
 
   async openNews(news: News) {
     this.loading = true;
-    this.http.get<News>(`/api/news/${news.id}/`).subscribe({
+    this.backend.getNewsItem(news.id).subscribe({
       next: async (fullNews) => {
         this.selectedNews = { ...news, ...fullNews };
         this.selectedNewsHtml = await marked.parse(this.selectedNews.description || '');
