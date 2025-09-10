@@ -1,19 +1,20 @@
 .news-category-pill[data-category="Award"] {
-  background: #ffe066;
-  color: #222a3f;
+  background: var(--pink-300);
+  color: #000000;
 }
 .news-category-pill[data-category="Funding"] {
-  background: #a3e635;
-  color: #222a3f;
+  background: var(--pink-400);
+  color: #000000;
 }
 .news-category-pill[data-category="Launch"] {
-  background: #38bdf8;
-  color: #222a3f;
+  background: var(--lavender-300);
+  color: #000000;
 }
 .news-category-pill[data-category="Partnership"] {
-  background: #f472b6;
-  color: #222a3f;
+  background: var(--lavender-400);
+  color: #000000;
 }
+
 .news-dashboard {
   max-width: var(--container);
   margin: 0 auto;
@@ -28,9 +29,9 @@
 
 .news-item {
   cursor: pointer;
-  background: #222a3f;
+  background: #ffffff;
   border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(15,23,42,0.10);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
   padding: 18px 24px;
   transition: box-shadow 160ms, transform 120ms, background 120ms;
   border-left: 4px solid var(--brand);
@@ -40,8 +41,8 @@
   gap: 6px;
 }
 .news-item:hover {
-  box-shadow: 0 8px 24px rgba(124, 58, 237, 0.18);
-  background: #232b45;
+  box-shadow: 0 8px 24px rgba(193,116,242,0.25);
+  background: #fdf9ff;
   transform: translateY(-2px);
 }
 .news-title {
@@ -59,13 +60,13 @@
   margin-bottom: 2px;
 }
 .news-category-pill {
-  background: #fff;
-  color: #222a3f;
+  background: var(--lavender-300);
+  color: #000000;
   font-weight: 600;
   font-size: 0.93rem;
   border-radius: 8px;
   padding: 2px 12px;
-  box-shadow: 0 1px 4px rgba(34,42,63,0.08);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
   margin-left: 2px;
   display: inline-block;
 }
@@ -90,7 +91,7 @@
 .modal-backdrop {
   position: absolute;
   top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(15, 23, 42, 0.75);
+  background: rgba(0,0,0,0.55);
   backdrop-filter: blur(2px);
 }
 .modal-content {
@@ -100,9 +101,9 @@
   width: 100%;
   padding: 40px 32px;
   z-index: 1;
-  background: #222a3f;
+  background: #ffffff;
   border-radius: 18px;
-  box-shadow: 0 4px 32px rgba(0,0,0,0.4);
+  box-shadow: 0 4px 32px rgba(0,0,0,0.15);
   overflow-y: auto;
   max-height: 90vh;
   display: flex;
