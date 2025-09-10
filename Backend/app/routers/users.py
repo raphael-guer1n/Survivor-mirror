@@ -203,3 +203,30 @@ def delete_user_image(user_id: int):
     finally:
         cursor.close()
         conn.close()
+
+@router.get("/{user_id}/startup")
+def get_user_startup(user_id: int):
+    conn = get_connection()
+    cursor = conn.cursor(dictionary=True)
+    try:
+        cursor.execute(
+            "SELECT founder_id FROM users WHERE id = %s",
+            (user_id,)
+        )
+        user = cursor.fetchone()
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found")
+        if not user["founder_id"]:
+            return {"user_id": user_id, "startup_id": None}
+        founder_id = user["founder_id"]
+        cursor.execute(
+            "SELECT startup_id FROM founders WHERE id = %s",
+            (founder_id,)
+        )
+        founder = cursor.fetchone()
+        if not founder:
+            return {"user_id": user_id, "startup_id": None}
+        return {"user_id": user_id, "startup_id": founder["startup_id"]}
+    finally:
+        cursor.close()
+        conn.close()
