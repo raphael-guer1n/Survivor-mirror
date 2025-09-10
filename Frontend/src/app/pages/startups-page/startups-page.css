@@ -6,8 +6,8 @@
     border-radius: var(--radius);
     padding: 14px;
     background: linear-gradient(
-            180deg,
-            rgba(241, 133, 133, 0.14), /* #F18585 */ rgba(193, 116, 242, 0.12) /* #C174F2 */
+            -90deg,
+            rgba(193, 116, 242, 0.5), /* #F18585 */ rgba(241, 133, 133, 0.5) /* #C174F2 */
     );
 }
 
