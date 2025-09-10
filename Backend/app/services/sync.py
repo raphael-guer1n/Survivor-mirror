@@ -1,394 +1,395 @@
+import requests
+import io
 import time
-from datetime import datetime
-import logging
-from typing import Iterable, List, Dict, Optional
+from typing import Any, Dict, List
 from app.db.connection import get_connection
-from app.clients.jeb_api import get_page, get_one, UpstreamHTTPError
+from app.utils.s3 import upload_file_to_s3
+from app.core import config
+from app.clients.jeb_api import UpstreamHTTPError
+import datetime
+import logging
 
 log = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO)
 
-def _execute_many(conn, sql: str, rows: Iterable[tuple]):
-    rows = list(rows)
-    if not rows:
-        return
-    cur = conn.cursor()
-    try:
-        cur.executemany(sql, rows)
-        conn.commit()
-    finally:
-        cur.close()
+API_BASE = config.JEB_API_BASE_URL
+HEADERS = {"X-Group-Authorization": config.JEB_API_KEY}
+REQUEST_TIMEOUT = config.JEB_API_TIMEOUT or 30
 
-def _execute(conn, sql: str, params: tuple):
-    cur = conn.cursor()
-    try:
-        cur.execute(sql, params)
-        conn.commit()
-    finally:
-        cur.close()
+REQUEST_SLEEP = 0.010
 
-def _iter_pages(path: str, page_size: int = 200, params: Optional[Dict] = None) -> Iterable[List[Dict]]:
-    params = dict(params or {})
-    skip = 0
+def fetch_json(url: str) -> Any:
+    """Fetch JSON with retry for 429 and rate limit backoff."""
+    retry_after = 2
     while True:
-        params.update({"skip": skip, "limit": page_size})
-        page = get_page(path, params=params)
-        if not page:
-            break
-        yield page
-        skip += page_size
+        resp = requests.get(url, headers=HEADERS)
+        if resp.status_code == 500:
+            log.warning(f"500 Internal Server Error. Retrying after {retry_after}s")
+            time.sleep(retry_after)
+            continue
+        if resp.status_code == 429:
+            log.warning(f"429 Too Many Requests. Retrying after {retry_after}s")
+            time.sleep(retry_after)
+            continue
+        resp.raise_for_status()
+        time.sleep(REQUEST_SLEEP)
+        return resp.json()
 
-def _iter_items(path: str, page_size: int = 200, params: Optional[Dict] = None) -> Iterable[Dict]:
-    for page in _iter_pages(path, page_size=page_size, params=params):
-        for item in page:
-            yield item
-def _get_last_synced_id(conn, entity: str) -> int:
-    cur = conn.cursor()
-    try:
-        cur.execute("SELECT last_id FROM sync_state WHERE entity=%s", (entity,))
-        row = cur.fetchone()
-        return row[0] if row else 0
-    finally:
-        cur.close()
+def fetch_and_upload_image(url: str, key_prefix: str, entity_id: int, table: str, cursor):
+    """Fetch image from JEB API and upload to S3."""
+    img_resp = requests.get(url, headers=HEADERS, stream=True)
+    time.sleep(REQUEST_SLEEP)
+    if img_resp.status_code == 200 and img_resp.content:
+        content_type = img_resp.headers.get("Content-Type", "image/jpeg")
+        ext = content_type.split("/")[-1]
+        key = f"{key_prefix}/{entity_id}/image.{ext}"
+        upload_file_to_s3(io.BytesIO(img_resp.content), key, content_type)
+        cursor.execute(
+            f"UPDATE {table} SET image_s3_key=%s WHERE id=%s", (key, entity_id)
+        )
+        return key
+    return None
 
-def _set_last_synced_id(conn, entity: str, last_id: int):
-    print(f"[DEBUG] _set_last_synced_id called for entity={entity}, last_id={last_id}")
-    cur = conn.cursor()
-    try:
-        cur.execute("REPLACE INTO sync_state (entity, last_id) VALUES (%s, %s)", (entity, last_id))
-        conn.commit()
-        print(f"[DEBUG] sync_state updated: entity={entity}, last_id={last_id}")
-    except Exception as e:
-        print(f"[ERROR] Failed to update sync_state for entity={entity}: {e}")
-    finally:
-        cur.close()
+def get_last_synced(entity: str, cursor) -> int:
+    cursor.execute("SELECT last_id FROM sync_state WHERE entity=%s", (entity,))
+    row = cursor.fetchone()
+    return row["last_id"] if row else 0
+
+def update_last_synced(entity: str, last_id: int, cursor):
+    cursor.execute(
+        """
+        INSERT INTO sync_state (entity, last_id)
+        VALUES (%s,%s)
+        ON DUPLICATE KEY UPDATE last_id=VALUES(last_id)
+        """,
+        (entity, last_id),
+    )
 
 def sync_startups():
     conn = get_connection()
+    cursor = conn.cursor(dictionary=True)
     try:
-        entity = "startups"
-        last_id = _get_last_synced_id(conn, entity)
-        ins_sql = """
-        INSERT INTO startups (id, name, legal_status, address, email, phone, sector, maturity)
-        VALUES (%s,%s,%s,%s,%s,%s,%s,%s)
-        ON DUPLICATE KEY UPDATE
-          name=VALUES(name),
-          legal_status=VALUES(legal_status),
-          address=VALUES(address),
-          email=VALUES(email),
-          phone=VALUES(phone),
-          sector=VALUES(sector),
-          maturity=VALUES(maturity)
-        """
-        batch = []
+        last_id = get_last_synced("startups", cursor)
         max_id = last_id
-        for it in _iter_items("/startups", page_size=200, params={"skip": last_id}):
-            sid = it.get("id")
-            if not sid or sid <= last_id:
-                continue
-            batch.append((
-                sid,
-                it.get("name"),
-                it.get("legal_status"),
-                it.get("address"),
-                it.get("email"),
-                it.get("phone"),
-                it.get("sector"),
-                it.get("maturity"),
-            ))
-            if sid > max_id:
-                max_id = sid
-            if len(batch) >= 500:
-                _execute_many(conn, ins_sql, batch); batch.clear()
-        _execute_many(conn, ins_sql, batch)
-        if max_id > last_id:
-            _set_last_synced_id(conn, entity, max_id)
-
-        upd_detail_sql = """
-        UPDATE startups
-           SET created_at=%s,
-               description=%s,
-               website_url=%s,
-               social_media_url=%s,
-               project_status=%s,
-               needs=%s
-         WHERE id=%s
-        """
-        ins_founder_sql = """
-        INSERT INTO founders (id, name, startup_id)
-        VALUES (%s,%s,%s)
-        ON DUPLICATE KEY UPDATE
-          name=VALUES(name),
-          startup_id=VALUES(startup_id)
-        """
-
-        for it in _iter_items("/startups", page_size=200, params={"skip": last_id}):
-            sid = it.get("id")
-            if not sid or sid <= last_id:
-                continue
-            try:
-                detail = get_one(f"/startups/{sid}")
-            except UpstreamHTTPError as e:
-                log.warning(f"[sync_startups] detail KO id={sid}: {e}")
-                continue
-            if not detail:
-                log.info(f"[sync_startups] detail 404 id={sid}, skip")
-                continue
-
-            _execute(conn, upd_detail_sql, (
-                detail.get("created_at"),
-                detail.get("description"),
-                detail.get("website_url"),
-                detail.get("social_media_url"),
-                detail.get("project_status"),
-                detail.get("needs"),
-                sid
-            ))
-
-            _execute(conn, "DELETE FROM founders WHERE startup_id=%s", (sid,))
-            founders = (detail.get("founders") or [])
-            f_rows = []
-            for f in founders:
-                fid = f.get("id")
-                if not fid:
+        skip = last_id
+        page_size = 50
+        while True:
+            startups = fetch_json(f"{API_BASE}/startups?skip={skip}&limit={page_size}")
+            if not startups:
+                break
+            for s in startups:
+                try:
+                    detail = fetch_json(f"{API_BASE}/startups/{s['id']}")
+                except Exception as e:
+                    log.warning(f"[sync_startups] Could not fetch details for startup_id={s['id']}: {e}")
                     continue
-                f_rows.append((fid, f.get("name"), f.get("startup_id")))
-            _execute_many(conn, ins_founder_sql, f_rows)
-
+                cursor.execute(
+                    """
+                    INSERT INTO startups (
+                        id, name, legal_status, address, email, phone, sector, maturity,
+                        description, website_url, social_media_url, project_status, needs, created_at
+                    )
+                    VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
+                    ON DUPLICATE KEY UPDATE
+                        name=VALUES(name),
+                        legal_status=VALUES(legal_status),
+                        address=VALUES(address),
+                        email=VALUES(email),
+                        phone=VALUES(phone),
+                        sector=VALUES(sector),
+                        maturity=VALUES(maturity),
+                        description=VALUES(description),
+                        website_url=VALUES(website_url),
+                        social_media_url=VALUES(social_media_url),
+                        project_status=VALUES(project_status),
+                        needs=VALUES(needs),
+                        created_at=VALUES(created_at)
+                    """,
+                    (
+                        detail["id"], detail["name"], detail.get("legal_status"), detail.get("address"),
+                        detail["email"], detail.get("phone"), detail.get("sector"), detail.get("maturity"),
+                        detail.get("description"), detail.get("website_url"), detail.get("social_media_url"),
+                        detail.get("project_status"), detail.get("needs"), detail.get("created_at"),
+                    ),
+                )
+                founders = detail.get("founders", [])
+                for founder in founders:
+                    cursor.execute(
+                        """
+                        INSERT INTO founders (id, name, startup_id)
+                        VALUES (%s, %s, %s)
+                        ON DUPLICATE KEY UPDATE
+                            name=VALUES(name),
+                            startup_id=VALUES(startup_id)
+                        """,
+                        (
+                            founder["id"], founder["name"], detail["id"]
+                        ),
+                    )
+                    try:
+                        fetch_and_upload_image(
+                            f"{API_BASE}/startups/{detail['id']}/founders/{founder['id']}/image",
+                            "founders",
+                            founder["id"],
+                            "founders",
+                            cursor,
+                        )
+                    except Exception as e:
+                        log.warning(f"[sync_startups] Could not fetch/upload founder image for founder_id={founder['id']} of startup_id={detail['id']}: {e}")
+                fetch_and_upload_image(
+                    f"{API_BASE}/startups/{s['id']}/image",
+                    "startups",
+                    s["id"],
+                    "startups",
+                    cursor,
+                )
+                max_id = max(max_id, s["id"])
+            skip += page_size
+        if max_id > last_id:
+            update_last_synced("startups", max_id, cursor)
+        conn.commit()
     finally:
+        cursor.close()
         conn.close()
 
 def sync_investors():
     conn = get_connection()
+    cursor = conn.cursor(dictionary=True)
     try:
-        entity = "investors"
-        last_id = _get_last_synced_id(conn, entity)
-        upsert_sql = """
-        INSERT INTO investors (id, name, legal_status, address, email, phone, created_at, description, investor_type, investment_focus)
-        VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
-        ON DUPLICATE KEY UPDATE
-          name=VALUES(name),
-          legal_status=VALUES(legal_status),
-          address=VALUES(address),
-          email=VALUES(email),
-          phone=VALUES(phone),
-          created_at=VALUES(created_at),
-          description=VALUES(description),
-          investor_type=VALUES(investor_type),
-          investment_focus=VALUES(investment_focus)
-        """
-        batch = []
+        last_id = get_last_synced("investors", cursor)
         max_id = last_id
-        for it in _iter_items("/investors", page_size=300, params={"skip": last_id}):
-            iid = it.get("id")
-            if not iid or iid <= last_id:
-                continue
-            batch.append((
-                iid,
-                it.get("name"),
-                it.get("legal_status"),
-                it.get("address"),
-                it.get("email"),
-                it.get("phone"),
-                it.get("created_at"),
-                it.get("description"),
-                it.get("investor_type"),
-                it.get("investment_focus"),
-            ))
-            if iid > max_id:
-                max_id = iid
-            if len(batch) >= 500:
-                _execute_many(conn, upsert_sql, batch); batch.clear()
-        _execute_many(conn, upsert_sql, batch)
+        skip = last_id
+        page_size = 50
+        while True:
+            investors = fetch_json(f"{API_BASE}/investors?skip={skip}&limit={page_size}")
+            if not investors:
+                break
+            for inv in investors:
+                cursor.execute(
+                    """
+                    INSERT INTO investors (id, name, legal_status, address, email, phone, created_at, description, investor_type, investment_focus)
+                    VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
+                    ON DUPLICATE KEY UPDATE
+                        name=VALUES(name),
+                        legal_status=VALUES(legal_status),
+                        address=VALUES(address),
+                        phone=VALUES(phone),
+                        description=VALUES(description),
+                        investor_type=VALUES(investor_type),
+                        investment_focus=VALUES(investment_focus)
+                    """,
+                    (
+                        inv["id"], inv["name"], inv.get("legal_status"),
+                        inv.get("address"), inv["email"], inv.get("phone"),
+                        inv.get("created_at"), inv.get("description"),
+                        inv.get("investor_type"), inv.get("investment_focus"),
+                    ),
+                )
+                fetch_and_upload_image(
+                    f"{API_BASE}/investors/{inv['id']}/image",
+                    "investors",
+                    inv["id"],
+                    "investors",
+                    cursor,
+                )
+                max_id = max(max_id, inv["id"])
+            skip += page_size
         if max_id > last_id:
-            _set_last_synced_id(conn, entity, max_id)
+            update_last_synced("investors", max_id, cursor)
+        conn.commit()
     finally:
+        cursor.close()
         conn.close()
 
 def sync_partners():
     conn = get_connection()
+    cursor = conn.cursor(dictionary=True)
     try:
-        entity = "partners"
-        last_id = _get_last_synced_id(conn, entity)
-        upsert_sql = """
-        INSERT INTO partners (id, name, legal_status, address, email, phone, created_at, description, partnership_type)
-        VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)
-        ON DUPLICATE KEY UPDATE
-          name=VALUES(name),
-          legal_status=VALUES(legal_status),
-          address=VALUES(address),
-          email=VALUES(email),
-          phone=VALUES(phone),
-          created_at=VALUES(created_at),
-          description=VALUES(description),
-          partnership_type=VALUES(partnership_type)
-        """
-        batch = []
+        last_id = get_last_synced("partners", cursor)
         max_id = last_id
-        for it in _iter_items("/partners", page_size=300, params={"skip": last_id}):
-            pid = it.get("id")
-            if not pid or pid <= last_id:
-                continue
-            batch.append((
-                pid,
-                it.get("name"),
-                it.get("legal_status"),
-                it.get("address"),
-                it.get("email"),
-                it.get("phone"),
-                it.get("created_at"),
-                it.get("description"),
-                it.get("partnership_type"),
-            ))
-            if pid > max_id:
-                max_id = pid
-            if len(batch) >= 500:
-                _execute_many(conn, upsert_sql, batch); batch.clear()
-        _execute_many(conn, upsert_sql, batch)
+        skip = last_id
+        page_size = 50
+        while True:
+            partners = fetch_json(f"{API_BASE}/partners?skip={skip}&limit={page_size}")
+            if not partners:
+                break
+            for p in partners:
+                cursor.execute(
+                    """
+                    INSERT INTO partners (id, name, legal_status, address, email, phone,
+                                          created_at, description, partnership_type)
+                    VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)
+                    ON DUPLICATE KEY UPDATE
+                        name=VALUES(name),
+                        legal_status=VALUES(legal_status),
+                        address=VALUES(address),
+                        phone=VALUES(phone),
+                        description=VALUES(description),
+                        partnership_type=VALUES(partnership_type)
+                    """,
+                    (
+                        p["id"], p["name"], p.get("legal_status"), p.get("address"),
+                        p["email"], p.get("phone"), p.get("created_at"),
+                        p.get("description"), p.get("partnership_type"),
+                    ),
+                )
+                fetch_and_upload_image(
+                    f"{API_BASE}/partners/{p['id']}/image",
+                    "partners",
+                    p["id"],
+                    "partners",
+                    cursor,
+                )
+                max_id = max(max_id, p["id"])
+            skip += page_size
         if max_id > last_id:
-            _set_last_synced_id(conn, entity, max_id)
+            update_last_synced("partners", max_id, cursor)
+        conn.commit()
     finally:
+        cursor.close()
         conn.close()
 
 def sync_news():
     conn = get_connection()
+    cursor = conn.cursor(dictionary=True)
     try:
-        entity = "news"
-        last_id = _get_last_synced_id(conn, entity)
-        upsert_sql = """
-        INSERT INTO news (id, news_date, location, title, category, startup_id, description)
-        VALUES (%s,%s,%s,%s,%s,%s,%s)
-        ON DUPLICATE KEY UPDATE
-          news_date=VALUES(news_date),
-          location=VALUES(location),
-          title=VALUES(title),
-          category=VALUES(category),
-          startup_id=VALUES(startup_id),
-          description=VALUES(description)
-        """
-
+        last_id = get_last_synced("news", cursor)
         max_id = last_id
-        for it in _iter_items("/news", page_size=300, params={"skip": last_id}):
-            nid = it.get("id")
-            if not nid or nid <= last_id:
-                continue
-            try:
-                detail = get_one(f"/news/{nid}")
-            except UpstreamHTTPError as e:
-                log.warning(f"[sync_news] detail KO id={nid}: {e}")
-                continue
-            if not detail:
-                log.info(f"[sync_news] detail 404 id={nid}, skip")
-                continue
-
-            _execute(conn, upsert_sql, (
-                detail.get("id"),
-                detail.get("news_date"),
-                detail.get("location"),
-                detail.get("title"),
-                detail.get("category"),
-                detail.get("startup_id"),
-                detail.get("description"),
-            ))
-            if nid > max_id:
-                max_id = nid
+        skip = last_id
+        page_size = 50
+        while True:
+            news_list = fetch_json(f"{API_BASE}/news?skip={skip}&limit={page_size}")
+            if not news_list:
+                break
+            for n in news_list:
+                detail = fetch_json(f"{API_BASE}/news/{n['id']}")
+                cursor.execute(
+                    """
+                    INSERT INTO news (id, title, news_date, location, category, startup_id, description)
+                    VALUES (%s,%s,%s,%s,%s,%s,%s)
+                    ON DUPLICATE KEY UPDATE
+                        title=VALUES(title),
+                        news_date=VALUES(news_date),
+                        location=VALUES(location),
+                        category=VALUES(category),
+                        startup_id=VALUES(startup_id),
+                        description=VALUES(description)
+                    """,
+                    (
+                        detail["id"], detail["title"], detail.get("news_date"),
+                        detail.get("location"), detail.get("category"),
+                        detail.get("startup_id"), detail.get("description"),
+                    ),
+                )
+                fetch_and_upload_image(
+                    f"{API_BASE}/news/{n['id']}/image",
+                    "news",
+                    n["id"],
+                    "news",
+                    cursor,
+                )
+                max_id = max(max_id, n["id"])
+            skip += page_size
         if max_id > last_id:
-            _set_last_synced_id(conn, entity, max_id)
+            update_last_synced("news", max_id, cursor)
+        conn.commit()
     finally:
+        cursor.close()
         conn.close()
 
 def sync_events():
     conn = get_connection()
+    cursor = conn.cursor(dictionary=True)
     try:
-        entity = "events"
-        last_id = _get_last_synced_id(conn, entity)
-        upsert_sql = """
-        INSERT INTO events (id, name, dates, location, description, event_type, target_audience)
-        VALUES (%s,%s,%s,%s,%s,%s,%s)
-        ON DUPLICATE KEY UPDATE
-          name=VALUES(name),
-          dates=VALUES(dates),
-          location=VALUES(location),
-          description=VALUES(description),
-          event_type=VALUES(event_type),
-          target_audience=VALUES(target_audience)
-        """
-        batch = []
+        last_id = get_last_synced("events", cursor)
         max_id = last_id
-        for it in _iter_items("/events", page_size=300, params={"skip": last_id}):
-            eid = it.get("id")
-            if not eid or eid <= last_id:
-                continue
-            batch.append((
-                eid,
-                it.get("name"),
-                it.get("dates"),
-                it.get("location"),
-                it.get("description"),
-                it.get("event_type"),
-                it.get("target_audience"),
-            ))
-            if eid > max_id:
-                max_id = eid
-            if len(batch) >= 500:
-                _execute_many(conn, upsert_sql, batch); batch.clear()
-        _execute_many(conn, upsert_sql, batch)
+        skip = last_id
+        page_size = 50
+        while True:
+            events = fetch_json(f"{API_BASE}/events?skip={skip}&limit={page_size}")
+            if not events:
+                break
+            for ev in events:
+                cursor.execute(
+                    """
+                    INSERT INTO events (id, name, dates, location, description, event_type, target_audience)
+                    VALUES (%s,%s,%s,%s,%s,%s,%s)
+                    ON DUPLICATE KEY UPDATE
+                        name=VALUES(name),
+                        dates=VALUES(dates),
+                        location=VALUES(location),
+                        description=VALUES(description),
+                        event_type=VALUES(event_type),
+                        target_audience=VALUES(target_audience)
+                    """,
+                    (
+                        ev["id"], ev["name"], ev.get("dates"), ev.get("location"),
+                        ev.get("description"), ev.get("event_type"), ev.get("target_audience"),
+                    ),
+                )
+                fetch_and_upload_image(
+                    f"{API_BASE}/events/{ev['id']}/image",
+                    "events",
+                    ev["id"],
+                    "events",
+                    cursor,
+                )
+                max_id = max(max_id, ev["id"])
+            skip += page_size
         if max_id > last_id:
-            _set_last_synced_id(conn, entity, max_id)
+            update_last_synced("events", max_id, cursor)
+        conn.commit()
     finally:
+        cursor.close()
         conn.close()
 
 def sync_users():
     conn = get_connection()
+    cursor = conn.cursor(dictionary=True)
     try:
-        entity = "users"
-        upsert_sql = """
-        INSERT INTO users (id, email, name, role, founder_id, investor_id)
-        VALUES (%s,%s,%s,%s,%s,%s)
-        ON DUPLICATE KEY UPDATE
-          email=VALUES(email),
-          name=VALUES(name),
-          role=VALUES(role),
-          founder_id=VALUES(founder_id),
-          investor_id=VALUES(investor_id)
-        """
-        items = get_page("/users")
-        rows = []
-        max_id = 0
-        for it in items:
-            uid = it.get("id")
-            if not uid:
-                continue
-            rows.append((
-                uid,
-                it.get("email"),
-                it.get("name"),
-                it.get("role"),
-                it.get("founder_id"),
-                it.get("investor_id"),
-            ))
-            if uid > max_id:
-                max_id = uid
-            if len(rows) >= 500:
-                _execute_many(conn, upsert_sql, rows); rows.clear()
-        _execute_many(conn, upsert_sql, rows)
-        if max_id > 0:
-            _set_last_synced_id(conn, entity, max_id)
+        users = fetch_json(f"{API_BASE}/users")
+        last_id = get_last_synced("users", cursor)
+        max_id = last_id
+        for u in users:
+            cursor.execute(
+                """
+                INSERT INTO users (id, email, name, role, founder_id, investor_id)
+                VALUES (%s,%s,%s,%s,%s,%s)
+                ON DUPLICATE KEY UPDATE
+                    name=VALUES(name),
+                    role=VALUES(role),
+                    founder_id=VALUES(founder_id),
+                    investor_id=VALUES(investor_id)
+                """,
+                (
+                    u["id"], u["email"], u["name"], u["role"],
+                    u.get("founder_id"), u.get("investor_id"),
+                ),
+            )
+            fetch_and_upload_image(
+                f"{API_BASE}/users/{u['id']}/image",
+                "users",
+                u["id"],
+                "users",
+                cursor,
+            )
+            max_id = max(max_id, u["id"])
+        if max_id > last_id:
+            update_last_synced("users", max_id, cursor)
+        conn.commit()
     finally:
+        cursor.close()
         conn.close()
 
 def sync_all():
-    """
-    Enchaîne la sync sur tous les datasets, sans limite, avec pagination.
-    N'interrompt pas tout en cas d'erreur amont sur un item : log puis continue.
-    """
     results = {}
     for name, fn in [
         ("startups", sync_startups),
         ("investors", sync_investors),
-        ("partners",  sync_partners),
-        ("news",      sync_news),
-        ("events",    sync_events),
-        ("users",     sync_users),
+        ("partners", sync_partners),
+        ("news", sync_news),
+        ("events", sync_events),
+        ("users", sync_users),
     ]:
         try:
             fn()
@@ -399,5 +400,5 @@ def sync_all():
         except Exception as e:
             log.exception(f"[sync_all] unexpected error in {name}: {e}")
             results[name] = f"error:{e}"
-    print({"status": results, "synced_at": datetime.utcnow().isoformat() + "Z"})
+    log.info({"status": results, "synced_at": datetime.datetime.utcnow().isoformat() + "Z"})
     return results

@@ -1,7 +1,6 @@
 from pydantic import BaseModel
 from typing import Optional
 
-
 class EventBase(BaseModel):
     name: str
     dates: str
@@ -10,10 +9,8 @@ class EventBase(BaseModel):
     event_type: str
     target_audience: str
 
-
 class EventCreate(EventBase):
     pass
-
 
 class EventUpdate(BaseModel):
     name: Optional[str] = None
@@ -23,13 +20,12 @@ class EventUpdate(BaseModel):
     event_type: Optional[str] = None
     target_audience: Optional[str] = None
 
-
 class EventOut(EventBase):
     id: int
+    image_s3_key: Optional[str] = None
 
     class Config:
         orm_mode = True
-
 
 class EventImage(BaseModel):
     image_url: str

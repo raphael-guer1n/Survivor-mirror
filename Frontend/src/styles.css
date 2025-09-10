@@ -1,15 +1,18 @@
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Open+Sans:wght@400;500;600;700&display=swap");
+
 :host {
     display: block;
 }
 
 :root {
-    --bg: color-mix(in oklab, #000 84%, var(--brand-800) 16%);
-    --bg-soft: color-mix(in oklab, #000 80%, var(--brand-700) 20%);
-    --surface: color-mix(in oklab, #000 76%, var(--lavender-400) 24%);
-    --card: color-mix(in oklab, #000 72%, var(--lavender-300) 28%);
-    --text: #e5e7eb;
-    --text-muted: #9ca3af;
+    --bg: #ffffff;
+    --bg-soft: #f8f9fb;
+    --surface: #ffffff;
+    --card: #fdfdfd;
+    --text: #111111;
+    --text-muted: #555555;
     --brand: #c174f2;
+    /* lavender violet */
     --brand-700: #cb90f1;
     --brand-800: #d5a8f2;
     --pink-600: #f18585;
@@ -18,9 +21,9 @@
     --pink-300: #f8cacf;
     --lavender-300: #eed5fb;
     --lavender-400: #e4bef8;
-    --border: #27314a;
+    --border: #C174F2;
     --ring: rgba(193, 116, 242, 0.45);
-    --shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+    --shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
     --radius: 12px;
     --container: 1100px;
 }
@@ -28,14 +31,14 @@
 body {
     margin: 0;
     color: var(--text);
-    background: linear-gradient(
-            180deg,
-            color-mix(in oklab, var(--bg) 60%, var(--brand) 40%) 0%,
-            color-mix(in oklab, var(--bg) 70%, var(--brand-700) 30%) 100%
-    );
-    font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji";
+    background: var(--bg);
+    font-family: "Open Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji";
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+}
+
+:where(h1, h2, h3, h4, h5, h6) {
+    font-family: "Montserrat", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji";
 }
 
 *,
@@ -45,7 +48,8 @@ body {
 }
 
 a {
-    color: inherit;
+    color: #7505bb;
+    font-weight: bold;
 }
 
 .top-nav {
@@ -58,11 +62,7 @@ a {
     gap: 16px;
     padding: 0 20px;
     backdrop-filter: saturate(160%) blur(10px);
-    background: linear-gradient(
-            180deg,
-            rgba(15, 23, 42, 0.55),
-            rgba(15, 23, 42, 0.35)
-    );
+    background: var(--surface);
     border-bottom: 1px solid var(--border);
 }
 
@@ -80,8 +80,8 @@ a {
     gap: 6px;
     padding: 4px;
     border-radius: 999px;
-    background: color-mix(in oklab, var(--brand) 12%, transparent);
-    border: 1px solid color-mix(in oklab, var(--brand) 25%, transparent);
+    background: #ffffff;
+    border: 0px solid var(--lavender-400);
 }
 
 .links a {
@@ -95,7 +95,7 @@ a {
 }
 
 .links a:hover {
-    background: color-mix(in oklab, var(--brand) 16%, transparent);
+    background: var(--lavender-400);
 }
 
 .links a:focus-visible {
@@ -104,6 +104,7 @@ a {
 
 .links a.active {
     font-weight: 600;
+    color: var(--brand);
 }
 
 .links a.active::after {
@@ -150,17 +151,14 @@ a {
 .content .card,
 .content section:not(.page),
 .content article:not(.page) {
-    background: linear-gradient(
-            180deg,
-            rgba(241, 133, 133, 0.14), rgba(193, 116, 242, 0.12)
-    );
-    border: 1px solid var(--border);
+    background: var(--surface);
+    border: 0px solid var(--border);
     border-radius: var(--radius);
     padding: 20px;
     box-shadow: var(--shadow);
 }
 
-.content > * + * {
+.content>*+* {
     margin-top: 18px;
 }
 
@@ -168,20 +166,26 @@ a {
     display: inline-flex;
     align-items: center;
     gap: 10px;
-    border: 1px solid transparent;
-    background: linear-gradient(180deg, var(--pink-500), var(--brand-700));
+    border: 0px solid transparent;
+    background: linear-gradient(45deg, rgba(244, 156, 156), rgb(203, 144, 241));
     color: white;
     padding: 10px 14px;
     border-radius: 10px;
     text-decoration: none;
     font-weight: 600;
-    box-shadow: 0 10px 20px color-mix(in oklab, var(--brand) 25%, transparent);
+    box-shadow: 0 10px 20px rgba(193, 116, 242, 0.25);
     transition: transform 120ms ease, box-shadow 120ms ease, filter 160ms ease;
 }
 
 .btn:hover {
     transform: translateY(-1px);
-    box-shadow: 0 12px 24px color-mix(in oklab, var(--brand) 35%, transparent);
+    box-shadow: 0 12px 24px rgba(193, 116, 242, 0.35);
+    background: linear-gradient(45deg,
+            rgba(193, 116, 242, 1),
+            /* #c174f2 */
+            rgba(241, 133, 133, 1)
+            /* #cb90f1 */
+        );
     filter: brightness(1.02);
 }
 
@@ -197,7 +201,7 @@ a {
 }
 
 .btn.ghost:hover {
-    background: rgba(255, 255, 255, 0.04);
+    background: rgba(0, 0, 0, 0.04);
 }
 
 @media (max-width: 640px) {
@@ -220,16 +224,18 @@ a {
     }
 }
 
-.scrollable, .carousel-viewport {
-    background: #121212;
+.scrollable,
+.carousel-viewport {
+    background: var(--bg);
     overscroll-behavior: contain;
     scrollbar-gutter: stable both-edges;
 }
 
-html, body {
-    height: 100%;
+html,
+body {
+    min-height: 100%;
     margin: 0;
-    background-color: #121212;
+    background-color: var(--bg);
     overscroll-behavior: none;
 }
 

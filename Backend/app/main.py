@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.routers import auth, users, events, news, partners, investors, startups
 from app.communication import privates_messages
+from app.routers import auth, users, events, news, partners, investors, startups, founders
 from app.scheduler.sync_runner import register_scheduler
 from app.services.sync import sync_all
 
@@ -23,6 +24,7 @@ app.include_router(news.router, prefix="/api", tags=["news"])
 app.include_router(partners.router, prefix="/api", tags=["partners"])
 app.include_router(investors.router, prefix="/api", tags=["investors"])
 app.include_router(startups.router, prefix="/api", tags=["startups"])
+app.include_router(founders.router, prefix="/api", tags=["founders"])
 
 @app.post("/admin/sync")
 def admin_sync():

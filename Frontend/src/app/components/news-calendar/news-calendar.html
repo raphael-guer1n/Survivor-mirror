@@ -1,0 +1,34 @@
+<div class="calendar-header">
+    <button type="button" class="nav" (click)="prevMonth()">‹</button>
+    <div class="label">{{ monthLabel }}</div>
+    <button type="button" class="nav" (click)="nextMonth()">›</button>
+</div>
+
+<div class="calendar-grid">
+    <div class="dow">Mon</div>
+    <div class="dow">Tue</div>
+    <div class="dow">Wed</div>
+    <div class="dow">Thu</div>
+    <div class="dow">Fri</div>
+    <div class="dow">Sat</div>
+    <div class="dow">Sun</div>
+
+    @for (week of weeks; track week) {
+        <ng-container>
+            @for (day of week; track day) {
+                <button
+                        type="button"
+                        class="cell"
+                        [class.outside]="!day.inCurrentMonth"
+                        [class.has-news]="day.hasNews"
+                        (click)="selectDay(day)">
+                    <span class="date">{{ day.date.getDate() }}</span>
+                    @if (day.hasNews) {
+                        <span class="dot" [title]="day.count + ' news'"></span>
+                    }
+
+                </button>
+            }
+        </ng-container>
+    }
+</div>

@@ -17,6 +17,7 @@ class StartupCreate(StartupBase):
     social_media_url: Optional[str] = None
     project_status: Optional[str] = None
     needs: Optional[str] = None
+    image_s3_key: Optional[str] = None
 
 class StartupUpdate(BaseModel):
     name: Optional[str] = None
@@ -31,6 +32,7 @@ class StartupUpdate(BaseModel):
     social_media_url: Optional[str] = None
     project_status: Optional[str] = None
     needs: Optional[str] = None
+    image_s3_key: Optional[str] = None
 
 class StartupOut(StartupBase):
     id: int
@@ -40,13 +42,16 @@ class StartupOut(StartupBase):
     social_media_url: Optional[str] = None
     project_status: Optional[str] = None
     needs: Optional[str] = None
+    image_s3_key: Optional[str] = None
+    view_count: int = 0
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class Founder(BaseModel):
     id: int
     name: str
+    image_s3_key: Optional[str] = None
 
 class StartupDetail(StartupOut):
     founders: List[Founder] = []

@@ -34,6 +34,7 @@ export interface News {
     location?: string | null;
     category?: string | null;
     startup_id?: number | null;
+    description?: string | null;
 }
 
 export interface NewsDetail extends News {
@@ -67,7 +68,8 @@ export interface StartupDetail {
     needs?: string | null;
     sector?: string | null;
     maturity?: string | null;
-    founders?: Founder[];         // default [] on backend, optional in DTO
+    founders?: Founder[];
+    view_count : number;
 }
 
 export interface StartupList {
