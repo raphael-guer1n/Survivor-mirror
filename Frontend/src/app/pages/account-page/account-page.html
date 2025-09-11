@@ -6,8 +6,120 @@
         <p><strong>Role:</strong> {{ user.role || '—' }}</p>
     </div>
     <button class="btn" (click)="logout()">Logout</button>
+
+  @if (user.role === 'founder') {
+    <h2 style="margin-top: 1.5rem;">My startup</h2>
+
+    @if (startupLoading) {
+      <p>Loading startup…</p>
+    } @else {
+      @if (!startupId) {
+        <p>No startup is linked to your account.</p>
+      } @else {
+        @if (!editingStartup) {
+          <div class="card">
+            <p><strong>Name:</strong> {{ startupForm.value.name }}</p>
+            <p><strong>Email:</strong> {{ startupForm.value.email }}</p>
+            <p><strong>Phone:</strong> {{ startupForm.value.phone || '—' }}</p>
+            <p><strong>Website:</strong> {{ startupForm.value.website_url || '—' }}</p>
+            <p><strong>Sector:</strong> {{ startupForm.value.sector || '—' }}</p>
+            <p><strong>Maturity:</strong> {{ startupForm.value.maturity || '—' }}</p>
+            <p><strong>Project status:</strong> {{ startupForm.value.project_status || '—' }}</p>
+            <p><strong>Needs:</strong> {{ startupForm.value.needs || '—' }}</p>
+            <p><strong>Description:</strong></p>
+            <p>{{ startupForm.value.description || '—' }}</p>
+          </div>
+          @if (startupError) {
+            <p class="error">{{ startupError }}</p>
+          }
+          <button class="btn" (click)="startEditStartup()">Edit startup</button>
+        } @else {
+          <form [formGroup]="startupForm" (ngSubmit)="saveStartup()" class="card">
+            <div class="field">
+              <label for="s-name">Name</label>
+              <input id="s-name" type="text" formControlName="name" />
+              @if (startupForm.controls.name.touched && startupForm.controls.name.invalid) {
+                <small class="error">Name is required (min 2 chars)</small>
+              }
+            </div>
+
+            <div class="field">
+              <label for="s-email">Email</label>
+              <input id="s-email" type="email" formControlName="email" />
+              @if (startupForm.controls.email.touched && startupForm.controls.email.invalid) {
+                <small class="error">Please enter a valid email</small>
+              }
+            </div>
+
+            <div class="field">
+              <label for="s-phone">Phone</label>
+              <input id="s-phone" type="text" formControlName="phone" />
+            </div>
+
+            <div class="field">
+              <label for="s-website">Website</label>
+              <input id="s-website" type="text" formControlName="website_url" />
+            </div>
+
+            <div class="field">
+              <label for="s-social">Social media</label>
+              <input id="s-social" type="text" formControlName="social_media_url" />
+            </div>
+
+            <div class="field">
+              <label for="s-addr">Address</label>
+              <input id="s-addr" type="text" formControlName="address" />
+            </div>
+
+            <div class="field">
+              <label for="s-legal">Legal status</label>
+              <input id="s-legal" type="text" formControlName="legal_status" />
+            </div>
+
+            <div class="field">
+              <label for="s-sector">Sector</label>
+              <input id="s-sector" type="text" formControlName="sector" />
+            </div>
+
+            <div class="field">
+              <label for="s-maturity">Maturity</label>
+              <input id="s-maturity" type="text" formControlName="maturity" />
+            </div>
+
+            <div class="field">
+              <label for="s-project">Project status</label>
+              <input id="s-project" type="text" formControlName="project_status" />
+            </div>
+
+            <div class="field">
+              <label for="s-needs">Needs</label>
+              <input id="s-needs" type="text" formControlName="needs" />
+            </div>
+
+            <div class="field">
+              <label for="s-desc">Description</label>
+              <textarea id="s-desc" rows="4" formControlName="description"></textarea>
+            </div>
+
+            @if (startupError) {
+              <p class="error">{{ startupError }}</p>
+            }
+
+            <div class="actions">
+              <button class="btn" type="submit" [disabled]="startupSaving">
+                {{ startupSaving ? 'Saving…' : 'Save changes' }}
+              </button>
+              <button class="btn secondary" type="button" (click)="cancelEditStartup()" [disabled]="startupSaving">
+                Cancel
+              </button>
+            </div>
+          </form>
+        }
+      }
+    }
+  }
 } @else {
-    <ng-template>
-        <p>Loading your profile…</p>
-    </ng-template>
+  <ng-template>
+    <p>Loading your profile…</p>
+  </ng-template>
 }
