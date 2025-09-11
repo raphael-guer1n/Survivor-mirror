@@ -1,0 +1,9 @@
+<div *ngIf="partner" class="partner-details">
+  <h3>{{ partner.name }}</h3>
+  <div *ngIf="partner.partnership_type"><b>Type :</b> {{ partner.partnership_type }}</div>
+  <div *ngIf="partner.description"><b>Description :</b> {{ partner.description }}</div>
+  <div *ngIf="partner.email"><b>Email :</b> {{ partner.email }}</div>
+  <div *ngIf="partner.phone"><b>Téléphone :</b> {{ partner.phone }}</div>
+  <div *ngIf="partner.address"><b>Adresse :</b> {{ partner.address }}</div>
+  <div *ngIf="partner.legal_status"><b>Statut légal :</b> {{ partner.legal_status }}</div>
+</div>
