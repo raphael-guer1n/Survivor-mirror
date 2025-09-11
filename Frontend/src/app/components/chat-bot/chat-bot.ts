@@ -36,7 +36,7 @@ export class ChatBot {
       next: (msg) => {
           this.email[this.email.length] = msg.sender_name
           this.last_message[this.last_message.length] = msg.content
-          console.log("dans init pour emails", this.email, id, id_user);
+          console.log("dans init pour emails", this.email, id, id_user, this.ids);
     },})
   }
 
@@ -47,11 +47,11 @@ export class ChatBot {
         this.backend.get_Conversations_of_user(this.id_of_user).subscribe({
           next: (msg) => {
               this.ids = msg;
+              console.log("dans init", this.ids);
+              console.log("dans init", this.email)
               this.email = [];
               this.last_message = []
-              console.log("dans init", this.ids);
               for (let tmp of this.ids) {
-                console.log(tmp);
                 this.get_last_message_and_email(tmp, this.id_of_user);
               }
         },})
@@ -150,7 +150,7 @@ export class ChatBot {
     if (!text) return;
 
     console.log(this.id_of_user, " /", this.draft?.trim(), "/ a");
-    this.backend.create_conversation(this.id_of_user, this.draft?.trim())
+    this.backend.create_conversation(this.id_of_user, this.draft?.trim()).subscribe({})
     this.draft = '';
     console.log("we done");
   }
