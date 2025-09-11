@@ -1,9 +1,11 @@
+
 import { Component } from '@angular/core';
+import { PartnersListComponent } from '../../components/partners-list/partners-list.component';
 
 @Component({
   selector: 'app-about-page',
   standalone: true,
-  imports: [],
+  imports: [PartnersListComponent],
   templateUrl: './about-page.html',
   styleUrl: './about-page.css'
 })
