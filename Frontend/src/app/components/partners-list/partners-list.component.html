@@ -1,0 +1,22 @@
+
+<div class="partners-list">
+  <ng-container *ngIf="loading">Chargement des partenaires...</ng-container>
+  <ng-container *ngIf="error">{{ error }}</ng-container>
+  <div *ngIf="!loading && !error" class="partners-grid">
+    <div *ngFor="let partner of partners" class="partner-card" (click)="showDetails(partner)">
+      <div class="partner-title">{{ partner.name }}</div>
+      <div class="partner-meta">
+        <span *ngIf="partner.partnership_type" class="partner-type">{{ partner.partnership_type }}</span>
+      </div>
+      <div class="partner-description-preview" *ngIf="partner.description">{{ partner.description }}</div>
+    </div>
+    <div *ngIf="partners.length === 0" class="empty">Aucun partenaire pour le moment.</div>
+  </div>
+
+  <div *ngIf="selectedPartner" class="partner-details-modal-overlay" (click)="closeDetails()">
+    <div class="partner-details-modal" (click)="$event.stopPropagation()">
+      <app-partner-details [partner]="selectedPartner"></app-partner-details>
+      <button class="close-details-btn" (click)="closeDetails()">Fermer</button>
+    </div>
+  </div>
+</div>
