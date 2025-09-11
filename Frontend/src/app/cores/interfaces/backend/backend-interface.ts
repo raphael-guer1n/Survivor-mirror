@@ -1,7 +1,10 @@
 import {Observable} from "rxjs";
 import {Injectable} from "@angular/core";
 import {HttpInterface, RequestOptions} from "../http/http-interface";
-import {Event, Investor, News, NewsDetail, Partner, StartupDetail, StartupList, User, Communication, Conversations} from "./dtos";
+import {
+  Event, Investor, News, NewsDetail, Partner, StartupDetail, StartupList, User, Communication, Conversations,
+  UserStartup
+} from "./dtos";
 
 @Injectable({providedIn: 'root'})
 export class BackendInterface {
@@ -213,6 +216,10 @@ export class BackendInterface {
 
   getStartupView(startupId: number, options?: RequestOptions): Observable<unknown> {
     return this.http.get<unknown>(`/startups/${encodeURIComponent(String(startupId))}/view/`, options);
+  }
+
+  getUserStartup(userId: number, options?: RequestOptions): Observable<UserStartup> {
+    return this.http.get<UserStartup>(`/users/${encodeURIComponent(String(userId))}/startup/`, options);
   }
 
   createInvestor(payload: {
