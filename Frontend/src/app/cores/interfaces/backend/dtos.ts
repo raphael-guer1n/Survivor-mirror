@@ -117,6 +117,10 @@ export interface UserStartup {
   startup_id?: number | null,
 }
 
+export interface TotalStartupView {
+  total_views?: number | null;
+}
+
 export type StartupListResponse = StartupList[];
 export type InvestorListResponse = Investor[];
 export type PartnerListResponse = Partner[];
