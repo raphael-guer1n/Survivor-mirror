@@ -27,6 +27,34 @@ def get_news(skip: int = Query(0, ge=0), limit: int = Query(100, ge=1)):
         cursor.close()
         conn.close()
 
+@router.get("/startup/{startup_id}", response_model=list[NewsOut])
+def get_news_by_startup(startup_id: int, skip: int = Query(0, ge=0), limit: int = Query(100, ge=1),
+):
+    conn = get_connection()
+    cursor = conn.cursor(dictionary=True)
+    try:
+        cursor.execute(
+            """
+            SELECT id, title, news_date, location, category, startup_id, 
+                   description, image_s3_key, view_count
+            FROM news
+            WHERE startup_id = %s
+            ORDER BY news_date DESC
+            LIMIT %s OFFSET %s
+            """,
+            (startup_id, limit, skip),
+        )
+        news_items = cursor.fetchall()
+        if not news_items:
+            raise HTTPException(
+                status_code=404,
+                detail=f"No news found for startup {startup_id}",
+            )
+        return news_items
+    finally:
+        cursor.close()
+        conn.close()
+
 @router.get("/most-viewed", response_model=list[NewsOut])
 def get_most_viewed_news(limit: int = Query(10, ge=1, le=100)):
     conn = get_connection()
