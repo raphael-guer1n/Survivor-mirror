@@ -238,6 +238,12 @@ def require_investor_of_investor(investor_id, user=Depends(get_current_user)):
         cursor.close()
         conn.close()
 
+def require_owner_of_user(user_id, user=Depends(get_current_user)):
+    if user.get("role") == "admin":
+        return user
+    if user_id != user.get("sub"):
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="permission denied")
+
 def check_founder_of_startup(user, startup_id):
     if user.get("role") == "admin":
         return

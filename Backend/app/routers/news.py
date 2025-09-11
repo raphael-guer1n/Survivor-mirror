@@ -27,6 +27,29 @@ def get_news(skip: int = Query(0, ge=0), limit: int = Query(100, ge=1)):
         cursor.close()
         conn.close()
 
+@router.get("/most-viewed", response_model=list[NewsOut])
+def get_most_viewed_news(limit: int = Query(10, ge=1, le=100)):
+    conn = get_connection()
+    cursor = conn.cursor(dictionary=True)
+    try:
+        cursor.execute(
+            """
+            SELECT id, title, news_date, location, category, startup_id, description, image_s3_key,
+                   view_count
+            FROM news
+            ORDER BY view_count DESC
+            LIMIT %s
+            """,
+            (limit,),
+        )
+        news = cursor.fetchall()
+        if not news:
+            raise HTTPException(status_code=404, detail="No news found")
+        return news
+    finally:
+        cursor.close()
+        conn.close()
+
 @router.get("/{news_id}", response_model=NewsOut)
 def get_news_item(news_id: int):
     conn = get_connection()
@@ -193,6 +216,50 @@ def delete_news_image(news_id: int):
         cursor.execute("UPDATE news SET image_s3_key=NULL WHERE id=%s", (news_id,))
         conn.commit()
         return {"message": f"Image for news {news_id} deleted successfully"}
+    finally:
+        cursor.close()
+        conn.close()
+
+@router.post("/{news_id}/view")
+def increment_news_view(news_id: int):
+    conn = get_connection()
+    cursor = conn.cursor(dictionary=True)
+    try:
+        cursor.execute("SELECT id, view_count FROM news WHERE id = %s", (news_id,))
+        news = cursor.fetchone()
+        if not news:
+            raise HTTPException(status_code=404, detail="News not found")
+        cursor.execute(
+            "UPDATE news SET view_count = view_count + 1 WHERE id = %s", (news_id,)
+        )
+        conn.commit()
+        return {"news_id": news_id, "new_view_count": news["view_count"] + 1}
+    finally:
+        cursor.close()
+        conn.close()
+
+@router.get("/{news_id}/view")
+def get_news_view_count(news_id: int):
+    conn = get_connection()
+    cursor = conn.cursor(dictionary=True)
+    try:
+        cursor.execute("SELECT id, view_count FROM news WHERE id = %s", (news_id,))
+        row = cursor.fetchone()
+        if not row:
+            raise HTTPException(status_code=404, detail="News not found")
+        return {"news_id": row["id"], "view_count": row["view_count"]}
+    finally:
+        cursor.close()
+        conn.close()
+
+@router.get("/views/total")
+def get_total_news_views():
+    conn = get_connection()
+    cursor = conn.cursor()
+    try:
+        cursor.execute("SELECT SUM(view_count) FROM news")
+        total = cursor.fetchone()[0] or 0
+        return {"total_views": total}
     finally:
         cursor.close()
         conn.close()

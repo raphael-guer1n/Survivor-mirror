@@ -23,6 +23,7 @@ class EventUpdate(BaseModel):
 class EventOut(EventBase):
     id: int
     image_s3_key: Optional[str] = None
+    view_count: int = 0
 
     class Config:
         orm_mode = True

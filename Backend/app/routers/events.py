@@ -26,6 +26,29 @@ def get_events(skip: int = Query(0, ge=0), limit: int = Query(100, ge=1)):
         cursor.close()
         conn.close()
 
+@router.get("/most-viewed", response_model=list[EventOut])
+def get_most_viewed_event(limit: int = Query(10, ge=1, le=100)):
+    conn = get_connection()
+    cursor = conn.cursor(dictionary=True)
+    try:
+        cursor.execute(
+            """
+            SELECT id, name, dates, location, description, event_type, target_audience, image_s3_key,
+                   view_count
+            FROM events
+            ORDER BY view_count DESC
+            LIMIT %s
+            """,
+            (limit,),
+        )
+        event = cursor.fetchall()
+        if not event:
+            raise HTTPException(status_code=404, detail="No event found")
+        return event
+    finally:
+        cursor.close()
+        conn.close()
+
 @router.get("/{event_id}", response_model=EventOut)
 def get_event(event_id: int):
     conn = get_connection()
@@ -184,6 +207,50 @@ def delete_event_image(event_id: int):
         conn.commit()
 
         return {"message": f"Image for event {event_id} deleted successfully"}
+    finally:
+        cursor.close()
+        conn.close()
+
+@router.post("/{event_id}/view")
+def increment_event_view(event_id: int):
+    conn = get_connection()
+    cursor = conn.cursor(dictionary=True)
+    try:
+        cursor.execute("SELECT id, view_count FROM events WHERE id = %s", (event_id,))
+        event = cursor.fetchone()
+        if not event:
+            raise HTTPException(status_code=404, detail="Event not found")
+        cursor.execute(
+            "UPDATE events SET view_count = view_count + 1 WHERE id = %s", (event_id,)
+        )
+        conn.commit()
+        return {"event_id": event_id, "new_view_count": event["view_count"] + 1}
+    finally:
+        cursor.close()
+        conn.close()
+
+@router.get("/{event_id}/view")
+def get_event_view_count(event_id: int):
+    conn = get_connection()
+    cursor = conn.cursor(dictionary=True)
+    try:
+        cursor.execute("SELECT id, view_count FROM events WHERE id = %s", (event_id,))
+        row = cursor.fetchone()
+        if not row:
+            raise HTTPException(status_code=404, detail="Event not found")
+        return {"event_id": row["id"], "view_count": row["view_count"]}
+    finally:
+        cursor.close()
+        conn.close()
+
+@router.get("/views/total")
+def get_total_event_views():
+    conn = get_connection()
+    cursor = conn.cursor()
+    try:
+        cursor.execute("SELECT SUM(view_count) FROM events")
+        total = cursor.fetchone()[0] or 0
+        return {"total_views": total}
     finally:
         cursor.close()
         conn.close()
