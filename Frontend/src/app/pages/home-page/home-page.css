@@ -1,3 +1,38 @@
+/* Footer styles */
+.site-footer {
+    width: 100%;
+    background: linear-gradient(90deg, var(--brand) 0%, var(--pink-400) 100%);
+    color: #fff;
+    padding: 28px 0 18px 0;
+    margin-top: 48px;
+    font-size: 1rem;
+    box-shadow: 0 -2px 16px rgba(213, 168, 242, 0.10);
+}
+.footer-inner {
+    max-width: 900px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 0 18px;
+}
+.footer-links {
+    display: flex;
+    gap: 18px;
+}
+.footer-link {
+    color: #fff;
+    text-decoration: underline dotted;
+    opacity: 0.85;
+    transition: opacity 0.2s;
+}
+.footer-link:hover {
+    opacity: 1;
+    text-decoration: underline;
+}
 .mv-badges {
     display: flex;
     gap: 8px;
