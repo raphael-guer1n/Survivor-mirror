@@ -4,47 +4,43 @@
     <div class="cards">
         <div class="card">
             <div class="label">Startups</div>
-            <div class="value" *ngIf="totalStartups$ | async as total; else loading">
-                {{ total }}
-            </div>
-            <ng-template #loading>
-                <div class="value">Loading…</div>
-            </ng-template>
+            @if ((totalStartups$ | async) !== null && (totalStartups$ | async) !== undefined) {
+                <div class="value">
+                    {{ totalStartups$ | async }}
+                </div>
+            } @else {
+                <ng-template>
+                    <div class="value">Loading…</div>
+                </ng-template>
+            }
         </div>
 
-        <div class="card">
-            <div class="label">Project Views</div>
-            <div class="value">{{ projectViews() | number }}</div>
-        </div>
+        @if (isFounder$ | async) {
+            <div class="card">
+                <div class="label">My Startup Views</div>
+                @if ((founderStartupViews$ | async) !== null && (founderStartupViews$ | async) !== undefined) {
+                    <div class="value">
+                        {{ founderStartupViews$ | async | number }}
+                    </div>
+                } @else {
+                    <ng-template>
+                        <div class="value">Loading…</div>
+                    </ng-template>
+                }
+            </div>
+        }
 
         <div class="card">
             <div class="label">Total Startup Views (Site)</div>
-            <div class="value" *ngIf="totalSiteViews$ | async as siteViews; else loading2">
-                {{ siteViews | number }}
-            </div>
-            <ng-template #loading2>
-                <div class="value">Loading…</div>
-            </ng-template>
-        </div>
-
-        <div class="card" *ngIf="isFounder$ | async">
-            <div class="label">My Startup Views</div>
-            <div class="value" *ngIf="founderStartupViews$ | async as myViews; else loading3">
-                {{ myViews | number }}
-            </div>
-            <ng-template #loading3>
-                <div class="value">Loading…</div>
-            </ng-template>
-        </div>
-
-        <div class="card">
-            <div class="label">Engagement Rate</div>
-            <div class="value">{{ engagementRate() }}%</div>
-        </div>
-
-        <div class="card">
-            <div class="label">Avg. Time on Page</div>
-            <div class="value">{{ avgTimeOnPage() }}s</div>
+            @if ((totalSiteViews$ | async) !== null && (totalSiteViews$ | async) !== undefined) {
+                <div class="value">
+                    {{ totalSiteViews$ | async | number }}
+                </div>
+            } @else {
+                <ng-template>
+                    <div class="value">Loading…</div>
+                </ng-template>
+            }
         </div>
     </div>
 </div>
