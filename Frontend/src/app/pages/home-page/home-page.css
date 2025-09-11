@@ -329,7 +329,7 @@
   margin-bottom: 6px;
 }
 .stat-value {
-  color: var(--text);
+  color: #C174F2;
   font-size: 2.2rem;
   font-weight: bold;
 }
