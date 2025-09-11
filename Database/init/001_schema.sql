@@ -76,6 +76,7 @@ CREATE TABLE IF NOT EXISTS news (
   startup_id INT,
   description TEXT,
   image_s3_key VARCHAR(512) NULL,
+  view_count INT NOT NULL DEFAULT 0,
   FOREIGN KEY (startup_id) REFERENCES startups(id) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
