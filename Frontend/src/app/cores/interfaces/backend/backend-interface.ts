@@ -367,14 +367,16 @@ export class BackendInterface {
     return this.http.get<Communication[]>(`communication/read_conversation/${encodeURIComponent(Number(conversation_id))}`, options)
   }
   get_last_message_by_id(id_of_conv: number, user: number, options?: RequestOptions): Observable<Communication> {
-    return this.http.get<Communication>(`/communication/read_last_message_by_id/${encodeURIComponent(Number(id_of_conv))}/user/${encodeURIComponent(Number(user))}`, options)
+    return this.http.get<Communication>(`communication/read_last_message_by_id/${encodeURIComponent(Number(id_of_conv))}/user/${encodeURIComponent(Number(user))}`, options)
   }
   send_message(sender_email: string, reciver_email:string, content:string, id: number, options?: RequestOptions): Observable<null> {
-    return this.http.get<null>(`/communication/send_message/sender/${encodeURIComponent(String(sender_email))}/reciver/${encodeURIComponent(String(reciver_email))}/content/${encodeURIComponent(String(content))}/conv/${encodeURIComponent(Number(id))}`,
+    console.log("j'ai envoyé un message");
+    return this.http.get<null>(`communication/send_message/sender/${encodeURIComponent(String(sender_email))}/reciver/${encodeURIComponent(String(reciver_email))}/content/${encodeURIComponent(String(content))}/conv/${encodeURIComponent(Number(id))}`,
     options)
   }
-  create_conversation(id: number, user_mail:string, options?: RequestOptions): Observable<string> {
-    return this.http.get<string>(`/communication//create_a_conversation/${encodeURIComponent(String(id))}/chat_with/${encodeURIComponent(String(user_mail))}`,
+  create_conversation(id: number, user_mail:string, options?: RequestOptions): Observable<null> {
+    console.log("Je suis passé ici\n");
+    return this.http.get<null>(`communication/create_conversation/user/${encodeURIComponent(Number(id))}/chat_with/${encodeURIComponent(String(user_mail))}`,
     options)
   }
 }
