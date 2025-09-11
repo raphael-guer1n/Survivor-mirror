@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 
@@ -22,7 +22,10 @@ export class HomePage implements OnInit {
   infiniteMostViewed: any[] = [];
   private scrollInterval: any = null;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private router: Router) {}
+  goToStartup(id: number) {
+    this.router.navigate(['/startups'], { queryParams: { open: id } });
+  }
 
   ngOnInit() {
     this.loadingStats = true;

@@ -1,4 +1,5 @@
 import {Component, Input} from '@angular/core';
+import {ActivatedRoute} from '@angular/router';
 import {CommonModule} from '@angular/common';
 import {FormsModule} from '@angular/forms';
 import type {StartupList as StartupListDTO} from '../../cores/interfaces/backend/dtos';
@@ -19,8 +20,14 @@ export class StartupList {
   filtersBy: string[] = ['sector', 'maturity'];
   filterValues: Record<string, string> = {};
 
-  constructor(private backend: BackendInterface) {
+  constructor(private backend: BackendInterface, private route: ActivatedRoute) {
     this.filtersBy.forEach(k => (this.filterValues[k] ??= ''));
+    this.route.queryParams.subscribe(params => {
+      const openId = params['open'];
+      if (openId && !isNaN(+openId)) {
+        this.openDetails(+openId);
+      }
+    });
   }
 
   get filters(): string[][] {

@@ -10,7 +10,7 @@
       <div class="most-viewed-scroll" #scrollContainer (mouseenter)="pauseInfiniteScroll()" (mouseleave)="resumeInfiniteScroll()">
         <ng-container *ngIf="!loadingMostViewed && mostViewedStartups.length > 0; else loadingMV">
           <ng-container *ngFor="let s of infiniteMostViewed">
-            <div class="most-viewed-card">
+            <div class="most-viewed-card" (click)="goToStartup(s.id)">
               <div class="mv-name">{{ s.name }}</div>
               <div class="mv-badges">
                 <span class="mv-badge mv-sector">{{ s.sector || '—' }}</span>
@@ -42,7 +42,7 @@
   </div>
   <div class="hero-glow" aria-hidden="true"></div>
 </section>
-
+<div class="section-gap"></div>
 <section class="cta" id="contact">
   <div class="cta-inner">
     <h2>A project idea ?</h2>
