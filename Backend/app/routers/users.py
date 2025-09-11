@@ -4,7 +4,7 @@ from app.schemas.user import UserOut, UserCreate, UserUpdate
 from app.utils.security import hash_password
 from app.schemas.event import EventImage
 from app.utils.s3 import upload_file_to_s3, generate_presigned_url
-from app.routers.auth import require_admin
+from app.routers.auth import require_admin, require_owner_of_user
 
 router = APIRouter(prefix="/users", tags=["users"])
 
@@ -100,7 +100,7 @@ def create_user(user: UserCreate, admin=Depends(require_admin)):
         conn.close()
 
 @router.put("/{user_id}", response_model=UserOut)
-def update_user(user_id: int, user: UserUpdate, admin=Depends(require_admin)):
+def update_user(user_id: int, user: UserUpdate, admin=Depends(require_owner_of_user)):
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
     try:
