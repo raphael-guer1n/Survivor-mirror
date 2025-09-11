@@ -35,6 +35,7 @@ export interface News {
     category?: string | null;
     startup_id?: number | null;
     description?: string | null;
+    view_count?: number | null;
 }
 
 export interface NewsDetail extends News {
@@ -115,6 +116,10 @@ export interface Conversations {
 export interface UserStartup {
   user_id?: number | null,
   startup_id?: number | null,
+}
+
+export interface TotalStartupView {
+  total_views?: number | null;
 }
 
 export type StartupListResponse = StartupList[];
