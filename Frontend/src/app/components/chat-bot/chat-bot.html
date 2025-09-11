@@ -94,12 +94,28 @@
                  (click)="openConversation(c, i)">
           
               <div class="meta">
-                <div class="name">{{ email[i] }}</div>
+                <div class="name">{{ email[c - 4] }}</div>
                 <div class="last">{{ last_message[i] }}</div>
               </div>
             </div>
-          </div>
-          <div class="chat-container" *ngIf="display_conversation !== -1">
+        </div>
+        <footer class="com-input" *ngIf="display_conversation === -1">
+            <textarea
+              #msgInput
+              class="input"
+              rows="1"
+              placeholder="Create a new conversation"
+              [(ngModel)]="draft"
+              (keydown)="handleKeydown($event)">
+            </textarea>
+            <button type="button" class="send-btn" (click)="create_a_new_conversation()" [disabled]="!draft.trim()"
+            aria-label="Envoyer">
+                <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+                    <path fill="currentColor" d="M2 21l21-9L2 3v7l15 2-15 2z"/>
+                </svg>
+            </button>
+        </footer>
+        <div class="chat-container" *ngIf="display_conversation !== -1">
             <button (click)="display_conversation = -1">⬅ Back</button>
           
             <h3>{{ email[display_conversation]}}</h3>
@@ -111,8 +127,8 @@
                     </div>
                 </div>
             </div>
-          </div>
-        <footer class="com-input" *ngIf="display_conversation != -1">
+        </div>
+      <footer class="com-input" *ngIf="display_conversation !== -1">
     <textarea
       #msgInput
       class="input"

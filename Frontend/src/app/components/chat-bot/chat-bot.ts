@@ -16,9 +16,9 @@ import {Communication} from '../../cores/interfaces/backend/dtos';
 
 
 export class ChatBot {
-  isOpen = false;
-  logged = false;
-  id_of_user = -1
+  isOpen: boolean = false;
+  logged: boolean = false;
+  id_of_user: number = -1
   email: string[] = []
   last_message: string[] = []
   reciver_name = "";
@@ -32,25 +32,34 @@ export class ChatBot {
   private auth = inject(AuthService);
   
   get_last_message_and_email(id: number, id_user: number) {
-    console.log("donc: ", id, id_user)
     this.backend.get_last_message_by_id(id, id_user).subscribe({
       next: (msg) => {
           this.email[this.email.length] = msg.sender_name
           this.last_message[this.last_message.length] = msg.content
-          console.log(this.email.length, this.last_message.length, this.email[this.email.length - 1])
+          console.log("dans init pour emails", this.email, id, id_user);
     },})
   }
 
 
   ngOnInit(): void {
     this.reloadSub = interval(2000).subscribe(() => {
+      if (this.isOpen && this.display_conversation === -1 && this.auth.isAuthenticated && this.auth.user) {
+        this.backend.get_Conversations_of_user(this.id_of_user).subscribe({
+          next: (msg) => {
+              this.ids = msg;
+              this.email = [];
+              this.last_message = []
+              console.log("dans init", this.ids);
+              for (let tmp of this.ids) {
+                console.log(tmp);
+                this.get_last_message_and_email(tmp, this.id_of_user);
+              }
+        },})
+      }
       if (this.display_conversation !== -1) {
         this.backend.get_Conversations_content(this.ids[this.display_conversation]).subscribe({
           next: (msg) => {
             this.conversation = msg;
-            for (let m of msg) {
-              console.log("reload ", m.sender_name, m.content);
-            }
           },})
       }
     });
@@ -64,8 +73,8 @@ export class ChatBot {
       this.backend.get_Conversations_of_user(this.auth.user.id).subscribe({
         next: (msg) => {
             this.ids = msg;
+            console.log("de chat access", this.ids);
             for (let tmp of this.ids) {
-              console.log("tmp value in order: ", tmp)
               this.get_last_message_and_email(tmp, this.id_of_user);
             }
       },})
@@ -110,37 +119,40 @@ export class ChatBot {
   draft = '';
 
   openConversation(id: number, id_list: number) {
-      console.log(this.display_conversation)
+      console.log(this.display_conversation, "id", id, "id list", id_list, "value", this.ids[id_list]);
+      console.log(this.ids);
+      console.log(this.email, this.email[id_list]);
       this.backend.get_Conversations_content(this.ids[id_list]).subscribe({
         next: (msg) => {
           this.conversation = msg;
-          for (let m of msg) {
-            console.log("waw ", m.sender_name, m.content);
-          }
           },})
           this.display_conversation = id_list;
-          console.log("laaaaaaaaaaaaaaaaaaaaa ", this.email[this.display_conversation])
   }
 
   sendMessage(): void {
     const text = this.draft?.trim();
     if (!text) return;
 
-    console.log(this.sender, this.email[this.display_conversation], this.ids[this.display_conversation], text)
     this.backend.send_message(this.sender, this.email[this.display_conversation], text, this.ids[this.display_conversation])
     .subscribe({
         next: () =>{
-        this.last_message[this.display_conversation] = this.draft
         this.draft = '';
         this.conversation = []
         this.backend.get_Conversations_content(this.ids[this.display_conversation]).subscribe({
           next: (msg) => {
             this.conversation = msg;
-            for (let m of msg) {
-              console.log("waw waw waw", m.sender_name, m.content);
-            }
           },})
       },})
+  }
+
+  create_a_new_conversation() {
+    const text = this.draft?.trim();
+    if (!text) return;
+
+    console.log(this.id_of_user, " /", this.draft?.trim(), "/ a");
+    this.backend.create_conversation(this.id_of_user, this.draft?.trim())
+    this.draft = '';
+    console.log("we done");
   }
 
   read_message(text: string): void {
