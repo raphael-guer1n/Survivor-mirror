@@ -10,8 +10,8 @@
     flex-wrap: wrap;
     background: linear-gradient(
             45deg,
-            rgba(193, 116, 242, 1), /* #c174f2 */
-            rgba(241, 133, 133, 1)  /* #cb90f1 */
+            rgba(193, 116, 242, 1),
+            rgba(241, 133, 133, 1)
     );
     border: 0px solid var(--border);
     border-radius: var(--radius);
@@ -83,8 +83,8 @@
     pointer-events: none;
     background: linear-gradient(
             120deg,
-            rgba(193, 116, 242, 0.22), /* #c174f2 */
-            rgba(241, 133, 133, 0.14), /* #f18585 */
+            rgba(193, 116, 242, 0.22),
+            rgba(241, 133, 133, 0.14),
             transparent 40%
     );
     mask: linear-gradient(#000, #000) content-box, linear-gradient(#000, #000);
@@ -99,8 +99,8 @@
     box-shadow: 0 14px 30px rgba(2, 6, 23, 0.28);
     background: linear-gradient(
           45deg,
-          rgba(193, 116, 242, 1), /* #c174f2 */
-          rgba(241, 133, 133, 1)  /* #cb90f1 */
+          rgba(193, 116, 242, 1),
+          rgba(241, 133, 133, 1)
   );
     border-color: color-mix(in oklab, var(--border), var(--brand) 24%);
 }
@@ -124,8 +124,8 @@
 .badge {
     background: linear-gradient(
             180deg,
-            rgba(228, 190, 248, 1), /* #e4bef8 */
-            rgba(238, 213, 251, 1)  /* #eed5fb */
+            rgba(228, 190, 248, 1),
+            rgba(238, 213, 251, 1)
     );
     color: var(--text);
     border: 0px solid color-mix(in oklab, var(--border), var(--brand-700) 35%);
@@ -167,8 +167,8 @@
     padding: 16px;
     background: linear-gradient(
             180deg,
-            rgba(193, 116, 242, 0.10), /* #c174f2 */
-            rgba(203, 144, 241, 0.06)  /* #cb90f1 */
+            rgba(193, 116, 242, 0.10),
+            rgba(203, 144, 241, 0.06)
     );
 }
 

@@ -12,7 +12,6 @@
     --text: #111111;
     --text-muted: #555555;
     --brand: #c174f2;
-    /* lavender violet */
     --brand-700: #cb90f1;
     --brand-800: #d5a8f2;
     --pink-600: #f18585;
@@ -182,9 +181,7 @@ a {
     box-shadow: 0 12px 24px rgba(193, 116, 242, 0.35);
     background: linear-gradient(45deg,
             rgba(193, 116, 242, 1),
-            /* #c174f2 */
             rgba(241, 133, 133, 1)
-            /* #cb90f1 */
         );
     filter: brightness(1.02);
 }
