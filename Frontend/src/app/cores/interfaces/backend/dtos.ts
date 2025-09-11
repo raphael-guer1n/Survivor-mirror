@@ -112,6 +112,11 @@ export interface Conversations {
     chat_with: string;
 }
 
+export interface UserStartup {
+  user_id?: number | null,
+  startup_id?: number | null,
+}
+
 export type StartupListResponse = StartupList[];
 export type InvestorListResponse = Investor[];
 export type PartnerListResponse = Partner[];
