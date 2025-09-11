@@ -3,7 +3,7 @@ import {Injectable} from "@angular/core";
 import {HttpInterface, RequestOptions} from "../http/http-interface";
 import {
   Event, Investor, News, NewsDetail, Partner, StartupDetail, StartupList, User, Communication, Conversations,
-  UserStartup
+  UserStartup, TotalStartupView
 } from "./dtos";
 
 @Injectable({providedIn: 'root'})
@@ -88,11 +88,15 @@ export class BackendInterface {
 
   getStartups(skip?: number, limit?: number, options?: RequestOptions): Observable<StartupList[]> {
     const qs = this.buildQuery({skip, limit});
-    return this.http.get<StartupList[]>(`/startups${qs}`, options);
+    return this.http.get<StartupList[]>(`/startups/${qs}`, options);
   }
 
   getStartup(startupId: number, options?: RequestOptions): Observable<StartupDetail> {
     return this.http.get<StartupDetail>(`/startups/${encodeURIComponent(String(startupId))}`, options);
+  }
+
+  getStartupNews(startupId: number, options?: RequestOptions): Observable<News[]> {
+    return this.http.get<News[]>(`/news/startup/${encodeURIComponent(String(startupId))}`, options);
   }
 
   getFounderImage(founderId: number, options?: RequestOptions): Observable<{ image_url: string }> {
@@ -218,8 +222,16 @@ export class BackendInterface {
     return this.http.get<unknown>(`/startups/${encodeURIComponent(String(startupId))}/view/`, options);
   }
 
+  incrementNewsView(newsId: number, options?: RequestOptions): Observable<unknown> {
+    return this.http.post<unknown>(`/news/${encodeURIComponent(String(newsId))}/view/`, options);
+  }
+
+  getTotalStartupsViews(options?: RequestOptions): Observable<TotalStartupView> {
+    return this.http.get<TotalStartupView>(`/startups/views/total`, options);
+  }
+
   getUserStartup(userId: number, options?: RequestOptions): Observable<UserStartup> {
-    return this.http.get<UserStartup>(`/users/${encodeURIComponent(String(userId))}/startup/`, options);
+    return this.http.get<UserStartup>(`/users/${encodeURIComponent(String(userId))}/startup`, options);
   }
 
   createInvestor(payload: {

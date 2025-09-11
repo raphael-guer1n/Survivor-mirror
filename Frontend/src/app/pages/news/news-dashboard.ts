@@ -38,6 +38,7 @@ export class NewsDashboardComponent implements OnInit {
 
   async openNews(news: News) {
     this.loading = true;
+    this.backend.incrementNewsView(news.id).subscribe();
     this.backend.getNewsItem(news.id).subscribe({
       next: async (fullNews) => {
         this.selectedNews = { ...news, ...fullNews };
