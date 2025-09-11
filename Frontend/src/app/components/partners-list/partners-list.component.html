@@ -16,7 +16,7 @@
   <div *ngIf="selectedPartner" class="partner-details-modal-overlay" (click)="closeDetails()">
     <div class="partner-details-modal" (click)="$event.stopPropagation()">
       <app-partner-details [partner]="selectedPartner"></app-partner-details>
-      <button class="close-details-btn" (click)="closeDetails()">Fermer</button>
+      <button class="close-details-btn" (click)="closeDetails()">Close</button>
     </div>
   </div>
 </div>
