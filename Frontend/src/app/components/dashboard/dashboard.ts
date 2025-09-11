@@ -43,6 +43,21 @@ export class DashboardComponent {
     }),
     shareReplay(1)
   );
+  founderNewsViews$ = this.me$.pipe(
+    switchMap(u => {
+      if (!u?.id || u.role !== 'founder') return of(0);
+      return this.backend.getUserStartup(u.id).pipe(
+        switchMap(link => {
+          const sid = link?.startup_id;
+          if (!sid) return of(0);
+          return this.backend.getStartupNews(sid).pipe(
+            map(newsList => (newsList ?? []).reduce((sum, n) => sum + (n.view_count ?? 0), 0))
+          );
+        })
+      );
+    }),
+    shareReplay(1)
+  );
 
   engagementRate = signal(this.seededMetric(2.3, 8.7, 'engagement', true)); // percent
   avgTimeOnPage = signal(this.seededMetric(45, 210, 'time')); // seconds

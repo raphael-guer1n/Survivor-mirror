@@ -28,6 +28,18 @@
                     </ng-template>
                 }
             </div>
+            <div class="card">
+                <div class="label">My Startup News Views</div>
+                @if ((founderNewsViews$ | async) !== null && (founderNewsViews$ | async) !== undefined) {
+                    <div class="value">
+                        {{ founderNewsViews$ | async | number }}
+                    </div>
+                } @else {
+                    <ng-template>
+                        <div class="value">Loading…</div>
+                    </ng-template>
+                }
+            </div>
         }
 
         <div class="card">
