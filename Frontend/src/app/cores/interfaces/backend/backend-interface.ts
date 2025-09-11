@@ -95,6 +95,10 @@ export class BackendInterface {
     return this.http.get<StartupDetail>(`/startups/${encodeURIComponent(String(startupId))}`, options);
   }
 
+  getStartupNews(startupId: number, options?: RequestOptions): Observable<News[]> {
+    return this.http.get<News[]>(`/news/startup/${encodeURIComponent(String(startupId))}`, options);
+  }
+
   getFounderImage(founderId: number, options?: RequestOptions): Observable<{ image_url: string }> {
     return this.http.get<{ image_url: string }>(`/founders/${encodeURIComponent(String(founderId))}/image`, options);
   }
@@ -216,6 +220,10 @@ export class BackendInterface {
 
   getStartupView(startupId: number, options?: RequestOptions): Observable<unknown> {
     return this.http.get<unknown>(`/startups/${encodeURIComponent(String(startupId))}/view/`, options);
+  }
+
+  incrementNewsView(newsId: number, options?: RequestOptions): Observable<unknown> {
+    return this.http.post<unknown>(`/news/${encodeURIComponent(String(newsId))}/view/`, options);
   }
 
   getTotalStartupsViews(options?: RequestOptions): Observable<TotalStartupView> {

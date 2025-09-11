@@ -35,6 +35,7 @@ export interface News {
     category?: string | null;
     startup_id?: number | null;
     description?: string | null;
+    view_count?: number | null;
 }
 
 export interface NewsDetail extends News {
