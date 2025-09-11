@@ -1,8 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
-import { BackendInterface } from '../../cores/interfaces/backend/backend-interface';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { User } from '../../cores/interfaces/backend/dtos';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
@@ -71,7 +69,6 @@ export class AccountPage {
       if (user?.id && user.role === 'founder') {
         this.fetchFounderStartup(user.id);
       } else {
-        // Clear any founder state if role changes
         this.startupId = null;
         this.editingStartup = false;
       }
