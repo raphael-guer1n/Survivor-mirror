@@ -30,7 +30,7 @@ app.include_router(founders.router, prefix="/api", tags=["founders"])
 def admin_sync():
     return sync_all()
 
-##register_scheduler(app)
+register_scheduler(app)
 
 @app.get("/")
 async def root():
