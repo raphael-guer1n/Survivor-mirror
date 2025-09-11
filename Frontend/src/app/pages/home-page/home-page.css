@@ -474,3 +474,8 @@
         margin-left: 2px;
     }
 }
+
+.section-gap {
+    height: 28px;
+    width: 100%;
+}
