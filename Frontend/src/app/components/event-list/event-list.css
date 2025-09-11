@@ -73,10 +73,13 @@
     padding: 18px 24px;
     transition: box-shadow 160ms, transform 120ms, background 120ms;
     border-left: 8px solid rgb(193, 116, 242);
-    margin-bottom: 0;
+    margin-bottom: 18px;
     display: flex;
     flex-direction: column;
     gap: 6px;
+}
+.event-item:last-child {
+    margin-bottom: 0;
 }
 .event-item:hover {
     box-shadow: 0 8px 24px rgba(193,116,242,0.5);
