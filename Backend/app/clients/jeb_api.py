@@ -1,5 +1,6 @@
 import time
 import requests
+import logging
 from typing import Optional
 from app.core.config import JEB_API_BASE_URL, JEB_API_KEY, JEB_API_TIMEOUT
 
@@ -29,7 +30,7 @@ def _request_with_retry(method: str, path: str, *,
             if resp.status_code == 404:
                 return resp
             if resp.status_code == 429:
-                print(f"[DEBUG] 429 Too Many Requests on endpoint: {path} (attempt {attempt+1})")
+                logging.warning(f"429 Too Many Requests on endpoint: {path} (attempt {attempt+1})")
             if 500 <= resp.status_code < 600:
                 last_exc = UpstreamHTTPError(resp.status_code, resp.text)
                 if attempt < retries:
