@@ -54,7 +54,7 @@ def send_message(message: Message):
         connection.close()
 
 @comm.post("/read_conversation", response_model= list[Read_message])
-def read_message(reader: Read_conversation_from):
+def read_conversation(reader: Read_conversation_from):
     reader_email: str = reader.reader_email.strip().lower()
     readed_email: str= reader.chat_with_email.strip().lower()
     connection = get_connection()
@@ -156,7 +156,7 @@ def read_message(reader: Read_conversation_from):
         connection.close()
         
 @comm.get("/read_message/{reader_email}/with/{readed_email}", response_model= Read_message)
-def read_message(reader_email :str, readed_email: str):
+def read_message_from_email(reader_email :str, readed_email: str):
     connection = get_connection()
     cursor = connection.cursor(dictionary=True)
     conversation: list[Read_message]= []
@@ -323,7 +323,7 @@ def read_conversation_by_id(conversation_id: int):
         connection.close()
 
 @comm.get("/read_last_message_by_id/{id}/user/{user}", response_model= Read_message)
-def read_message(id: int, user: int):
+def read_last_message(id: int, user: int):
     connection = get_connection()
     cursor = connection.cursor(dictionary=True)
     email: str
