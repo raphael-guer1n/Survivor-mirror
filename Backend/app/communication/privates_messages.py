@@ -1,8 +1,6 @@
 from fastapi import APIRouter, HTTPException
 from app.db.connection import get_connection
-from app.schemas.user import UserRegister, UserLogin, UserOut
 from app.communication.com_classes import Message, Read_message, Read_conversation_from
-from app.utils.security import hash_password, verify_password
 
 comm = APIRouter(prefix="/communication", tags=["communication"])
 
@@ -398,27 +396,29 @@ def add_message_to_conversation(sender_email: str, reciver_email:str, content:st
         cursor.close()
         connection.close()
 
-@comm.get("/create_a_conversation/{user_id}/chat_with/{user_email}", response_model= str)
-def read_conversation_by_id(user_id: int, user_email: str):
+@comm.get("/create_conversation/user/{user_id}/chat_with/{user_email}", response_model= None)
+def create_a_conversation(user_id: int, user_email: str):
+    print("nous sommes dedans voilà")
     connection = get_connection()
     cursor = connection.cursor(dictionary=True)
     try:
+        print(user_email, user_id, "\n")
         cursor.execute("SELECT id FROM users where email = %s", (user_email,))
         get_reader = cursor.fetchone()
         if not get_reader:
             raise HTTPException(status_code=501,
                 detail="Reader does not exist.")
         cursor.execute(
-            "SELECT id FROM conversations where user1_id = %s AND user2_id = %s OR user2_id = %s AND user1_id = %s", (user_id, get_reader['id'], get_reader['id'], user_id))
+            "SELECT id FROM conversations where user1_id = %s AND user2_id = %s OR user1_id = %s AND user2_id = %s", (user_id, get_reader['id'], get_reader['id'], user_id))
         get_readed = cursor.fetchone()
-        if  get_readed:
+        if get_readed:
             raise HTTPException(status_code=501,
                 detail="You already have a conversation with this guy.")
         cursor.execute("INSERT INTO conversations (user1_id, user2_id) VALUES (%s, %s)",
             (user_id, get_reader['id'],))
         connection.commit()
         print(user_id, get_reader['id'])
-        return "success"
+        return 
     finally:
         cursor.close()
         connection.close()
