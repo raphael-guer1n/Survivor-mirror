@@ -19,6 +19,9 @@ export class DashboardComponent {
   projectViews = signal(this.seededMetric(1500, 4500, 'views'));
 
   totalStartups$ = this.dataCache.getStartups$().pipe(map(list => list.length));
+  totalPartners$ = this.backend.getPartners().pipe(map(list => list.length));
+  totalEvents$ = this.backend.getEvents().pipe(map(list => list.length));
+  totalNews$ = this.backend.getNews().pipe(map(list => list.length));
 
   totalSiteViews$ = this.backend.getTotalStartupsViews().pipe(
     map(r => r?.total_views ?? 0),

@@ -14,6 +14,42 @@
                 </ng-template>
             }
         </div>
+        <div class="card">
+            <div class="label">Partners</div>
+            @if ((totalPartners$ | async) !== null && (totalPartners$ | async) !== undefined) {
+                <div class="value">
+                    {{ totalPartners$ | async }}
+                </div>
+            } @else {
+                <ng-template>
+                    <div class="value">Loading…</div>
+                </ng-template>
+            }
+        </div>
+        <div class="card">
+            <div class="label">Events</div>
+            @if ((totalEvents$ | async) !== null && (totalEvents$ | async) !== undefined) {
+                <div class="value">
+                    {{ totalEvents$ | async }}
+                </div>
+            } @else {
+                <ng-template>
+                    <div class="value">Loading…</div>
+                </ng-template>
+            }
+        </div>
+        <div class="card">
+            <div class="label">News</div>
+            @if ((totalNews$ | async) !== null && (totalNews$ | async) !== undefined) {
+                <div class="value">
+                    {{ totalNews$ | async }}
+                </div>
+            } @else {
+                <ng-template>
+                    <div class="value">Loading…</div>
+                </ng-template>
+            }
+        </div>
 
         @if (isFounder$ | async) {
             <div class="card">
